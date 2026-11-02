@@ -447,7 +447,8 @@ def _apply_root(canvas, pose, work):
                          resample=Image.BICUBIC)
 
 
-def render_frame(spec, t, actions, size=512, layers=None, work=None):
+def render_frame(spec, t, actions, size=512, layers=None, work=None,
+                 leg_rig=False):
     """渲染一帧。
 
     actions 两种写法：
@@ -457,6 +458,12 @@ def render_frame(spec, t, actions, size=512, layers=None, work=None):
 
     work = 变换发生的分辨率。桌宠只显示 256，在 1024 上做旋转是浪费
     （实测 0.6s/帧 → 512 上 0.15s、256 上 0.04s）。默认取 max(size, 256)。
+
+    leg_rig = 是否启用腿部 rig（sim/legs.py）。默认 False：
+        Q 版短腿画在 body_core 一张位图里、和躯干像素连续，切图摆动必然
+        穿模/脱离主体。在美术出分腿部件前，腿部 rig 在真实桌宠上不自然，
+        所以默认关闭，散步只用 walk_fx（腿不动但不穿模）。
+        verify_anim G 区传 True 做单元测试。
     """
     work = work or max(size or 512, 256)
     if layers is None:
@@ -468,12 +475,12 @@ def render_frame(spec, t, actions, size=512, layers=None, work=None):
 
     canvas = Image.new('RGBA', (work, work), (0, 0, 0, 0))
     canvas.alpha_composite(rig_tail(layers['tail'], spec['tail'], pose, work))
-    # core 层：walk 类动作时启用腿部 rig（腿画在 body_core 位图里无独立骨骼，
-    # 原始 walk 的腿部通道被丢弃；这里把 4 条短腿切出来按四足步态摆动）
+    # core 层：腿部 rig 默认关闭（见上文 leg_rig 说明）
     core_layer = _scaled_core(layers['core'], pose, work)
-    wt = _LEG.walk_phase(items)
-    if wt is not None:
-        core_layer = _LEG.rig_legs(core_layer, wt, _spec_key(spec), work)
+    if leg_rig:
+        wt = _LEG.walk_phase(items)
+        if wt is not None:
+            core_layer = _LEG.rig_legs(core_layer, wt, _spec_key(spec), work)
     canvas.alpha_composite(core_layer)
     for side in ('L', 'R'):
         canvas.alpha_composite(rig_ear(layers['ear_' + side], side, pose, work))
