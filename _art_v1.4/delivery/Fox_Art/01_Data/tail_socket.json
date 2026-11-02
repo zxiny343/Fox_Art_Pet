@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "rule": "tail-behind-body / socket-window",
+  "layerOrderBottomToTop": [
+    "Tail_Base",
+    "Tail",
+    "Body_Core",
+    "Pattern",
+    "Ear_L",
+    "Ear_R",
+    "Eye_L",
+    "Eye_R"
+  ],
+  "socket": {
+    "anchor": [
+      425,
+      505
+    ],
+    "anchorName": "tail_root",
+    "note": "统一 socket 锚点；所有尾巴部件以全画布 (0,0) 对齐，根点天然落在此锚点",
+    "regionMask": "assets/master/Parts/tail_socket_mask@1024.png",
+    "seamAreaPx": 2129,
+    "socketAreaPx": 3181,
+    "socketBBox": [
+      208,
+      298,
+      503,
+      506
+    ],
+    "seamPx": 4,
+    "socketDilatePx": 2,
+    "definition": "窗口内'贴着身体'的 4px 接缝带外扩 2px；接缝带归 body_core 所有并做 socket 补色（默认方案），因此任何尾型都不会露出透明漏洞"
+  },
+  "tailWindow": {
+    "region": "split_regions.json#regions.tail",
+    "noDilate": true,
+    "note": "窗口不做膨胀，使 body_core 与 tail 部件像素级互补，合成零缝零白边",
+    "areaPx": 40294
+  },
+  "tailBase": {
+    "pattern": "assets/master/Tails/tail_base_<coat>@1024.png",
+    "coats": [
+      "white",
+      "orange",
+      "black",
+      "grey",
+      "blue",
+      "purple",
+      "caramel",
+      "sakura",
+      "mint",
+      "obsidian_gold"
+    ],
+    "coverage": "100% 覆盖 socket（额外外扩 3px），短尾/异形尾替换时不会露出透明洞",
+    "compositeRule": "Tail_Base 置于最底层，仅在变体尾巴未覆盖的窗口处可见"
+  },
+  "envelope": {
+    "version": "1.2",
+    "alignTarget": "body_core",
+    "rule": "身体核心的坐标/尺寸/锚点全毛色统一；耳朵与尾巴允许突破统一包络，禁止为对齐包络而缩放部件（会压缩性状差异）",
+    "bodyCoreBBox": [
+      189,
+      150,
+      877,
+      928
+    ],
+    "allowOverflow": [
+      "tail",
+      "ear_L",
+      "ear_R"
+    ]
+  },
+  "verified": true
+}

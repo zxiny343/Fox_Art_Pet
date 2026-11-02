@@ -1,0 +1,80 @@
+{
+  "round": {
+    "category": "pupils",
+    "canvas": [
+      160,
+      160
+    ],
+    "anchor": [
+      80,
+      80
+    ],
+    "rootRule": "center",
+    "placedBBox": [
+      30,
+      16,
+      130,
+      144
+    ],
+    "placedSize": [
+      100,
+      128
+    ],
+    "scale": 0.4476,
+    "file": "pupil_round.png",
+    "sourceSheet": "pupils_1.png",
+    "index": 0
+  },
+  "slit": {
+    "category": "pupils",
+    "canvas": [
+      160,
+      160
+    ],
+    "anchor": [
+      80,
+      80
+    ],
+    "rootRule": "center",
+    "placedBBox": [
+      20,
+      16,
+      139,
+      144
+    ],
+    "placedSize": [
+      119,
+      128
+    ],
+    "scale": 0.4238,
+    "file": "pupil_slit.png",
+    "sourceSheet": "pupils_1.png",
+    "index": 1
+  },
+  "star": {
+    "category": "pupils",
+    "canvas": [
+      160,
+      160
+    ],
+    "anchor": [
+      80,
+      80
+    ],
+    "rootRule": "center",
+    "placedBBox": [
+      18,
+      16,
+      143,
+      144
+    ],
+    "placedSize": [
+      125,
+      128
+    ],
+    "scale": 0.4384,
+    "file": "pupil_star.png",
+    "sourceSheet": "pupils_1.png",
+    "index": 2
+  }
+}

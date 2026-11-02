@@ -1,0 +1,188 @@
+{
+ "schemaVersion": "1.0",
+ "anchorSet": "v1.0-view34",
+ "referenceCoat": "blue",
+ "note": "blue is the only hand-painted master; others are hue-mapped from it and hand-corrected. outline must never be pure black except for black / obsidian_gold.",
+ "colorways": [
+  {
+   "id": "white",
+   "nameZh": "雪白",
+   "rarity": "common",
+   "base": "#F4F1EA",
+   "shade": "#D9D3C7",
+   "light": "#FFFFFF",
+   "belly": "#FFFFFF",
+   "innerEar": "#F3C9CE",
+   "nose": "#4A4048",
+   "outline": "#6B6259"
+  },
+  {
+   "id": "orange",
+   "nameZh": "赤橙",
+   "rarity": "common",
+   "base": "#F08A3C",
+   "shade": "#C96A26",
+   "light": "#FFB068",
+   "belly": "#FBE0BE",
+   "innerEar": "#F2B3A8",
+   "nose": "#5A3B2E",
+   "outline": "#7A4418"
+  },
+  {
+   "id": "black",
+   "nameZh": "玄黑",
+   "rarity": "fine",
+   "base": "#4A4550",
+   "shade": "#322E38",
+   "light": "#6E6878",
+   "belly": "#8E8795",
+   "innerEar": "#B98C92",
+   "nose": "#2A262E",
+   "outline": "#1D1A22"
+  },
+  {
+   "id": "grey",
+   "nameZh": "烟灰",
+   "rarity": "common",
+   "base": "#A7A5A2",
+   "shade": "#85837F",
+   "light": "#C7C5C2",
+   "belly": "#E2E0DD",
+   "innerEar": "#E0B4B2",
+   "nose": "#4E4B48",
+   "outline": "#565350"
+  },
+  {
+   "id": "blue",
+   "nameZh": "霜蓝",
+   "rarity": "common",
+   "isMaster": true,
+   "base": "#7FB2E5",
+   "shade": "#5A8CC4",
+   "light": "#A8CFF3",
+   "belly": "#E7F2FC",
+   "innerEar": "#F6C3CF",
+   "nose": "#3E4E63",
+   "outline": "#2E4E75"
+  },
+  {
+   "id": "purple",
+   "nameZh": "幽紫",
+   "rarity": "rare",
+   "base": "#A98BD8",
+   "shade": "#8467B4",
+   "light": "#C9B2EC",
+   "belly": "#EDE4FA",
+   "innerEar": "#F0BFD6",
+   "nose": "#4C3B63",
+   "outline": "#4A356E"
+  },
+  {
+   "id": "sakura",
+   "nameZh": "樱粉",
+   "rarity": "rare",
+   "base": "#F5A9C0",
+   "shade": "#D97E9C",
+   "light": "#FFC9DA",
+   "belly": "#FFF0F4",
+   "innerEar": "#F58BB0",
+   "nose": "#6B4150",
+   "outline": "#8A4C63"
+  },
+  {
+   "id": "mint",
+   "nameZh": "薄荷",
+   "rarity": "fine",
+   "base": "#8FD9BE",
+   "shade": "#63B99A",
+   "light": "#B4EBD8",
+   "belly": "#E9FBF4",
+   "innerEar": "#F7BFC9",
+   "nose": "#3D6357",
+   "outline": "#2F6B57"
+  },
+  {
+   "id": "caramel",
+   "nameZh": "焦糖",
+   "rarity": "common",
+   "base": "#C98F5E",
+   "shade": "#A16E42",
+   "light": "#E3B184",
+   "belly": "#F6E2C8",
+   "innerEar": "#EFAE9C",
+   "nose": "#5C4029",
+   "outline": "#6B4526"
+  },
+  {
+   "id": "obsidian_gold",
+   "nameZh": "曜金",
+   "rarity": "special",
+   "base": "#3A3550",
+   "shade": "#262238",
+   "light": "#574F72",
+   "belly": "#C9A24A",
+   "innerEar": "#8A7590",
+   "nose": "#1D1A28",
+   "outline": "#17142A",
+   "accent": "#E8C063",
+   "accentNote": "gold applies to chest, tail tip and pattern layer only",
+   "pointsRule": {
+    "applyTo": "belly",
+    "altColor": "#605A74",
+    "regions": [
+     {
+      "type": "ellipse",
+      "id": "chest",
+      "cx": 681,
+      "cy": 705,
+      "rx": 88,
+      "ry": 104
+     },
+     {
+      "type": "circle",
+      "id": "tailTip",
+      "cx": 225,
+      "cy": 345,
+      "r": 128
+     }
+    ],
+    "measuredFrom": "probe_belly.py on fox_base_blue_q4@1024; chest cluster centroid (681,705), tail tip cluster bbox (168,310)-(435,520)"
+   }
+  },
+  {
+   "id": "mist_purple",
+   "nameZh": "淡雾紫",
+   "rarity": "fine",
+   "base": "#CDBDE8",
+   "shade": "#AF9BD0",
+   "light": "#E4D9F5",
+   "belly": "#F5F0FC",
+   "innerEar": "#F4D2E2",
+   "nose": "#6B587E",
+   "outline": "#5E4A80",
+   "note": "purple 的 D 位点稀释态：更浅、更灰（v1.3 P1）"
+  },
+  {
+   "id": "haze_blue",
+   "nameZh": "雾霭蓝",
+   "rarity": "fine",
+   "base": "#93A9C6",
+   "shade": "#6E87A8",
+   "light": "#BCCFE4",
+   "belly": "#E3ECF6",
+   "innerEar": "#C9A0A6",
+   "nose": "#4E5A6B",
+   "outline": "#3D5670",
+   "note": "black 的 D 位点稀释态：低饱和蓝灰（v1.3 P1）"
+  }
+ ],
+ "remapRules": {
+  "lightRatio": 1.28,
+  "shadeRatio": 0.78,
+  "bellyLightness": "85-92%",
+  "bellySaturationRatio": 0.45,
+  "outlineDarkenRatio": 0.75,
+  "noseDarkenRatio": 0.85,
+  "innerEarFollowsCoat": false
+ }
+}

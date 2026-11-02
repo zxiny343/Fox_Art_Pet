@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>表型 → 部件 映射层 v1 · 验收报告</title>
+<style>
+  :root{
+    --bg:#f6f6f8; --card:#ffffff; --ink:#1c1c22; --ink2:#5a5a68;
+    --line:#e3e3ea; --accent:#6a4bd6; --ok:#227a52; --warn:#b06a12; --bad:#b03a34;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.72 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:48px 28px 80px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:36px}
+  h1{font-size:32px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--ink2);font-size:14px}
+  h2{font-size:21px;margin:52px 0 16px;padding-left:12px;border-left:4px solid var(--accent)}
+  h3{font-size:16px;margin:26px 0 10px;color:var(--ink)}
+  p{margin:12px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:18px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .kpi .n{font-size:30px;font-weight:650;letter-spacing:-1px;line-height:1.1}
+  .kpi .t{font-size:13px;color:var(--ink2);margin-top:6px}
+  .kpi.ok .n{color:var(--ok)} .kpi.bad .n{color:var(--bad)} .kpi.warn .n{color:var(--warn)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#efeff4;font-weight:600;font-size:13px;color:var(--ink2)}
+  code{background:#eeeef4;padding:1.5px 6px;border-radius:5px;font-size:13px;
+       font-family:ui-monospace,Consolas,monospace}
+  .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+  .tag.ok{background:#e2f3ea;color:var(--ok)}
+  .tag.bad{background:#fbe8e6;color:var(--bad)}
+  .tag.warn{background:#fcf0dd;color:var(--warn)}
+  figure{margin:22px 0}
+  figure img{width:100%;border:1px solid var(--line);border-radius:10px;display:block;background:#fff}
+  figcaption{font-size:13px;color:var(--ink2);margin-top:9px;line-height:1.6}
+  .flow{background:#1f1f28;color:#e8e8f0;border-radius:12px;padding:20px 24px;
+        font-family:ui-monospace,Consolas,monospace;font-size:13.5px;line-height:1.85;
+        overflow-x:auto;white-space:pre}
+  .flow b{color:#a89bff}
+  blockquote{margin:18px 0;padding:14px 20px;background:#f0edfb;border-left:4px solid var(--accent);
+             border-radius:0 10px 10px 0;font-size:15px}
+  ul,ol{padding-left:22px} li{margin:7px 0}
+  .note{font-size:13.5px;color:var(--ink2)}
+  footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+         font-size:13px;color:var(--ink2)}
+  @media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>表型 → 美术部件 映射层 v1</h1>
+  <div class="sub">
+    22 个遗传位点 → Fox_Art v1.3 的 335 个部件 · 可执行版<br>
+    实现 <code>sim/artmap.py</code> · 自检 69 项全通过 · 2026-11-01
+  </div>
+</header>
+
+<h2>一句话结论</h2>
+<div class="card">
+  <p style="margin-top:0">
+    22 个位点全部有了可执行出口，真实种群 36 只**一次渲染成功、零碎片零出血**。
+    过程中修掉三个会让功能直接失效的集成缺陷，其中一个是
+    <b>「所有长毛/中毛/卷毛狐狸都会变成霜蓝色」</b>——不修的话 L1/L2、K 三个位点等于白设计。
+  </p>
+</div>
+
+<div class="grid3" style="margin-top:18px">
+  <div class="kpi ok"><div class="n">69 / 69</div><div class="t">自检断言通过</div></div>
+  <div class="kpi ok"><div class="n">36 / 36</div><div class="t">真实种群渲染成功</div></div>
+  <div class="kpi bad"><div class="n">6</div><div class="t">实测出的美术侧缺陷</div></div>
+</div>
+
+<h2>1. 这一层在做什么</h2>
+<div class="flow">基因型 dict
+   │  <b>phenotype()</b>        孟德尔规则 → 表型
+   ▼
+表型 dict  { color, tails, hair_len, curl, ear, eye, pattern ... }
+   │  <b>to_art()</b>            表型 → 部件名（纯数据，不碰磁盘）
+   ▼
+组装参数  { coat, fur, tail, ear, eye_l, eye_r, pupil, pattern, special[] }
+   │  <b>_compose()</b>          1024 全画布合成
+   ▼
+PNG（1024 / 512 / 256）</div>
+
+<p>
+  <code>to_art()</code> 除了部件名，还返回 <code>notes</code>（降级与覆盖说明）和
+  <code>missing</code>（无素材支撑的位点）。<b>任何映射损失都留痕，不静默丢弃</b>——
+  这是后面能一口气找出 6 个美术缺陷的前提。
+</p>
+
+<h2>2. 修掉的三个缺口</h2>
+
+<div class="card">
+  <h3 style="margin-top:0">2.1 ★ 非短毛的狐狸会丢掉毛色 <span class="tag bad">P0</span></h3>
+  <p>
+    美术侧组装器在 <code>fur != 'short'</code> 时直接取
+    <code>fox_fur_&lt;fur&gt;_blue_q4</code> 母版，<b>把 coat 参数完全丢弃</b>。
+    实测 <code>orange + long</code> 的核心平均 RGB 是 <b>(104, 133, 158) 蓝灰</b>。
+  </p>
+  <p>
+    也就是：只要狐狸不是短毛，毛色基因就完全失效。L1、L2、K 三个位点白设计。
+    修法是先按 blue 切核心、再用 LOCK-F 的 <code>recolor_coat</code> 换色——
+    实测色相偏差均值 <b>0.006</b>（0 = 完全一致），肉眼无差。
+  </p>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">2.2 eye_narrow 不存在</h3>
+    <p class="note">
+      <code>traits.json</code> 声明眼型有 <code>eye_narrow</code>，但素材目录里
+      从来没有这个文件——实际是 <code>eye_sleepy</code>（细长困眼）。
+      映射层做别名处理。
+    </p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">2.3 fur_medium 与文件不符</h3>
+    <p class="note">
+      声明值 <code>fur_medium</code>，母版文件名是
+      <code>fox_fur_mid_blue_q4</code>。映射用 <code>mid</code>，
+      输出面板值时再拼回 <code>fur_medium</code>。
+    </p>
+  </div>
+</div>
+
+<h2>3. 表型图谱</h2>
+<p>把映射层的每一个出口都渲染出来，用来验收「位点取值 → 部件」是否一一对应。</p>
+
+<figure>
+  <img src="fox-render/_atlas_01_毛色与毛质.png" alt="毛色与毛质">
+  <figcaption>
+    <b>毛色 12 种</b>（9 种 A×D×W 组合 + 3 个突变预留色）全部正确且互相可辨。
+    <b>毛质 4 种</b>：短/中/长/卷形态差异明显——这正是 2.1 修好之后才看得见的效果。
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="fox-render/_atlas_02_尾型.png" alt="尾型">
+  <figcaption>
+    <b>尾型 11 种</b>。单尾形态由 Tl（长/中/短）× Tf（蓬/纤）+ K 卷毛决定；
+    多尾数量由 Tn1+Tn2 累加、V 决定九尾。实测双/三/四/五/九尾的分支数<b>逐一核对无误</b>。
+    <code>normal</code> 是美术基准件，没有基因出口。
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="fox-render/_atlas_03_耳型与眼睛.png" alt="耳型与眼睛">
+  <figcaption>
+    <b>耳型 6 种</b>：Er 3 态 × Ez 3 档正好填满 5 个非星耳部件 + St 星耳。
+    <b>眼型 3 × 眼色 4 = 12 种</b>，<b>异色瞳 4 种</b>（右眼取 Ey 显性序列下一色，
+    确定性规则，不随机抖动）。
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="fox-render/_atlas_04_斑纹与特殊层.png" alt="斑纹与特殊层">
+  <figcaption>
+    <b>斑纹 5 种 + 特殊层 3 种</b>。美术侧声明了
+    <code>special_glow / special_aura / special_star_mark</code> 三个值但<b>没有交付任何素材</b>，
+    发光 / 光环 / 星纹三层由程序化合成兜底（光环位置按耳顶 y=166 实测校准）。
+  </figcaption>
+</figure>
+
+<blockquote>
+  花纹这里是全篇最弱的一环：遮罩本身在躯干只覆盖 22%（<code>spots</code> 只有 9%），
+  在 128–256px 的桌宠尺寸上只剩一层淡淡纹理。已加自适应对比度补偿
+  （保证花纹与底色亮度差 ≥ 48），但覆盖率是美术遮罩的问题，得靠补素材解决。
+</blockquote>
+
+<h2>4. 真实种群渲染</h2>
+<figure>
+  <img src="fox-render/_population.png" alt="36 只真实种群">
+  <figcaption>
+    v0.6 生态跑 5 年、第 9 代、存活 36 只，<b>全部由映射层渲染，无一失败</b>。
+    4 只标了「⚠ 尾根缺口」——那是美术侧 <code>tail_short</code> / <code>tail_thin</code>
+    的已知缺陷（见第 6 节 A2）。
+  </figcaption>
+</figure>
+
+<h3>顺带发现：默认频率让外观过于单调</h3>
+<p>
+  36 只里一半以上是「卷毛 + 双尾 + 尖耳 + 赤橙」。量化后（12 种子 × 5 年，只统计不渲染）：
+</p>
+<table>
+  <thead><tr>
+    <th>方案</th><th>唯一外观</th><th>毛色熵</th><th>毛质熵</th><th>尾型熵</th><th>耳型熵</th><th>近交 F</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>基线 v0.6</td><td>27.4</td><td>2.04</td><td>1.36</td><td>2.33</td><td>1.37</td><td>0.082</td></tr>
+    <tr style="background:#f2f8f4">
+      <td><b>只把 K 从 0.30 降到 0.12</b></td><td>27.5</td><td>2.04</td>
+      <td><b>1.65</b></td><td>2.38</td><td>1.37</td><td><b>0.082</b></td>
+    </tr>
+    <tr><td>只改 K + Er 均分</td><td>29.8</td><td>1.92</td><td>1.65</td><td>2.63</td><td>1.76</td><td>0.130</td></tr>
+    <tr><td>只改 A/D（稀释增多）</td><td>27.0</td><td><b>2.49</b></td><td>1.41</td><td>2.34</td><td>1.67</td><td>0.105</td></tr>
+    <tr><td>全改</td><td>30.8</td><td>2.72</td><td>1.62</td><td>2.36</td><td>1.92</td><td>0.132</td></tr>
+  </tbody>
+</table>
+<p>
+  <b>调 K 频率是零代价的</b>：12 个种子的逐种子 F 值<b>完全相同</b>
+  （0.06 0.09 0.10 0.03 0.14 0.04 0.09 0.12 0.08 0.10 0.07 0.07）——
+  证明 K 位点与适应度完全解耦，只影响观感。毛质熵 1.36 → 1.65（+21%）。
+</p>
+<p class="note">
+  其余位点（Er、A、D）参与适应度，改动会把近交 F 从 0.082 抬到 0.13（+59%），
+  属「多样性与遗传健康」的权衡项。建议只采纳 K 这一条，其余留作可选难度。
+</p>
+
+<h2>5. 自检结果</h2>
+<table>
+  <thead><tr><th>段</th><th>内容</th><th style="width:90px">结果</th></tr></thead>
+  <tbody>
+    <tr><td>A 表型层逐维穷举</td>
+        <td>22 位点每个可取值都能映射到合法部件，且素材文件确实存在</td>
+        <td><span class="tag ok">47 项 ✓</span></td></tr>
+    <tr><td>A10 / A11 值域对账</td>
+        <td>432 组交叉组合输出值可解析；素材 vs 机读数据全量对账</td>
+        <td><span class="tag ok">3 项 ✓</span></td></tr>
+    <tr><td>D 换色保真</td>
+        <td>4 毛色 × 3 非短毛，色相与同色短毛一致（均值 Δ = 0.006）</td>
+        <td><span class="tag ok">13 项 ✓</span></td></tr>
+    <tr><td>B/C 整链渲染</td>
+        <td>16 组随机表型：主体最大岛占比最低 100%、0 组出血</td>
+        <td><span class="tag ok">6 项 ✓</span></td></tr>
+  </tbody>
+</table>
+
+<h2>6. 实测出的美术侧缺陷</h2>
+<p>按严重度排序，全部有量化依据，可直接转成 v1.4 修单。</p>
+<table>
+  <thead><tr><th style="width:44px">#</th><th style="width:34%">问题</th><th>证据</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><b>A1</b></td>
+      <td><b>ear_large 的内容比 ear_small 还小 2.7 倍</b></td>
+      <td>large 内容 124×100 / 6054 px，small 128×166 / 16344 px；
+          large 的 topY=235 而其他都是 169。「大圆耳」视觉上最小，Er/Ez 语义反转。
+          v1.2 起就是这样，v1.3 未修。</td>
+    </tr>
+    <tr>
+      <td><b>A2</b></td>
+      <td>尾根缺口：thin 35743 px、short 32043 px</td>
+      <td>「母版轮廓内、组装后却透明」的严格判据。thin 是 Tf 的纤态，
+          出现率约 25%，不修则该性状不可用。</td>
+    </tr>
+    <tr>
+      <td><b>A3</b></td>
+      <td>traits.json 的 values 漏登记 4 项</td>
+      <td>coat 缺 mist_purple / haze_blue（colorways 有 12 色，values 只列 10）；
+          eyeColor 缺 eye_cyan；eyeShape 写 eye_narrow 但素材是 eye_sleepy；
+          fur 写 fur_medium 但文件是 fur_mid。</td>
+    </tr>
+    <tr>
+      <td><b>A4</b></td>
+      <td>花纹遮罩覆盖率偏低</td>
+      <td>stripes / tabby 在躯干只覆盖 22%，spots 仅 9%。
+          128–256px 桌宠尺寸下花纹只剩淡淡纹理。</td>
+    </tr>
+    <tr>
+      <td><b>A5</b></td>
+      <td>三个 special 值声明未交付</td>
+      <td>traits.json 有 special_glow / special_aura / special_star_mark，
+          assets/master 下无任何对应文件。已用程序化合成兜底。</td>
+    </tr>
+    <tr>
+      <td><b>A6</b></td>
+      <td>run_assemble.ORIG_EAR_H 未定义</td>
+      <td>第 219 行引用，全文件无赋值。一旦走到 legacy 耳朵分支
+          （非 1024 画布件）就 NameError，目前被「全部 1024 对齐」掩盖。</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>7. 文件与用法</h2>
+<table>
+  <thead><tr><th style="width:34%">文件</th><th>作用</th></tr></thead>
+  <tbody>
+    <tr><td><code>sim/artmap.py</code></td><td>映射层本体（to_art / render / render_geno）</td></tr>
+    <tr><td><code>sim/verify_artmap.py</code></td><td>69 项自检</td></tr>
+    <tr><td><code>sim/render_population.py</code></td><td>真实种群批量渲染 + 拼版图</td></tr>
+    <tr><td><code>sim/render_atlas.py</code></td><td>表型图谱（4 页）</td></tr>
+    <tr><td><code>sim/diversity.py</code></td><td>外观多样性诊断</td></tr>
+    <tr><td><code>docs/artmap-spec-v1.md</code></td><td>映射规范（完整表格 + 缺口记录）</td></tr>
+  </tbody>
+</table>
+
+<div class="card">
+  <p style="margin:0" class="note">
+    <b>环境</b>：必须用系统 Python 3.10（<code>E:/SoftWare/python3.10/python.exe</code>），
+    托管 3.13 缺 pillow / numpy / scipy。
+    资产目录按版本号自然排序取最新，可用 <code>FOX_ART_ROOT</code> 覆盖。
+    <b>不修改 <code>Fox_Art/tools/</code> 下任何文件</b>，全部用包装 + 运行时补丁，
+    美术升级不会冲突。
+  </p>
+</div>
+
+<footer>
+  幻想小狐狸 Fantasy Fox · 表型→部件映射层 v1 · 2026-11-01<br>
+  资产基准 Fox_Art v1.3（520 文件 / 52.9 MB）· 遗传引擎 fox_ecosystem_sim v0.6
+</footer>
+
+</div>
+</body>
+</html>

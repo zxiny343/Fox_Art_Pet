@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>基因与性状面板 · 幻想小狐狸 v0.4（§18 交互原型）</title>
+<style>
+:root{
+  --bg:#F7F8FA; --card:#FFFFFF; --tx:#1F2328; --tx2:#5A6470; --tx3:#8A94A0;
+  --bd:#E3E7EC; --bd2:#D0D6DE; --accent:#7F77DD; --ok:#639922; --warn:#BA7517;
+  --bad:#C0392B; --info:#378ADD;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);
+  font-family:"Microsoft YaHei UI","PingFang SC","Hiragino Sans GB",-apple-system,"Segoe UI",sans-serif;
+  font-size:13.5px;line-height:1.65}
+.wrap{max-width:1320px;margin:0 auto;padding:22px 20px 60px}
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:16px;margin:26px 0 10px;padding-left:9px;border-left:3px solid var(--accent)}
+h3{font-size:14px;margin:16px 0 8px}
+.sub{color:var(--tx2);font-size:12.5px;margin-bottom:14px}
+.meta{color:var(--tx3);font-size:11.5px}
+
+.card{background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:14px 16px;margin-bottom:14px}
+.note{background:#F4F6F8;border-left:3px solid var(--bd2);padding:9px 12px;border-radius:0 6px 6px 0;
+  font-size:12.5px;color:var(--tx2);margin:10px 0}
+.note.warn{border-left-color:var(--warn);background:#FDF8EE}
+.note.bad{border-left-color:var(--bad);background:#FDF2F0}
+.note.ok{border-left-color:var(--ok);background:#F3F8EE}
+
+/* 顶部统计 */
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.chip{display:inline-block;background:#EEF1F5;border:1px solid var(--bd);border-radius:20px;
+  padding:3px 11px;font-size:11.5px;color:var(--tx2)}
+.chip b{color:var(--tx)}
+.chip.b-ok{background:#EAF3E0;border-color:#C6DCB0;color:#3F6B12}
+.chip.b-bad{background:#FBE9E7;border-color:#EFC9C4;color:#9C2B1E}
+
+/* Tab */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd);margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 16px;cursor:pointer;border:1px solid transparent;border-bottom:none;
+  border-radius:8px 8px 0 0;color:var(--tx2);font-size:13px;user-select:none;margin-bottom:-1px}
+.tab:hover{background:#EEF1F5}
+.tab.on{background:var(--card);border-color:var(--bd);border-bottom:1px solid var(--card);
+  color:var(--tx);font-weight:600}
+.page{display:none}.page.on{display:block}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
+th,td{border:1px solid var(--bd);padding:5px 8px;text-align:left}
+th{background:#F4F6F8;font-weight:600;font-size:12px;color:var(--tx2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:#FAFBFC}
+
+/* 位点表 */
+.loci{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:6px;margin-top:8px}
+.locus{border:1px solid var(--bd);border-radius:6px;padding:6px 9px;background:#FCFDFE}
+.locus.mask{background:#F3F0FB;border-color:#D9D2F0}
+.locus.carry{background:#FFFBF0;border-color:#EDDFC0}
+.locus .lt{font-size:11px;color:var(--tx3);display:flex;justify-content:space-between}
+.locus .lg{font-family:Consolas,"Courier New",monospace;font-size:12.5px;margin:1px 0}
+.locus .lp{font-size:12px;color:var(--tx)}
+.locus .lh{font-size:11px;color:var(--warn);margin-top:2px}
+.locus .lm{font-size:11px;color:var(--accent);margin-top:2px}
+
+/* 狐狸卡 */
+.flist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;
+  max-height:520px;overflow-y:auto;padding:2px}
+.fox{border:1px solid var(--bd);border-radius:8px;padding:6px;cursor:pointer;background:#FCFDFE;text-align:center}
+.fox:hover{border-color:var(--accent)}
+.fox.sel{border-color:var(--accent);background:#F2F0FC;box-shadow:0 0 0 2px #E4E0F7}
+.fox .fn{font-size:11.5px;margin-top:2px}
+.fox .fp{font-size:10.5px;color:var(--tx3)}
+.fox.lock{opacity:.55}
+
+/* 概率条 */
+.probrow{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12.5px}
+.probrow .nm{flex:0 0 118px;color:var(--tx2)}
+.pb{flex:1;height:14px;background:#EFF2F5;border-radius:7px;overflow:hidden}
+.pf{height:100%;border-radius:7px}
+.pv{flex:0 0 52px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px}
+
+/* 选择器 */
+select,button{font-family:inherit;font-size:12.5px;padding:5px 9px;border:1px solid var(--bd2);
+  border-radius:6px;background:#fff;color:var(--tx)}
+button{cursor:pointer}
+button:hover{background:#F4F6F8}
+button.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.pri:hover{background:#6A62C9}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.col{flex:1;min-width:280px}
+.lb{font-size:11px;color:var(--tx3);margin-bottom:3px}
+.bar-wrap{height:9px;background:#EFF2F5;border-radius:5px;overflow:hidden;margin:2px 0 5px}
+.bar{height:100%}
+
+.tag{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;margin-right:4px}
+.tag.hid{background:#FFF3D6;color:#8A5A00;border:1px solid #EDD9A8}
+.tag.mask{background:#EFEAFB;color:#5643B0;border:1px solid #DAD1F0}
+.tag.rare{background:#E8F3E0;color:#3F6B12;border:1px solid #C6DCB0}
+.tag.bad{background:#FBE9E7;color:#9C2B1E;border:1px solid #EFC9C4}
+
+.mono{font-family:Consolas,"Courier New",monospace}
+.small{font-size:11.5px;color:var(--tx3)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>基因与性状面板 <span class="chip">§18 新增 · v0.4</span></h1>
+<div class="sub">
+  隐性基因在外观上不可见 —— 这个面板把「看得见的性状」和「藏着不显示的基因型」拆开并列，
+  并给出配对后的后代概率，用于<b>人工选择育种</b>的决策依据。<br>
+  数据来自真实模拟种群（v0.6 规则 v3，种子 20261031，5 生态年）。页面内所有概率均由本页 JS 实时计算，
+  与模拟器内核同一套遗传规则。
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="tabs">
+  <div class="tab on" data-p="p1">① 个体基因档案</div>
+  <div class="tab" data-p="p2">② 配对预测</div>
+  <div class="tab" data-p="p3">③ 种群基因库</div>
+  <div class="tab" data-p="p4">④ 育种目标推荐</div>
+  <div class="tab" data-p="p5">⑤ 规则与自检</div>
+</div>
+
+<!-- ==================== ① 个体档案 ==================== -->
+<div class="page on" id="p1">
+  <div class="card">
+    <h3 style="margin-top:0">选择个体</h3>
+    <div class="lb">点击一只狐狸查看它的完整基因型。<b>橙色卡</b> = 携带隐性等位，
+      <b>紫色卡</b> = 有基因型被上位基因遮蔽（外观完全看不出来）。</div>
+    <div class="flist" id="flist"></div>
+  </div>
+
+  <div class="card" id="detail">
+    <div class="row">
+      <div style="flex:0 0 168px;text-align:center" id="dFox"></div>
+      <div style="flex:1;min-width:300px">
+        <div id="dInfo"></div>
+      </div>
+    </div>
+    <h3>看不见的部分（育种价值所在）</h3>
+    <div id="dHidden"></div>
+    <h3>完整基因型 / 表型对照（24 位点）</h3>
+    <div class="lb">
+      每行显示：位点名 · 基因型 · <b>表现出来的</b> · 藏在基因型里没显示的。
+      <span class="tag mask">紫底</span>被上位基因遮蔽　<span class="tag hid">橙底</span>携带隐性等位
+    </div>
+    <div class="loci" id="dLoci"></div>
+  </div>
+</div>
+
+<!-- ==================== ② 配对预测 ==================== -->
+<div class="page" id="p2">
+  <div class="card">
+    <h3 style="margin-top:0">选择双亲</h3>
+    <div class="row">
+      <div class="col" style="max-width:220px">
+        <div class="lb">母本 ♀</div>
+        <select id="selDam" style="width:100%"></select>
+        <div id="dFoxA" style="margin-top:6px;text-align:center"></div>
+      </div>
+      <div class="col" style="max-width:220px">
+        <div class="lb">父本 ♂</div>
+        <select id="selSire" style="width:100%"></select>
+        <div id="dFoxB" style="margin-top:6px;text-align:center"></div>
+      </div>
+      <div class="col" style="min-width:240px">
+        <div class="lb">亲缘关系</div>
+        <div id="kinBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">后代性状概率分布</h3>
+    <div class="note">这里算的是<b>真实配子随机组合</b>的结果：每个位点双亲各随机给一个等位基因，
+      各位点独立。预测只对玩家可见，<b>不会改变实际繁殖结果</b>（沿用 §5 红线）。</div>
+    <div id="predOut"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">隐性 / 稀有性状解锁概率</h3>
+    <div class="lb">这一对能「开出」哪些外观上没显现的性状 —— 人工育种真正关心的数字。</div>
+    <div id="unlockOut"></div>
+  </div>
+</div>
+
+<!-- ==================== ③ 种群基因库 ==================== -->
+<div class="page" id="p3">
+  <div class="card">
+    <h3 style="margin-top:0">濒危等位预警</h3>
+    <div class="note bad">
+      这些等位在种群里<b>只剩极少数拷贝</b>，且集中在个别个体身上。
+      淘汰狐狸前先看这里 —— 误删某只，某个等位可能<b>永久消失</b>（只能再等突变）。
+    </div>
+    <div id="endOut"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">等位基因频率表</h3>
+    <div class="row" style="align-items:center;margin-bottom:6px">
+      <label class="small"><input type="checkbox" id="onlyRec"> 只看隐性等位</label>
+      <label class="small"><input type="checkbox" id="onlyAlive"> 只看仍在种群中的（频率 &gt; 0）</label>
+      <label class="small">位点筛选 <select id="fLocus"></select></label>
+    </div>
+    <div style="max-height:560px;overflow-y:auto">
+      <table id="popTable"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ④ 育种目标 ==================== -->
+<div class="page" id="p4">
+  <div class="card">
+    <h3 style="margin-top:0">目标驱动育种</h3>
+    <div class="lb">选一个想要的性状 → 列出当前种群里<b>概率最高且近交风险最低</b>的配对组合。</div>
+    <div class="row" style="align-items:center;margin:8px 0">
+      <select id="selTarget"></select>
+      <button class="pri" id="btnRec">计算推荐配对</button>
+      <span class="small" id="recHint"></span>
+    </div>
+    <div id="recOut"></div>
+  </div>
+</div>
+
+<!-- ==================== ⑤ 规则与自检 ==================== -->
+<div class="page" id="p5">
+  <div class="card">
+    <h3 style="margin-top:0">面板引擎自检</h3>
+    <div class="lb">本页 JS 计算结果 vs Python 模拟器内核预计算结果（导出时已算好），必须完全一致。</div>
+    <div id="selfTest"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">面板遵循的规则红线</h3>
+    <table>
+      <thead><tr><th style="width:130px">事项</th><th>规则</th></tr></thead>
+      <tbody>
+        <tr><td>预测的作用</td><td>仅对玩家可见，<b>不改变配子随机组合</b>。玩家看到 25% 就是 25%，
+          不会因为"看了"就变成 100%。</td></tr>
+        <tr><td>人工选育权限</td><td>只能决定<b>谁和谁生</b>以及<b>每窝多少仔</b>，
+          绝不能直接指定后代基因型（§5 红线）。</td></tr>
+        <tr><td>密度约束</td><td>人工繁殖与自主繁殖同样受拥挤度约束，ρ ≥ 1 时配对按钮置灰，
+          不允许绕过（Q16）。</td></tr>
+        <tr><td>近交提示</td><td>r ≥ 0.125 标为近交，触发 §5.4 的 50% 放弃交配判定；
+          面板只提示，不代替判定。</td></tr>
+        <tr><td>突变</td><td>面板概率<b>不含突变</b>（突变率 3%/仔另计）。实际每只幼崽都有 3% 概率
+          出现表里没有的新性状。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">为什么必须有这个面板</h3>
+    <table>
+      <thead><tr><th style="width:150px">场景</th><th>没有面板</th><th>有面板</th></tr></thead>
+      <tbody>
+        <tr><td>两只赤橙狐狸选谁留</td><td>外观完全相同，只能随机挑</td>
+          <td>一只藏"稀释 + 雪绒白"，另一只藏"墨黑"，育种价值一目了然</td></tr>
+        <tr><td>想培育雪绒白</td><td>盲配，可能几十窝不出</td>
+          <td>直接列出 w 携带者，100% 概率的组合一次命中</td></tr>
+        <tr><td>自动淘汰谁</td><td>按外观/评分，可能误删唯一携带者</td>
+          <td>濒危预警锁定"幽夜紫只在 FX-0102 身上"，自动淘汰自动豁免</td></tr>
+        <tr><td>紫瞳培育</td><td>反复失败，以为是 bug</td>
+          <td>面板显示"0 个可行配对"——该等位频率为 0，只能等突变</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script id="pd" type="application/json">{"meta":{"seed":20261031,"years":5,"variant":"v3","t":2880,"generation":9,"n_alive":36,"n_pedigree":91,"births":121,"migrations":[53]},"loci":{"A":{"type":"multi","dom":["A+","As","Av","Ab"]},"D":{"type":"simple","dom":["D","d"]},"W":{"type":"simple","dom":["W","w"]},"P":{"type":"multi","dom":["PT","Ps","Pg","p"]},"L1":{"type":"simple","dom":["L","l"]},"L2":{"type":"simple","dom":["L","l"]},"K":{"type":"simple","dom":["K","k"]},"Er":{"type":"multi","dom":["ErP","ErR","Erf"]},"Ez":{"type":"dosage","dom":["Ez","ez"]},"Tp":{"type":"multi","dom":["TpD","TpW","tp"]},"In":{"type":"simple","dom":["InL","in"]},"Tn1":{"type":"simple","dom":["T","t"]},"Tn2":{"type":"simple","dom":["T","t"]},"V":{"type":"simple","dom":["V","v"]},"Tl":{"type":"dosage","dom":["Tl","tl"]},"Tf":{"type":"simple","dom":["Tf","tf"]},"Tw":{"type":"multi","dom":["TwW","TwK","tw"]},"Ey":{"type":"multi","dom":["EyG","EyC","EyB","EyV"]},"Ef":{"type":"dosage","dom":["Ef","ef"]},"Ht":{"type":"simple","dom":["Ht","ht"]},"G":{"type":"simple","dom":["G","g"]},"St":{"type":"simple","dom":["St","st"]},"Ha":{"type":"simple","dom":["Ha","ha"]},"Fl":{"type":"simple","dom":["Fl","fl"]}},"locus_order":["A","D","W","P","L1","L2","K","Er","Ez","Tp","In","Tn1","Tn2","V","Tl","Tf","Tw","Ey","Ef","Ht","G","St","Ha","Fl"],"locus_name":{"A":"主毛色","D":"稀释","W":"白化上位","P":"斑纹","L1":"毛长基因1","L2":"毛长基因2","K":"卷毛","Er":"耳型","Ez":"耳大小","Tp":"耳尖色","In":"内耳色","Tn1":"尾数基因1","Tn2":"尾数基因2","V":"九尾","Tl":"尾长","Tf":"尾毛","Tw":"尾尖","Ey":"眼色","Ef":"眼形","Ht":"异色瞳","G":"发光","St":"星纹","Ha":"光环","Fl":"火焰纹"},"allele_cn":{"A+":"赤橙","As":"霜灰","Av":"幽夜紫","Ab":"墨黑","D":"深色","d":"稀释","W":"非白","w":"雪绒白","PT":"虎斑","Ps":"条纹","Pg":"斑点","p":"纯色","L":"长毛","l":"短毛","K":"卷毛","k":"直毛","ErP":"尖耳","ErR":"圆耳","Erf":"折耳","Ez":"大耳","ez":"小耳","TpD":"深尖耳","TpW":"白尖耳","tp":"同色耳尖","InL":"浅内耳","in":"深内耳","T":"多尾","t":"少尾","V":"九尾","v":"常尾","Tl":"长尾","tl":"短尾","Tf":"蓬尾","tf":"细尾","TwW":"宽尾尖","TwK":"钩尾尖","tw":"无尾尖","EyG":"金瞳","EyC":"青瞳","EyB":"蓝瞳","EyV":"紫瞳","Ef":"圆眼","ef":"细眼","Ht":"异色瞳","ht":"同色","G":"发光","g":"不发光","St":"星纹","st":"无星纹","Ha":"光环","ha":"无光环","Fl":"火焰","fl":"无火焰"},"foxes":[{"id":74,"sex":"M","gen":4,"phase":"adult","health":20.1,"satiety":100.0,"geno":{"A":["A+","As"],"D":["D","d"],"W":["W","w"],"P":["Ps","p"],"L1":["l","L"],"L2":["L","L"],"K":["k","K"],"Er":["ErP","ErR"],"Ez":["ez","Ez"],"Tp":["TpD","TpD"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["tf","tf"],"Tw":["TwW","TwK"],"Ey":["EyB","EyG"],"Ef":["ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErP","ear_size":1,"eye":"EyG","eye_shape":0,"hair_len":3,"curl":true,"tails":1,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":false,"source":"birth"},{"id":88,"sex":"M","gen":5,"phase":"adult","health":95.7,"satiety":100.0,"geno":{"A":["A+","As"],"D":["D","d"],"W":["W","W"],"P":["p","Ps"],"L1":["L","l"],"L2":["L","L"],"K":["k","k"],"Er":["ErR","ErP"],"Ez":["ez","Ez"],"Tp":["TpW","TpD"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","tf"],"Tw":["TwK","TwW"],"Ey":["EyG","EyB"],"Ef":["Ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErP","ear_size":1,"eye":"EyG","eye_shape":1,"hair_len":3,"curl":false,"tails":1,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0312,"founder":false,"source":"birth"},{"id":94,"sex":"M","gen":6,"phase":"adult","health":93.6,"satiety":100.0,"geno":{"A":["As","Ab"],"D":["d","D"],"W":["w","w"],"P":["Ps","p"],"L1":["l","l"],"L2":["l","L"],"K":["K","k"],"Er":["ErR","Erf"],"Ez":["Ez","ez"],"Tp":["TpW","tp"],"In":["InL","InL"],"Tn1":["T","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["tf","Tf"],"Tw":["TwW","tw"],"Ey":["EyC","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"雪绒白","pattern":"Ps","ear":"ErR","ear_size":1,"eye":"EyC","eye_shape":0,"hair_len":1,"curl":true,"tails":2,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":false,"source":"birth"},{"id":95,"sex":"F","gen":6,"phase":"adult","health":39.4,"satiety":100.0,"geno":{"A":["As","Ab"],"D":["d","D"],"W":["W","w"],"P":["Ps","PT"],"L1":["l","l"],"L2":["l","L"],"K":["K","k"],"Er":["ErR","ErP"],"Ez":["Ez","ez"],"Tp":["TpW","tp"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","tw"],"Ey":["EyC","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"PT","ear":"ErP","ear_size":1,"eye":"EyC","eye_shape":0,"hair_len":1,"curl":true,"tails":2,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":false,"source":"birth"},{"id":96,"sex":"F","gen":6,"phase":"adult","health":14.2,"satiety":100.0,"geno":{"A":["As","Ab"],"D":["d","D"],"W":["W","W"],"P":["Ps","PT"],"L1":["l","l"],"L2":["l","L"],"K":["K","k"],"Er":["ErR","ErP"],"Ez":["Ez","ez"],"Tp":["TpD","tp"],"In":["InL","in"],"Tn1":["T","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","Tf"],"Tw":["TwW","TwK"],"Ey":["EyC","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"PT","ear":"ErP","ear_size":1,"eye":"EyC","eye_shape":0,"hair_len":1,"curl":true,"tails":3,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":false,"source":"birth"},{"id":98,"sex":"F","gen":6,"phase":"adult","health":66.2,"satiety":100.0,"geno":{"A":["A+","Ab"],"D":["D","d"],"W":["w","w"],"P":["PT","Ps"],"L1":["l","l"],"L2":["l","l"],"K":["k","k"],"Er":["ErR","ErR"],"Ez":["ez","Ez"],"Tp":["TpW","TpW"],"In":["in","InL"],"Tn1":["T","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["tf","tf"],"Tw":["TwW","tw"],"Ey":["EyG","EyG"],"Ef":["Ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"雪绒白","pattern":"PT","ear":"ErR","ear_size":1,"eye":"EyG","eye_shape":1,"hair_len":0,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0703,"founder":false,"source":"birth"},{"id":100,"sex":"M","gen":1,"phase":"adult","health":55.8,"satiety":100.0,"geno":{"A":["A+","A+"],"D":["d","d"],"W":["W","W"],"P":["Ps","PT"],"L1":["L","l"],"L2":["L","l"],"K":["K","k"],"Er":["Erf","Erf"],"Ez":["Ez","ez"],"Tp":["TpW","tp"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["T","T"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","Tf"],"Tw":["TwW","TwK"],"Ey":["EyB","EyG"],"Ef":["ef","Ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"奶油金","pattern":"PT","ear":"Erf","ear_size":1,"eye":"EyG","eye_shape":1,"hair_len":2,"curl":true,"tails":3,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":true,"source":"immigrant"},{"id":101,"sex":"F","gen":5,"phase":"adult","health":97.2,"satiety":100.0,"geno":{"A":["As","Ab"],"D":["D","D"],"W":["w","W"],"P":["p","p"],"L1":["l","L"],"L2":["l","l"],"K":["K","k"],"Er":["ErR","ErR"],"Ez":["Ez","ez"],"Tp":["TpD","TpD"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","TwK"],"Ey":["EyB","EyB"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"p","ear":"ErR","ear_size":1,"eye":"EyB","eye_shape":2,"hair_len":1,"curl":true,"tails":1,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.25,"founder":false,"source":"birth"},{"id":102,"sex":"F","gen":5,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["Av","Ab"],"D":["d","D"],"W":["W","w"],"P":["p","p"],"L1":["l","l"],"L2":["l","L"],"K":["K","K"],"Er":["ErR","ErP"],"Ez":["Ez","ez"],"Tp":["TpD","TpD"],"In":["InL","InL"],"Tn1":["T","t"],"Tn2":["T","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["tf","tf"],"Tw":["TwK","TwW"],"Ey":["EyB","EyC"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"幽夜紫","pattern":"p","ear":"ErP","ear_size":1,"eye":"EyC","eye_shape":2,"hair_len":1,"curl":true,"tails":3,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.25,"founder":false,"source":"birth"},{"id":107,"sex":"M","gen":5,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["A+","A+"],"D":["d","D"],"W":["W","w"],"P":["p","PT"],"L1":["l","l"],"L2":["L","L"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["Ez","ez"],"Tp":["TpD","tp"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["t","T"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["tf","tf"],"Tw":["TwW","TwK"],"Ey":["EyG","EyC"],"Ef":["Ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"PT","ear":"ErR","ear_size":1,"eye":"EyG","eye_shape":1,"hair_len":2,"curl":false,"tails":2,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":false,"source":"birth"},{"id":108,"sex":"F","gen":5,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["Ab","Ab"],"D":["D","D"],"W":["w","W"],"P":["p","PT"],"L1":["l","l"],"L2":["L","L"],"K":["K","k"],"Er":["ErR","ErP"],"Ez":["Ez","ez"],"Tp":["TpD","tp"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","T"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["tf","Tf"],"Tw":["TwK","TwK"],"Ey":["EyC","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"墨黑","pattern":"PT","ear":"ErP","ear_size":1,"eye":"EyC","eye_shape":0,"hair_len":2,"curl":true,"tails":3,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":false,"source":"birth"},{"id":109,"sex":"F","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","As"],"D":["D","D"],"W":["W","w"],"P":["PT","Ps"],"L1":["l","L"],"L2":["L","l"],"K":["K","K"],"Er":["ErP","ErR"],"Ez":["ez","Ez"],"Tp":["TpW","tp"],"In":["in","InL"],"Tn1":["T","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["Tf","tf"],"Tw":["TwK","TwW"],"Ey":["EyC","EyG"],"Ef":["ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"PT","ear":"ErP","ear_size":1,"eye":"EyG","eye_shape":0,"hair_len":2,"curl":true,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0566,"founder":false,"source":"birth"},{"id":111,"sex":"F","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["d","d"],"W":["w","w"],"P":["PT","Ps"],"L1":["l","L"],"L2":["l","l"],"K":["K","k"],"Er":["ErP","ErR"],"Ez":["Ez","Ez"],"Tp":["TpW","tp"],"In":["InL","in"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["tf","tf"],"Tw":["tw","TwK"],"Ey":["EyC","EyB"],"Ef":["ef","Ef"],"Ht":["Ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"雪绒白","pattern":"PT","ear":"ErP","ear_size":2,"eye":"EyC","eye_shape":1,"hair_len":1,"curl":true,"tails":1,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0566,"founder":false,"source":"birth"},{"id":112,"sex":"F","gen":7,"phase":"adult","health":86.2,"satiety":100.0,"geno":{"A":["Ab","A+"],"D":["d","D"],"W":["w","w"],"P":["Ps","PT"],"L1":["l","l"],"L2":["l","L"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["Ez","Ez"],"Tp":["TpW","tp"],"In":["InL","in"],"Tn1":["T","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["tf","tf"],"Tw":["tw","tw"],"Ey":["EyG","EyG"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"雪绒白","pattern":"PT","ear":"ErR","ear_size":2,"eye":"EyG","eye_shape":2,"hair_len":1,"curl":false,"tails":3,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.1328,"founder":false,"source":"birth"},{"id":114,"sex":"M","gen":7,"phase":"adult","health":82.8,"satiety":100.0,"geno":{"A":["A+","As"],"D":["D","D"],"W":["w","W"],"P":["PT","PT"],"L1":["l","l"],"L2":["l","L"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["Ez","Ez"],"Tp":["TpW","tp"],"In":["in","in"],"Tn1":["T","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","tf"],"Tw":["TwW","tw"],"Ey":["EyG","EyG"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"PT","ear":"ErR","ear_size":2,"eye":"EyG","eye_shape":2,"hair_len":1,"curl":false,"tails":3,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.1328,"founder":false,"source":"birth"},{"id":115,"sex":"M","gen":1,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","As"],"D":["D","d"],"W":["W","W"],"P":["Ps","p"],"L1":["l","L"],"L2":["l","L"],"K":["k","K"],"Er":["ErP","ErP"],"Ez":["ez","ez"],"Tp":["tp","TpW"],"In":["InL","InL"],"Tn1":["t","T"],"Tn2":["T","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","Tf"],"Tw":["TwW","tw"],"Ey":["EyB","EyG"],"Ef":["ef","Ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"Ps","ear":"ErP","ear_size":0,"eye":"EyG","eye_shape":1,"hair_len":2,"curl":true,"tails":3,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":true,"source":"immigrant"},{"id":116,"sex":"M","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","d"],"W":["W","W"],"P":["Ps","p"],"L1":["l","l"],"L2":["l","L"],"K":["k","k"],"Er":["ErP","ErP"],"Ez":["ez","ez"],"Tp":["TpW","TpD"],"In":["in","InL"],"Tn1":["t","t"],"Tn2":["T","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["tf","tf"],"Tw":["TwW","TwW"],"Ey":["EyC","EyG"],"Ef":["Ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErP","ear_size":0,"eye":"EyG","eye_shape":1,"hair_len":1,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0391,"founder":false,"source":"birth"},{"id":117,"sex":"M","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["W","w"],"P":["p","p"],"L1":["L","l"],"L2":["l","L"],"K":["k","k"],"Er":["ErR","ErR"],"Ez":["Ez","ez"],"Tp":["TpW","TpD"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["T","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["tf","tf"],"Tw":["TwW","TwW"],"Ey":["EyC","EyB"],"Ef":["Ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"p","ear":"ErR","ear_size":1,"eye":"EyC","eye_shape":1,"hair_len":2,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0391,"founder":false,"source":"birth"},{"id":118,"sex":"F","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["W","W"],"P":["Ps","p"],"L1":["l","L"],"L2":["l","L"],"K":["k","K"],"Er":["ErP","ErR"],"Ez":["Ez","Ez"],"Tp":["TpW","TpD"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["T","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["tf","tf"],"Tw":["TwW","TwW"],"Ey":["EyC","EyB"],"Ef":["Ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErP","ear_size":2,"eye":"EyC","eye_shape":1,"hair_len":2,"curl":true,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0391,"founder":false,"source":"birth"},{"id":119,"sex":"F","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["W","w"],"P":["Ps","Ps"],"L1":["L","L"],"L2":["l","L"],"K":["k","k"],"Er":["ErP","ErR"],"Ez":["Ez","ez"],"Tp":["TpW","TpD"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["T","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","tf"],"Tw":["TwW","TwW"],"Ey":["EyC","EyG"],"Ef":["Ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErP","ear_size":1,"eye":"EyG","eye_shape":1,"hair_len":3,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0391,"founder":false,"source":"birth"},{"id":120,"sex":"F","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","d"],"W":["W","W"],"P":["p","p"],"L1":["l","L"],"L2":["l","L"],"K":["k","K"],"Er":["ErR","ErP"],"Ez":["ez","Ez"],"Tp":["TpW","TpD"],"In":["in","InL"],"Tn1":["t","t"],"Tn2":["T","t"],"V":["v","v"],"Tl":["tl","Tl"],"Tf":["tf","tf"],"Tw":["TwW","TwK"],"Ey":["EyC","EyG"],"Ef":["ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"p","ear":"ErP","ear_size":1,"eye":"EyG","eye_shape":0,"hair_len":2,"curl":true,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0391,"founder":false,"source":"birth"},{"id":121,"sex":"F","gen":7,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","As"],"D":["D","D"],"W":["W","W"],"P":["p","p"],"L1":["L","l"],"L2":["l","L"],"K":["k","K"],"Er":["ErR","ErP"],"Ez":["ez","Ez"],"Tp":["TpW","TpD"],"In":["in","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","tf"],"Tw":["TwW","TwK"],"Ey":["EyC","EyG"],"Ef":["ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"p","ear":"ErP","ear_size":1,"eye":"EyG","eye_shape":0,"hair_len":2,"curl":true,"tails":1,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0391,"founder":false,"source":"birth"},{"id":122,"sex":"M","gen":8,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["W","w"],"P":["PT","PT"],"L1":["L","l"],"L2":["L","l"],"K":["K","k"],"Er":["ErR","ErR"],"Ez":["Ez","Ez"],"Tp":["TpW","tp"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","tw"],"Ey":["EyC","EyG"],"Ef":["ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"PT","ear":"ErR","ear_size":2,"eye":"EyG","eye_shape":1,"hair_len":2,"curl":true,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0928,"founder":false,"source":"birth"},{"id":123,"sex":"M","gen":8,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","As"],"D":["D","D"],"W":["W","w"],"P":["Ps","PT"],"L1":["l","l"],"L2":["l","l"],"K":["K","k"],"Er":["ErP","ErR"],"Ez":["Ez","Ez"],"Tp":["tp","TpW"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","TwW"],"Ey":["EyG","EyG"],"Ef":["ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"PT","ear":"ErP","ear_size":2,"eye":"EyG","eye_shape":1,"hair_len":0,"curl":true,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0928,"founder":false,"source":"birth"},{"id":124,"sex":"M","gen":8,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["W","w"],"P":["Ps","PT"],"L1":["l","l"],"L2":["l","L"],"K":["K","k"],"Er":["ErR","Erf"],"Ez":["ez","Ez"],"Tp":["TpW","tp"],"In":["in","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","TwW"],"Ey":["EyC","EyG"],"Ef":["ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"PT","ear":"ErR","ear_size":1,"eye":"EyG","eye_shape":1,"hair_len":1,"curl":true,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0928,"founder":false,"source":"birth"},{"id":127,"sex":"M","gen":8,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["A+","As"],"D":["D","D"],"W":["W","w"],"P":["p","Ps"],"L1":["l","l"],"L2":["L","l"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["ez","ez"],"Tp":["TpD","TpW"],"In":["in","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","Tf"],"Tw":["TwW","tw"],"Ey":["EyC","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErR","ear_size":0,"eye":"EyC","eye_shape":0,"hair_len":1,"curl":false,"tails":1,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0566,"founder":false,"source":"birth"},{"id":128,"sex":"M","gen":8,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["A+","As"],"D":["d","d"],"W":["W","w"],"P":["p","Ps"],"L1":["L","l"],"L2":["l","L"],"K":["K","K"],"Er":["ErR","ErR"],"Ez":["ez","ez"],"Tp":["TpW","tp"],"In":["in","InL"],"Tn1":["t","T"],"Tn2":["T","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["tf","tf"],"Tw":["TwK","tw"],"Ey":["EyC","EyC"],"Ef":["ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"奶油金","pattern":"Ps","ear":"ErR","ear_size":0,"eye":"EyC","eye_shape":0,"hair_len":2,"curl":true,"tails":3,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0566,"founder":false,"source":"birth"},{"id":130,"sex":"M","gen":8,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["A+","Ab"],"D":["D","D"],"W":["W","w"],"P":["p","p"],"L1":["l","l"],"L2":["l","l"],"K":["K","k"],"Er":["ErP","ErR"],"Ez":["Ez","ez"],"Tp":["TpD","tp"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","tf"],"Tw":["TwW","TwW"],"Ey":["EyG","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"p","ear":"ErP","ear_size":1,"eye":"EyG","eye_shape":0,"hair_len":0,"curl":true,"tails":1,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0566,"founder":false,"source":"birth"},{"id":131,"sex":"M","gen":1,"phase":"adult","health":100.0,"satiety":100.0,"geno":{"A":["A+","Ab"],"D":["D","d"],"W":["W","W"],"P":["Pg","Ps"],"L1":["L","L"],"L2":["L","L"],"K":["k","K"],"Er":["ErP","ErR"],"Ez":["Ez","Ez"],"Tp":["tp","tp"],"In":["InL","InL"],"Tn1":["t","t"],"Tn2":["T","t"],"V":["v","v"],"Tl":["Tl","Tl"],"Tf":["tf","Tf"],"Tw":["tw","TwW"],"Ey":["EyG","EyG"],"Ef":["ef","ef"],"Ht":["Ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErP","ear_size":2,"eye":"EyG","eye_shape":0,"hair_len":4,"curl":true,"tails":2,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0,"founder":true,"source":"immigrant"},{"id":132,"sex":"F","gen":8,"phase":"pup","health":100.0,"satiety":100.0,"geno":{"A":["Ab","A+"],"D":["D","D"],"W":["W","W"],"P":["p","PT"],"L1":["L","l"],"L2":["l","l"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["Ez","Ez"],"Tp":["TpD","tp"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","TwW"],"Ey":["EyB","EyG"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"PT","ear":"ErR","ear_size":2,"eye":"EyG","eye_shape":2,"hair_len":1,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0625,"founder":false,"source":"birth"},{"id":133,"sex":"F","gen":8,"phase":"pup","health":100.0,"satiety":100.0,"geno":{"A":["Ab","As"],"D":["D","D"],"W":["W","w"],"P":["p","PT"],"L1":["l","l"],"L2":["l","L"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["ez","Ez"],"Tp":["TpD","tp"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["tf","tf"],"Tw":["TwK","tw"],"Ey":["EyB","EyG"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"PT","ear":"ErR","ear_size":1,"eye":"EyG","eye_shape":2,"hair_len":1,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0625,"founder":false,"source":"birth"},{"id":135,"sex":"F","gen":8,"phase":"pup","health":100.0,"satiety":100.0,"geno":{"A":["Ab","A+"],"D":["D","D"],"W":["W","w"],"P":["p","PT"],"L1":["L","l"],"L2":["l","L"],"K":["k","k"],"Er":["ErR","ErR"],"Ez":["ez","Ez"],"Tp":["TpD","TpW"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["Tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","TwW"],"Ey":["EyB","EyG"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"PT","ear":"ErR","ear_size":1,"eye":"EyG","eye_shape":2,"hair_len":2,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0625,"founder":false,"source":"birth"},{"id":136,"sex":"M","gen":8,"phase":"pup","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["w","W"],"P":["p","PT"],"L1":["l","l"],"L2":["l","L"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["ez","Ez"],"Tp":["TpD","TpW"],"In":["InL","in"],"Tn1":["t","T"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["Tf","tf"],"Tw":["TwK","tw"],"Ey":["EyB","EyG"],"Ef":["Ef","Ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"PT","ear":"ErR","ear_size":1,"eye":"EyG","eye_shape":2,"hair_len":1,"curl":false,"tails":2,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.0625,"founder":false,"source":"birth"},{"id":137,"sex":"M","gen":9,"phase":"pup","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["W","W"],"P":["p","Ps"],"L1":["L","l"],"L2":["l","l"],"K":["k","k"],"Er":["ErP","Erf"],"Ez":["ez","ez"],"Tp":["TpD","TpD"],"In":["in","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","Tf"],"Tw":["TwW","TwW"],"Ey":["EyC","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"Ps","ear":"ErP","ear_size":0,"eye":"EyC","eye_shape":0,"hair_len":1,"curl":false,"tails":1,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.1675,"founder":false,"source":"birth"},{"id":138,"sex":"F","gen":9,"phase":"pup","health":100.0,"satiety":100.0,"geno":{"A":["As","As"],"D":["D","D"],"W":["W","w"],"P":["p","Ps"],"L1":["l","l"],"L2":["l","l"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["ez","ez"],"Tp":["TpW","TpW"],"In":["InL","in"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","tf"],"Tw":["TwW","TwW"],"Ey":["EyG","EyC"],"Ef":["ef","ef"],"Ht":["ht","ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"霜灰","pattern":"Ps","ear":"ErR","ear_size":0,"eye":"EyG","eye_shape":0,"hair_len":0,"curl":false,"tails":1,"hetero":false,"glow":false,"star":false,"halo":false,"flame":false},"F":0.1675,"founder":false,"source":"birth"},{"id":139,"sex":"M","gen":9,"phase":"pup","health":100.0,"satiety":100.0,"geno":{"A":["As","A+"],"D":["D","D"],"W":["W","W"],"P":["p","p"],"L1":["L","l"],"L2":["L","l"],"K":["k","k"],"Er":["ErR","Erf"],"Ez":["ez","ez"],"Tp":["TpD","TpD"],"In":["in","InL"],"Tn1":["t","t"],"Tn2":["t","t"],"V":["v","v"],"Tl":["tl","tl"],"Tf":["tf","Tf"],"Tw":["TwW","tw"],"Ey":["EyG","EyC"],"Ef":["ef","ef"],"Ht":["ht","Ht"],"G":["g","g"],"St":["st","st"],"Ha":["ha","ha"],"Fl":["fl","fl"]},"pheno":{"color":"赤橙","pattern":"p","ear":"ErR","ear_size":0,"eye":"EyG","eye_shape":0,"hair_len":2,"curl":false,"tails":1,"hetero":true,"glow":false,"star":false,"halo":false,"flame":false},"F":0.1675,"founder":false,"source":"birth"}],"pedigree":{"-5015":{"m":null,"f":null,"g":0},"-5014":{"m":null,"f":null,"g":0},"-5013":{"m":null,"f":null,"g":0},"-5012":{"m":null,"f":null,"g":0},"-5011":{"m":null,"f":null,"g":0},"-5010":{"m":null,"f":null,"g":0},"-5009":{"m":null,"f":null,"g":0},"-5008":{"m":null,"f":null,"g":0},"-5005":{"m":null,"f":null,"g":0},"-5004":{"m":null,"f":null,"g":0},"-5003":{"m":null,"f":null,"g":0},"-5002":{"m":null,"f":null,"g":0},"-1015":{"m":null,"f":null,"g":0},"-1014":{"m":null,"f":null,"g":0},"-1013":{"m":null,"f":null,"g":0},"-1012":{"m":null,"f":null,"g":0},"-1011":{"m":null,"f":null,"g":0},"-1010":{"m":null,"f":null,"g":0},"-1007":{"m":null,"f":null,"g":0},"-1006":{"m":null,"f":null,"g":0},"-1003":{"m":null,"f":null,"g":0},"-1002":{"m":null,"f":null,"g":0},"-1001":{"m":null,"f":null,"g":0},"-1000":{"m":null,"f":null,"g":0},"1":{"m":-1001,"f":-1000,"g":1},"2":{"m":-1003,"f":-1002,"g":1},"4":{"m":-1007,"f":-1006,"g":1},"6":{"m":-1011,"f":-1010,"g":1},"7":{"m":-1013,"f":-1012,"g":1},"8":{"m":-1015,"f":-1014,"g":1},"12":{"m":1,"f":2,"g":2},"22":{"m":4,"f":6,"g":2},"27":{"m":7,"f":8,"g":2},"28":{"m":7,"f":8,"g":2},"36":{"m":4,"f":28,"g":3},"38":{"m":7,"f":22,"g":3},"45":{"m":27,"f":2,"g":3},"51":{"m":12,"f":28,"g":3},"52":{"m":-5002,"f":-5003,"g":1},"53":{"m":-5004,"f":-5005,"g":1},"54":{"m":27,"f":38,"g":4},"61":{"m":36,"f":45,"g":4},"63":{"m":36,"f":45,"g":4},"65":{"m":36,"f":52,"g":4},"66":{"m":36,"f":52,"g":4},"69":{"m":63,"f":52,"g":5},"70":{"m":63,"f":52,"g":5},"73":{"m":51,"f":53,"g":4},"74":{"m":51,"f":53,"g":4},"75":{"m":51,"f":53,"g":4},"76":{"m":51,"f":53,"g":4},"78":{"m":61,"f":53,"g":5},"80":{"m":61,"f":53,"g":5},"85":{"m":65,"f":74,"g":5},"88":{"m":65,"f":74,"g":5},"92":{"m":70,"f":54,"g":6},"93":{"m":-5008,"f":-5009,"g":1},"94":{"m":80,"f":93,"g":6},"95":{"m":80,"f":93,"g":6},"96":{"m":80,"f":93,"g":6},"98":{"m":69,"f":78,"g":6},"100":{"m":-5010,"f":-5011,"g":1},"101":{"m":73,"f":75,"g":5},"102":{"m":73,"f":75,"g":5},"107":{"m":76,"f":93,"g":5},"108":{"m":76,"f":93,"g":5},"109":{"m":95,"f":85,"g":7},"111":{"m":95,"f":85,"g":7},"112":{"m":98,"f":66,"g":7},"114":{"m":98,"f":66,"g":7},"115":{"m":-5012,"f":-5013,"g":1},"116":{"m":92,"f":74,"g":7},"117":{"m":92,"f":74,"g":7},"118":{"m":92,"f":74,"g":7},"119":{"m":92,"f":74,"g":7},"120":{"m":92,"f":74,"g":7},"121":{"m":92,"f":74,"g":7},"122":{"m":109,"f":114,"g":8},"123":{"m":109,"f":114,"g":8},"124":{"m":109,"f":114,"g":8},"127":{"m":120,"f":94,"g":8},"128":{"m":120,"f":94,"g":8},"130":{"m":120,"f":94,"g":8},"131":{"m":-5014,"f":-5015,"g":1},"132":{"m":101,"f":114,"g":8},"133":{"m":101,"f":114,"g":8},"135":{"m":101,"f":114,"g":8},"136":{"m":101,"f":114,"g":8},"137":{"m":121,"f":127,"g":9},"138":{"m":121,"f":127,"g":9},"139":{"m":121,"f":127,"g":9}},"population":[{"locus":"A","name":"主毛色","allele":"A+","cn":"赤橙","freq":0.3611,"copies":26,"carriers":24,"homo":2,"endangered":false,"recessive":false},{"locus":"A","name":"主毛色","allele":"As","cn":"霜灰","freq":0.4306,"copies":31,"carriers":26,"homo":5,"endangered":false,"recessive":true},{"locus":"A","name":"主毛色","allele":"Av","cn":"幽夜紫","freq":0.0139,"copies":1,"carriers":1,"homo":0,"endangered":true,"recessive":true},{"locus":"A","name":"主毛色","allele":"Ab","cn":"墨黑","freq":0.1944,"copies":14,"carriers":13,"homo":1,"endangered":false,"recessive":true},{"locus":"D","name":"稀释","allele":"D","cn":"深色","freq":0.7361,"copies":53,"carriers":33,"homo":20,"endangered":false,"recessive":false},{"locus":"D","name":"稀释","allele":"d","cn":"稀释","freq":0.2639,"copies":19,"carriers":16,"homo":3,"endangered":false,"recessive":true},{"locus":"W","name":"白化上位","allele":"W","cn":"非白","freq":0.6111,"copies":44,"carriers":32,"homo":12,"endangered":false,"recessive":false},{"locus":"W","name":"白化上位","allele":"w","cn":"雪绒白","freq":0.3889,"copies":28,"carriers":24,"homo":4,"endangered":false,"recessive":true},{"locus":"P","name":"斑纹","allele":"PT","cn":"虎斑","freq":0.2639,"copies":19,"carriers":17,"homo":2,"endangered":false,"recessive":false},{"locus":"P","name":"斑纹","allele":"Ps","cn":"条纹","freq":0.3056,"copies":22,"carriers":21,"homo":1,"endangered":false,"recessive":true},{"locus":"P","name":"斑纹","allele":"Pg","cn":"斑点","freq":0.0139,"copies":1,"carriers":1,"homo":0,"endangered":true,"recessive":true},{"locus":"P","name":"斑纹","allele":"p","cn":"纯色","freq":0.4167,"copies":30,"carriers":23,"homo":7,"endangered":false,"recessive":true},{"locus":"L1","name":"毛长基因1","allele":"L","cn":"长毛","freq":0.2917,"copies":21,"carriers":19,"homo":2,"endangered":false,"recessive":false},{"locus":"L1","name":"毛长基因1","allele":"l","cn":"短毛","freq":0.7083,"copies":51,"carriers":34,"homo":17,"endangered":false,"recessive":true},{"locus":"L2","name":"毛长基因2","allele":"L","cn":"长毛","freq":0.4583,"copies":33,"carriers":28,"homo":5,"endangered":false,"recessive":false},{"locus":"L2","name":"毛长基因2","allele":"l","cn":"短毛","freq":0.5417,"copies":39,"carriers":31,"homo":8,"endangered":false,"recessive":true},{"locus":"K","name":"卷毛","allele":"K","cn":"卷毛","freq":0.3194,"copies":23,"carriers":20,"homo":3,"endangered":false,"recessive":false},{"locus":"K","name":"卷毛","allele":"k","cn":"直毛","freq":0.6806,"copies":49,"carriers":33,"homo":16,"endangered":false,"recessive":true},{"locus":"Er","name":"耳型","allele":"ErP","cn":"尖耳","freq":0.2778,"copies":20,"carriers":18,"homo":2,"endangered":false,"recessive":false},{"locus":"Er","name":"耳型","allele":"ErR","cn":"圆耳","freq":0.5278,"copies":38,"carriers":32,"homo":6,"endangered":false,"recessive":true},{"locus":"Er","name":"耳型","allele":"Erf","cn":"折耳","freq":0.1944,"copies":14,"carriers":13,"homo":1,"endangered":false,"recessive":true},{"locus":"Ez","name":"耳大小","allele":"Ez","cn":"大耳","freq":0.5139,"copies":37,"carriers":29,"homo":8,"endangered":false,"recessive":false},{"locus":"Ez","name":"耳大小","allele":"ez","cn":"小耳","freq":0.4861,"copies":35,"carriers":28,"homo":7,"endangered":false,"recessive":true},{"locus":"Tp","name":"耳尖色","allele":"TpD","cn":"深尖耳","freq":0.3611,"copies":26,"carriers":21,"homo":5,"endangered":false,"recessive":false},{"locus":"Tp","name":"耳尖色","allele":"TpW","cn":"白尖耳","freq":0.3611,"copies":26,"carriers":24,"homo":2,"endangered":false,"recessive":true},{"locus":"Tp","name":"耳尖色","allele":"tp","cn":"同色耳尖","freq":0.2778,"copies":20,"carriers":19,"homo":1,"endangered":false,"recessive":true},{"locus":"In","name":"内耳色","allele":"InL","cn":"浅内耳","freq":0.6528,"copies":47,"carriers":34,"homo":13,"endangered":false,"recessive":false},{"locus":"In","name":"内耳色","allele":"in","cn":"深内耳","freq":0.3472,"copies":25,"carriers":23,"homo":2,"endangered":false,"recessive":true},{"locus":"Tn1","name":"尾数基因1","allele":"T","cn":"多尾","freq":0.2917,"copies":21,"carriers":18,"homo":3,"endangered":false,"recessive":false},{"locus":"Tn1","name":"尾数基因1","allele":"t","cn":"少尾","freq":0.7083,"copies":51,"carriers":33,"homo":18,"endangered":false,"recessive":true},{"locus":"Tn2","name":"尾数基因2","allele":"T","cn":"多尾","freq":0.1806,"copies":13,"carriers":12,"homo":1,"endangered":false,"recessive":false},{"locus":"Tn2","name":"尾数基因2","allele":"t","cn":"少尾","freq":0.8194,"copies":59,"carriers":35,"homo":24,"endangered":false,"recessive":true},{"locus":"V","name":"九尾","allele":"V","cn":"九尾","freq":0.0,"copies":0,"carriers":0,"homo":0,"endangered":false,"recessive":false},{"locus":"V","name":"九尾","allele":"v","cn":"常尾","freq":1.0,"copies":72,"carriers":36,"homo":36,"endangered":false,"recessive":true},{"locus":"Tl","name":"尾长","allele":"Tl","cn":"长尾","freq":0.3611,"copies":26,"carriers":25,"homo":1,"endangered":false,"recessive":false},{"locus":"Tl","name":"尾长","allele":"tl","cn":"短尾","freq":0.6389,"copies":46,"carriers":35,"homo":11,"endangered":false,"recessive":true},{"locus":"Tf","name":"尾毛","allele":"Tf","cn":"蓬尾","freq":0.2917,"copies":21,"carriers":18,"homo":3,"endangered":false,"recessive":false},{"locus":"Tf","name":"尾毛","allele":"tf","cn":"细尾","freq":0.7083,"copies":51,"carriers":33,"homo":18,"endangered":false,"recessive":true},{"locus":"Tw","name":"尾尖","allele":"TwW","cn":"宽尾尖","freq":0.4722,"copies":34,"carriers":27,"homo":7,"endangered":false,"recessive":false},{"locus":"Tw","name":"尾尖","allele":"TwK","cn":"钩尾尖","freq":0.3194,"copies":23,"carriers":21,"homo":2,"endangered":false,"recessive":true},{"locus":"Tw","name":"尾尖","allele":"tw","cn":"无尾尖","freq":0.2083,"copies":15,"carriers":14,"homo":1,"endangered":false,"recessive":true},{"locus":"Ey","name":"眼色","allele":"EyG","cn":"金瞳","freq":0.4028,"copies":29,"carriers":24,"homo":5,"endangered":false,"recessive":false},{"locus":"Ey","name":"眼色","allele":"EyC","cn":"青瞳","freq":0.4028,"copies":29,"carriers":22,"homo":7,"endangered":false,"recessive":true},{"locus":"Ey","name":"眼色","allele":"EyB","cn":"蓝瞳","freq":0.1944,"copies":14,"carriers":13,"homo":1,"endangered":false,"recessive":true},{"locus":"Ey","name":"眼色","allele":"EyV","cn":"紫瞳","freq":0.0,"copies":0,"carriers":0,"homo":0,"endangered":false,"recessive":true},{"locus":"Ef","name":"眼形","allele":"Ef","cn":"圆眼","freq":0.4028,"copies":29,"carriers":21,"homo":8,"endangered":false,"recessive":false},{"locus":"Ef","name":"眼形","allele":"ef","cn":"细眼","freq":0.5972,"copies":43,"carriers":28,"homo":15,"endangered":false,"recessive":true},{"locus":"Ht","name":"异色瞳","allele":"Ht","cn":"异色瞳","freq":0.1806,"copies":13,"carriers":13,"homo":0,"endangered":false,"recessive":false},{"locus":"Ht","name":"异色瞳","allele":"ht","cn":"同色","freq":0.8194,"copies":59,"carriers":36,"homo":23,"endangered":false,"recessive":true},{"locus":"G","name":"发光","allele":"G","cn":"发光","freq":0.0,"copies":0,"carriers":0,"homo":0,"endangered":false,"recessive":false},{"locus":"G","name":"发光","allele":"g","cn":"不发光","freq":1.0,"copies":72,"carriers":36,"homo":36,"endangered":false,"recessive":true},{"locus":"St","name":"星纹","allele":"St","cn":"星纹","freq":0.0,"copies":0,"carriers":0,"homo":0,"endangered":false,"recessive":false},{"locus":"St","name":"星纹","allele":"st","cn":"无星纹","freq":1.0,"copies":72,"carriers":36,"homo":36,"endangered":false,"recessive":true},{"locus":"Ha","name":"光环","allele":"Ha","cn":"光环","freq":0.0,"copies":0,"carriers":0,"homo":0,"endangered":false,"recessive":false},{"locus":"Ha","name":"光环","allele":"ha","cn":"无光环","freq":1.0,"copies":72,"carriers":36,"homo":36,"endangered":false,"recessive":true},{"locus":"Fl","name":"火焰纹","allele":"Fl","cn":"火焰","freq":0.0,"copies":0,"carriers":0,"homo":0,"endangered":false,"recessive":false},{"locus":"Fl","name":"火焰纹","allele":"fl","cn":"无火焰","freq":1.0,"copies":72,"carriers":36,"homo":36,"endangered":false,"recessive":true}],"endangered":[{"locus":"A","name":"主毛色","cn":"幽夜紫","copies":1,"carriers":1,"holders":[102]},{"locus":"P","name":"斑纹","cn":"斑点","copies":1,"carriers":1,"holders":[131]}],"targets":{"color|雪绒白":[{"dam":112,"sire":94,"prob":1.0,"r":0.0586},{"dam":98,"sire":94,"prob":1.0,"r":0.082},{"dam":111,"sire":94,"prob":1.0,"r":0.1533},{"dam":112,"sire":107,"prob":0.5,"r":0.0312},{"dam":98,"sire":107,"prob":0.5,"r":0.0469},{"dam":119,"sire":94,"prob":0.5,"r":0.0566}],"tails|5 尾":[{"dam":102,"sire":115,"prob":0.0625,"r":0.0},{"dam":108,"sire":115,"prob":0.0625,"r":0.0},{"dam":102,"sire":128,"prob":0.0625,"r":0.1113},{"dam":108,"sire":128,"prob":0.0625,"r":0.1182},{"dam":95,"sire":100,"prob":0.0,"r":0.0},{"dam":95,"sire":115,"prob":0.0,"r":0.0}],"eye|紫瞳":[{"dam":95,"sire":100,"prob":0.0,"r":0.0},{"dam":95,"sire":115,"prob":0.0,"r":0.0},{"dam":95,"sire":131,"prob":0.0,"r":0.0},{"dam":96,"sire":100,"prob":0.0,"r":0.0},{"dam":96,"sire":115,"prob":0.0,"r":0.0},{"dam":96,"sire":131,"prob":0.0,"r":0.0}],"color|奶油金":[{"dam":111,"sire":100,"prob":1.0,"r":0.0},{"dam":95,"sire":100,"prob":0.5,"r":0.0},{"dam":96,"sire":100,"prob":0.5,"r":0.0},{"dam":98,"sire":100,"prob":0.5,"r":0.0},{"dam":102,"sire":100,"prob":0.5,"r":0.0},{"dam":112,"sire":100,"prob":0.5,"r":0.0}],"pattern|纯色":[{"dam":101,"sire":130,"prob":1.0,"r":0.1113},{"dam":102,"sire":130,"prob":1.0,"r":0.1113},{"dam":101,"sire":117,"prob":1.0,"r":0.1445},{"dam":102,"sire":117,"prob":1.0,"r":0.1445},{"dam":121,"sire":130,"prob":1.0,"r":0.1675},{"dam":120,"sire":117,"prob":1.0,"r":0.2783}],"hair_len|4/4 档":[{"dam":119,"sire":131,"prob":0.5,"r":0.0},{"dam":109,"sire":131,"prob":0.25,"r":0.0},{"dam":118,"sire":131,"prob":0.25,"r":0.0},{"dam":120,"sire":131,"prob":0.25,"r":0.0},{"dam":121,"sire":131,"prob":0.25,"r":0.0},{"dam":119,"sire":88,"prob":0.25,"r":0.1748}],"color|幽夜紫":[{"dam":102,"sire":131,"prob":0.1875,"r":0.0},{"dam":102,"sire":130,"prob":0.1875,"r":0.1113},{"dam":102,"sire":94,"prob":0.0938,"r":0.0781},{"dam":95,"sire":100,"prob":0.0,"r":0.0},{"dam":95,"sire":115,"prob":0.0,"r":0.0},{"dam":95,"sire":131,"prob":0.0,"r":0.0}],"hetero|异色瞳":[{"dam":95,"sire":100,"prob":0.75,"r":0.0},{"dam":95,"sire":115,"prob":0.75,"r":0.0},{"dam":95,"sire":131,"prob":0.75,"r":0.0},{"dam":96,"sire":100,"prob":0.75,"r":0.0},{"dam":96,"sire":115,"prob":0.75,"r":0.0},{"dam":96,"sire":131,"prob":0.75,"r":0.0}]}}</script>
+<script>
+// =============================================================================
+// 数据
+// =============================================================================
+var DATA = JSON.parse(document.getElementById('pd').textContent);
+var LOCI = DATA.loci, LORDER = DATA.locus_order, LOCNAME = DATA.locus_name;
+var FOXES = DATA.foxes, PED = DATA.pedigree, POP = DATA.population;
+var ACN = DATA.allele_cn || {};
+var BYID = {};
+FOXES.forEach(function(f){ BYID[f.id] = f; });
+
+var COLOR_HEX = {
+  '赤橙':'#C2612B','奶油金':'#DCA85C','霜灰':'#9BA5B0','淡银蓝':'#B4C6D8',
+  '幽夜紫':'#6B4E9B','淡雾紫':'#A08FC0','墨黑':'#3E3E46','雾霭蓝':'#6E8296',
+  '雪绒白':'#EEF0F2'
+};
+var PAT_CN = {'PT':'虎斑','Ps':'条纹','Pg':'斑点','p':'纯色'};
+var EAR_CN = {'ErP':'尖耳','ErR':'圆耳','Erf':'折耳'};
+var EYE_CN = {'EyG':'金瞳','EyC':'铜瞳','EyB':'蓝瞳','EyV':'紫瞳'};
+
+// =============================================================================
+// 表型（与 Python fox_ecosystem_sim.phenotype 完全一致的规则）
+// =============================================================================
+function getL(geno, locus){
+  var g = geno[locus], spec = LOCI[locus];
+  var a = g[0], b = g[1];
+  if(spec.type === 'dosage'){
+    var dom = spec.dom[0];
+    return (a===dom?1:0) + (b===dom?1:0);
+  }
+  var order = spec.dom, ia = order.indexOf(a), ib = order.indexOf(b);
+  if(ia<0) ia=99; if(ib<0) ib=99;
+  var m = Math.min(ia, ib);
+  return m<99 ? order[m] : null;
+}
+function countDom(geno, locus){
+  var d = LOCI[locus].dom[0];
+  return (geno[locus][0]===d?1:0) + (geno[locus][1]===d?1:0);
+}
+function phenotype(geno){
+  var A=getL(geno,'A'), D=getL(geno,'D'), W=getL(geno,'W'), P=getL(geno,'P');
+  var base;
+  if(W==='w') base='雪绒白';
+  else if(A==='A+') base = (D==='D')?'赤橙':'奶油金';
+  else if(A==='As') base = (D==='D')?'霜灰':'淡银蓝';
+  else if(A==='Av') base = (D==='D')?'幽夜紫':'淡雾紫';
+  else             base = (D==='D')?'墨黑':'雾霭蓝';
+  var tails = 1 + countDom(geno,'Tn1') + countDom(geno,'Tn2');
+  if(getL(geno,'V')==='V') tails = 9;
+  return {
+    color:base, pattern:P, ear:getL(geno,'Er'), ear_size:getL(geno,'Ez'),
+    eye:getL(geno,'Ey'), eye_shape:getL(geno,'Ef'),
+    hair_len:countDom(geno,'L1')+countDom(geno,'L2'),
+    curl:getL(geno,'K')==='K', tails:tails, hetero:getL(geno,'Ht')==='Ht',
+    glow:getL(geno,'G')==='G', star:getL(geno,'St')==='St',
+    halo:getL(geno,'Ha')==='Ha', flame:getL(geno,'Fl')==='Fl'
+  };
+}
+function acn(a){ return ACN[a] || a; }
+
+// =============================================================================
+// 亲缘系数（Wright，与 Python World.kinship 一致）
+// =============================================================================
+var KIN_MEMO = {};
+function parentIds(i){
+  var p = PED[String(i)];
+  return p ? [p.m, p.f] : [null, null];
+}
+function kinship(a, b){
+  if(a===null || b===null || a===undefined || b===undefined) return 0.0;
+  if(a === b){
+    var pp = parentIds(a);
+    if(pp[0]===null || pp[1]===null) return 0.5;
+    return 0.5 * (1.0 + kinship(pp[0], pp[1]));
+  }
+  var pa = PED[String(a)], pb = PED[String(b)];
+  if(!pa || !pb) return 0.0;
+  if(pa.g < pb.g){ var t=a; a=b; b=t; }     // 必须递归展开较年轻的一方
+  var key = a + ',' + b;
+  if(KIN_MEMO[key] !== undefined) return KIN_MEMO[key];
+  var p = parentIds(a), v = 0.0;
+  if(p[0] !== null) v += 0.5 * kinship(p[0], b);
+  if(p[1] !== null) v += 0.5 * kinship(p[1], b);
+  KIN_MEMO[key] = v;
+  return v;
+}
+
+// =============================================================================
+// 遗传预测
+// =============================================================================
+var TRAITS = [
+  {key:'color',   name:'毛色',   loci:['A','D','W'],        pick:function(p){return p.color;}},
+  {key:'pattern', name:'斑纹',   loci:['P'],                pick:function(p){return PAT_CN[p.pattern]||p.pattern;}},
+  {key:'tails',   name:'尾数',   loci:['Tn1','Tn2','V'],    pick:function(p){return p.tails+' 尾';}},
+  {key:'hair_len',name:'毛长',   loci:['L1','L2'],          pick:function(p){return p.hair_len+'/4 档';}},
+  {key:'ear',     name:'耳型',   loci:['Er'],               pick:function(p){return EAR_CN[p.ear]||p.ear;}},
+  {key:'eye',     name:'眼色',   loci:['Ey'],               pick:function(p){return EYE_CN[p.eye]||p.eye;}},
+  {key:'curl',    name:'卷毛',   loci:['K'],                pick:function(p){return p.curl?'卷毛':'直毛';}},
+  {key:'hetero',  name:'异色瞳', loci:['Ht'],               pick:function(p){return p.hetero?'异色瞳':'同色';}},
+  {key:'glow',    name:'发光',   loci:['G'],                pick:function(p){return p.glow?'发光':'不发光';}},
+  {key:'star',    name:'星纹',   loci:['St'],               pick:function(p){return p.star?'有星纹':'无';}},
+  {key:'halo',    name:'光环',   loci:['Ha'],               pick:function(p){return p.halo?'有光环':'无';}},
+  {key:'flame',   name:'火焰纹', loci:['Fl'],               pick:function(p){return p.flame?'有火焰':'无';}}
+];
+var EPI_HIDDEN = {A:['W','w'], D:['W','w'], P:['W','w']};
+
+function locusDist(locus, ga, gb){
+  var order = LOCI[locus].dom;
+  function rank(s){ var i = order.indexOf(s); return i<0?99:i; }
+  var out = {};
+  for(var i=0;i<2;i++) for(var j=0;j<2;j++){
+    var pair = [ga[i], gb[j]].sort(function(x,y){return rank(x)-rank(y);});
+    var k = pair[0]+'|'+pair[1];
+    out[k] = (out[k]||0) + 0.25;
+  }
+  var res = [];
+  for(var k2 in out) res.push({gt:k2.split('|'), p:out[k2]});
+  return res;
+}
+function predictTrait(ga, gb, trait){
+  var dists = trait.loci.map(function(l){ return locusDist(l, ga[l], gb[l]); });
+  var agg = {};
+  function rec(idx, pr, base){
+    if(idx === dists.length){
+      var val = trait.pick(phenotype(base));
+      agg[val] = (agg[val]||0) + pr;
+      return;
+    }
+    var locus = trait.loci[idx];
+    dists[idx].forEach(function(d){
+      var nb = {}; for(var k in base) nb[k] = base[k];
+      nb[locus] = d.gt;
+      rec(idx+1, pr*d.p, nb);
+    });
+  }
+  var b0 = {}; for(var l in ga) b0[l] = ga[l];
+  rec(0, 1.0, b0);
+  var items = [];
+  for(var v in agg) items.push({value:v, prob:agg[v]});
+  items.sort(function(x,y){ return y.prob - x.prob; });
+  return items;
+}
+function predictTarget(ga, gb, traitKey, value){
+  var t = null;
+  TRAITS.forEach(function(x){ if(x.key===traitKey) t = x; });
+  if(!t) return 0;
+  var items = predictTrait(ga, gb, t);
+  var p = 0;
+  items.forEach(function(it){ if(it.value === value) p += it.prob; });
+  return p;
+}
+
+// =============================================================================
+// 渲染：小狐狸 SVG
+// =============================================================================
+function foxSVG(pheno, size){
+  size = size || 74;
+  var c = COLOR_HEX[pheno.color] || '#C2612B';
+  var dark = pheno.color === '雪绒白' ? '#C9CFD6' : shade(c, -0.28);
+  var eye = {'EyG':'#D9A441','EyC':'#B5762E','EyB':'#4A90D9','EyV':'#8B5FC0'}[pheno.eye] || '#D9A441';
+  var tails = pheno.tails, tstr = '';
+  var n = tails >= 9 ? 9 : tails;
+  for(var i=0;i<n;i++){
+    var ang = -34 + i*(n>1 ? (68/(n-1)) : 0);
+    tstr += '<path d="M 60 52 Q '+(74+ (n>=9?6:0))+' '+(52+ang*0.55)+' 88 '+(40+ang)+'" '
+         +  'stroke="'+c+'" stroke-width="'+(n>=9?5:7)+'" fill="none" stroke-linecap="round" opacity="0.95"/>';
+  }
+  var ear = pheno.ear === 'Erf'
+    ? '<path d="M 30 26 L 34 8 L 44 20 Z" fill="'+c+'" stroke="'+dark+'" stroke-width="2"/>'
+      +'<path d="M 62 26 L 58 8 L 48 20 Z" fill="'+c+'" stroke="'+dark+'" stroke-width="2"/>'
+    : (pheno.ear === 'ErR'
+      ? '<circle cx="35" cy="20" r="11" fill="'+c+'" stroke="'+dark+'" stroke-width="2"/>'
+        +'<circle cx="57" cy="20" r="11" fill="'+c+'" stroke="'+dark+'" stroke-width="2"/>'
+      : '<path d="M 28 28 L 33 6 L 46 19 Z" fill="'+c+'" stroke="'+dark+'" stroke-width="2"/>'
+        +'<path d="M 64 28 L 59 6 L 46 19 Z" fill="'+c+'" stroke="'+dark+'" stroke-width="2"/>');
+  var glow = pheno.glow ? '<circle cx="46" cy="40" r="30" fill="#FFE9A8" opacity="0.30"/>' : '';
+  return '<svg width="'+size+'" height="'+size*0.72+'" viewBox="0 0 100 72">'
+    + glow + tstr
+    + ear
+    + '<ellipse cx="46" cy="40" rx="24" ry="21" fill="'+c+'" stroke="'+dark+'" stroke-width="2"/>'
+    + '<ellipse cx="46" cy="50" rx="12" ry="10" fill="#FBF7F2" stroke="'+dark+'" stroke-width="1.4"/>'
+    + '<circle cx="37" cy="36" r="3.6" fill="'+eye+'"/>'
+    + '<circle cx="55" cy="36" r="3.6" fill="'+(pheno.hetero ? '#4A90D9' : eye)+'"/>'
+    + '<circle cx="46" cy="47" r="2.6" fill="#3A3A42"/>'
+    + '</svg>';
+}
+function shade(hex, amt){
+  var n = parseInt(hex.slice(1),16);
+  var r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+  function f(x){ return Math.max(0,Math.min(255,Math.round(x + (amt<0 ? x*amt : (255-x)*amt)))); }
+  return '#'+((1<<24)+(f(r)<<16)+(f(g)<<8)+f(b)).toString(16).slice(1);
+}
+function foxName(f){ return 'FX-' + String(f.id).padStart(4,'0'); }
+function sexSym(s){ return s==='F' ? '♀' : '♂'; }
+
+// =============================================================================
+// 统计条
+// =============================================================================
+(function(){
+  var m = DATA.meta;
+  document.getElementById('stats').innerHTML =
+      '<span class="chip">种群 <b>'+m.n_alive+'</b> 只</span>'
+    + '<span class="chip">第 <b>'+m.generation+'</b> 代</span>'
+    + '<span class="chip">模拟 <b>'+m.years+'</b> 生态年</span>'
+    + '<span class="chip">家谱节点 <b>'+m.n_pedigree+'</b></span>'
+    + '<span class="chip">累计出生 <b>'+m.births+'</b></span>'
+    + '<span class="chip b-bad">濒危等位 <b>'+DATA.endangered.length+'</b></span>';
+})();
+
+// =============================================================================
+// ① 个体档案
+// =============================================================================
+var curFox = FOXES[0].id;
+
+function carrierFlags(geno){
+  var ww = (geno.W[0]==='w' && geno.W[1]==='w');
+  var mask = {}, hide = {};
+  LORDER.forEach(function(l){
+    var spec = LOCI[l], g = geno[l], h = [];
+    if(EPI_HIDDEN[l] && ww) mask[l] = true;
+    if(spec.type === 'simple' || spec.type === 'multi'){
+      var order = spec.dom;
+      g.forEach(function(a){ if(order.indexOf(a) > 0 && h.indexOf(a) < 0) h.push(a); });
+    }
+    hide[l] = h;
+  });
+  return {ww:ww, mask:mask, hide:hide};
+}
+
+function renderList(){
+  var html = '';
+  FOXES.forEach(function(f){
+    var fl = carrierFlags(f.geno);
+    var carries = LORDER.some(function(l){ return fl.hide[l].length > 0; });
+    var masked = LORDER.some(function(l){ return fl.mask[l]; });
+    var cls = 'fox' + (f.id===curFox?' sel':'') + (masked?' lock':'');
+    html += '<div class="'+cls+'" data-id="'+f.id+'">'
+      + foxSVG(f.pheno, 66)
+      + '<div class="fn">'+foxName(f)+' '+sexSym(f.sex)+'</div>'
+      + '<div class="fp">'+f.pheno.color+' · '+f.pheno.tails+'尾</div>'
+      + '<div class="fp">'+(masked?'<span class="tag mask">遮蔽</span>':'')
+      + (carries?'<span class="tag hid">携带</span>':'')+'</div>'
+      + '</div>';
+  });
+  document.getElementById('flist').innerHTML = html;
+  Array.prototype.forEach.call(document.querySelectorAll('#flist .fox'), function(el){
+    el.onclick = function(){ curFox = parseInt(el.dataset.id); renderList(); renderDetail(); };
+  });
+}
+
+function renderDetail(){
+  var f = BYID[curFox], geno = f.geno, ph = f.pheno, fl = carrierFlags(geno);
+  document.getElementById('dFox').innerHTML = foxSVG(ph, 150)
+    + '<div style="margin-top:4px"><b>'+foxName(f)+'</b> '+sexSym(f.sex)+'</div>'
+    + '<div class="small">第 '+f.gen+' 代 · '+(f.founder?'创始':'出生')+'</div>';
+
+  var hid = [], masked = [];
+  LORDER.forEach(function(l){
+    if(fl.mask[l]) masked.push(LOCNAME[l]);
+    else if(fl.hide[l].length) hid.push(LOCNAME[l]+'('+fl.hide[l].map(acn).join('、')+')');
+  });
+  document.getElementById('dInfo').innerHTML =
+      '<table><tbody>'
+    + '<tr><td style="width:96px">可见性状</td><td><b>'+ph.color+'</b> · '
+      + PAT_CN[ph.pattern]+' · <b>'+ph.tails+' 尾</b> · 毛长 '+ph.hair_len+'/4 · '
+      + EAR_CN[ph.ear]+' · '+EYE_CN[ph.eye]+' · '+(ph.curl?'卷毛':'直毛')
+      + (ph.hetero?' · 异色瞳':'')+(ph.glow?' · 发光':'')+(ph.star?' · 星纹':'')
+      + (ph.halo?' · 光环':'')+(ph.flame?' · 火焰':'')+'</td></tr>'
+    + '<tr><td>自身近交系数 F</td><td class="num">'+f.F.toFixed(4)
+      + (f.F >= 0.125 ? ' <span class="tag bad">近交</span>' : '') + '</td></tr>'
+    + '<tr><td>携带隐性位点</td><td>'+(hid.length ? hid.length+' 个：'+hid.join('、') : '无')+'</td></tr>'
+    + '<tr><td>被遮蔽位点</td><td>'+(masked.length ? masked.join('、')+'（雪绒白 ww 掩盖）' : '无')+'</td></tr>'
+    + '<tr><td>健康 / 饱食</td><td>'+f.health+' / '+f.satiety+'</td></tr>'
+    + '</tbody></table>';
+
+  // 看不见的部分
+  var items = [];
+  LORDER.forEach(function(l){
+    var g = geno[l];
+    if(fl.mask[l]){
+      items.push({kind:'mask', locus:l,
+        text:'<b>'+LOCNAME[l]+'</b> 基因型 '+acn(g[0])+'/'+acn(g[1])
+            +' —— 被雪绒白完全盖住，外观上看不出任何痕迹'});
+    } else if(fl.hide[l].length){
+      var spec = LOCI[l];
+      var homoRec = (g[0]===g[1] && spec.dom.indexOf(g[0])>0);
+      if(!homoRec){
+        items.push({kind:'hid', locus:l,
+          text:'<b>'+LOCNAME[l]+'</b> 表现'+acn(getL(geno,l))+'，但携带 '
+              + fl.hide[l].map(acn).join('、')});
+      }
+    }
+  });
+  document.getElementById('dHidden').innerHTML = items.length
+    ? items.map(function(it){
+        return '<div class="note '+(it.kind==='mask'?'':'warn')+'" style="margin:5px 0">'
+             + (it.kind==='mask'?'<span class="tag mask">上位遮蔽</span>':'<span class="tag hid">隐性携带</span>')
+             + it.text + '</div>';
+      }).join('')
+    : '<div class="note ok">这只狐狸没有隐藏的隐性等位（所有位点都是最显性纯合）。</div>';
+
+  // 24 位点
+  document.getElementById('dLoci').innerHTML = LORDER.map(function(l){
+    var g = geno[l], spec = LOCI[l];
+    var phL;
+    if(spec.type === 'dosage'){
+      phL = acn(spec.dom[0])+'（'+countDom(geno,l)+' 个显性）';
+    } else {
+      phL = acn(getL(geno,l));
+    }
+    var cls = 'locus' + (fl.mask[l]?' mask':(fl.hide[l].length?' carry':''));
+    var extra = '';
+    if(fl.mask[l]) extra = '<div class="lm">⚠ 被上位遮蔽 · 不可见</div>';
+    else if(fl.hide[l].length) extra = '<div class="lh">◈ 隐藏：'+fl.hide[l].map(acn).join('、')+'</div>';
+    return '<div class="'+cls+'">'
+      + '<div class="lt"><span>'+LOCNAME[l]+'</span><span class="mono">'+l+'</span></div>'
+      + '<div class="lg">'+acn(g[0])+' / '+acn(g[1])+'</div>'
+      + '<div class="lp">→ '+phL+'</div>' + extra + '</div>';
+  }).join('');
+}
+renderList(); renderDetail();
+
+// =============================================================================
+// ② 配对预测
+// =============================================================================
+var dams = FOXES.filter(function(f){ return f.sex==='F'; });
+var sires = FOXES.filter(function(f){ return f.sex==='M'; });
+function fillSel(el, arr){
+  el.innerHTML = arr.map(function(f){
+    return '<option value="'+f.id+'">'+foxName(f)+' · '+f.pheno.color+' · '+f.pheno.tails+'尾</option>';
+  }).join('');
+}
+fillSel(document.getElementById('selDam'), dams);
+fillSel(document.getElementById('selSire'), sires);
+
+function renderPair(){
+  var da = parseInt(document.getElementById('selDam').value);
+  var si = parseInt(document.getElementById('selSire').value);
+  var A = BYID[da], B = BYID[si];
+  // 种群可能只剩单一性别（或无成年个体）：给提示而不是抛错
+  if(!A || !B){
+    document.getElementById('kinBox').innerHTML =
+      '<div class="note bad">当前没有可配对的雌雄组合，无法预测。</div>';
+    document.getElementById('predOut').innerHTML = '';
+    document.getElementById('unlockOut').innerHTML = '';
+    return;
+  }
+  document.getElementById('dFoxA').innerHTML = foxSVG(A.pheno,100)+'<div class="small">'+foxName(A)+'</div>';
+  document.getElementById('dFoxB').innerHTML = foxSVG(B.pheno,100)+'<div class="small">'+foxName(B)+'</div>';
+
+  var r = kinship(da, si);
+  var risk = r >= 0.125;
+  document.getElementById('kinBox').innerHTML =
+      '<div style="font-size:22px;font-family:Consolas,monospace">r = '+r.toFixed(4)+'</div>'
+    + '<div class="small">后代近交系数 F = r</div>'
+    + '<div style="margin-top:6px">'+(risk
+        ? '<span class="tag bad">近交</span>触发 §5.4 判定：50% 放弃交配；若交配，后代缺陷概率上升'
+        : '<span class="tag rare">安全</span>r &lt; 0.125，正常交配')+'</div>';
+
+  var out = '';
+  TRAITS.forEach(function(t){
+    var items = predictTrait(A.geno, B.geno, t);
+    out += '<div style="margin:10px 0 3px"><b>'+t.name+'</b></div>';
+    items.forEach(function(it){
+      var pct = (it.prob*100);
+      var col = (it.prob === items[0].prob) ? '#7F77DD' : '#B9C2CC';
+      out += '<div class="probrow"><span class="nm">'+it.value+'</span>'
+           + '<span class="pb"><span class="pf" style="width:'+pct.toFixed(1)+'%;background:'+col+'"></span></span>'
+           + '<span class="pv">'+(pct<0.05 && pct>0 ? '&lt;0.1' : pct.toFixed(1))+'%</span></div>';
+    });
+  });
+  document.getElementById('predOut').innerHTML = out;
+
+  var un = [];
+  TRAITS.forEach(function(t){
+    var items = predictTrait(A.geno, B.geno, t);
+    if(!items.length) return;
+    var top = items[0];
+    items.forEach(function(it){
+      if(it.value === top.value) return;
+      if(it.prob < 0.005) return;
+      un.push({t:t.name, v:it.value, p:it.prob});
+    });
+  });
+  un.sort(function(x,y){ return y.p - x.p; });
+  document.getElementById('unlockOut').innerHTML = un.length
+    ? '<table><thead><tr><th>性状</th><th>可解锁的隐藏值</th><th class="num">概率</th><th style="width:240px">分布</th></tr></thead><tbody>'
+      + un.map(function(u){
+          return '<tr><td>'+u.t+'</td><td><b>'+u.v+'</b></td><td class="num">'+(u.p*100).toFixed(1)+'%</td>'
+            + '<td><span class="pb" style="display:inline-block;width:220px"><span class="pf" style="width:'
+            + (u.p*100).toFixed(1)+'%;background:#BA7517"></span></span></td></tr>';
+        }).join('') + '</tbody></table>'
+    : '<div class="note">这一对的后代在所有可见性状上都不会出现新值（双亲在这些位点上是纯合的）。</div>';
+}
+document.getElementById('selDam').onchange = renderPair;
+document.getElementById('selSire').onchange = renderPair;
+renderPair();
+
+// =============================================================================
+// ③ 种群基因库
+// =============================================================================
+(function(){
+  var html = '';
+  if(!DATA.endangered.length){
+    html = '<div class="note ok">当前没有濒危等位（所有仍在种群中的等位拷贝数均 &gt; 3）。</div>';
+  } else {
+    DATA.endangered.forEach(function(e){
+      var who = e.holders.map(function(i){ return '<b>'+foxName(BYID[i])+'</b>'; }).join('、');
+      html += '<div class="note bad" style="margin:6px 0">'
+        + '<b>'+e.name+' · '+e.cn+'</b>　仅剩 <b>'+e.copies+'</b> 个拷贝，'
+        + e.carriers+' 只携带 → 全部集中在 '+who
+        + '<div class="small" style="margin-top:3px">淘汰这些个体前请三思：'
+        + '该等位一旦丢失，只能靠 3%/仔 的突变重新出现。</div></div>';
+    });
+  }
+  document.getElementById('endOut').innerHTML = html;
+})();
+
+(function(){
+  var sel = document.getElementById('fLocus');
+  sel.innerHTML = '<option value="">全部位点</option>'
+    + LORDER.map(function(l){ return '<option value="'+l+'">'+LOCNAME[l]+' ('+l+')</option>'; }).join('');
+  function render(){
+    var onlyRec = document.getElementById('onlyRec').checked;
+    var onlyAlive = document.getElementById('onlyAlive').checked;
+    var fl = sel.value;
+    var rows = POP.filter(function(r){
+      if(onlyRec && !r.recessive) return false;
+      if(onlyAlive && r.copies === 0) return false;
+      if(fl && r.locus !== fl) return false;
+      return true;
+    });
+    var html = '<thead><tr><th>位点</th><th>名称</th><th>等位基因</th><th>类型</th>'
+      + '<th class="num">频率</th><th class="num">拷贝</th><th class="num">携带者</th>'
+      + '<th class="num">纯合</th><th>状态</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      var st = r.copies === 0 ? '<span class="tag bad">已丢失</span>'
+             : (r.endangered ? '<span class="tag bad">濒危</span>' : '<span class="tag rare">稳定</span>');
+      html += '<tr'+((r.copies===0||r.endangered)?' style="background:#FDF5F4"':'')+'>'
+        + '<td class="mono">'+r.locus+'</td><td>'+r.name+'</td>'
+        + '<td><b>'+r.cn+'</b> <span class="mono small">'+r.allele+'</span></td>'
+        + '<td>'+(r.recessive?'隐性':'显性')+'</td>'
+        + '<td class="num">'+(r.freq*100).toFixed(1)+'%</td>'
+        + '<td class="num">'+r.copies+'</td><td class="num">'+r.carriers+'</td>'
+        + '<td class="num">'+r.homo+'</td><td>'+st+'</td></tr>';
+    });
+    html += '</tbody>';
+    document.getElementById('popTable').innerHTML = html;
+  }
+  sel.onchange = render;
+  document.getElementById('onlyRec').onchange = render;
+  document.getElementById('onlyAlive').onchange = render;
+  render();
+})();
+
+// =============================================================================
+// ④ 育种目标
+// =============================================================================
+(function(){
+  var opts = [];
+  TRAITS.forEach(function(t){
+    var vals = {};
+    FOXES.forEach(function(f){ vals[t.pick(f.pheno)] = 1; });
+    for(var v in vals) opts.push({key:t.key, name:t.name, val:v});
+  });
+  var sel = document.getElementById('selTarget');
+  sel.innerHTML = opts.map(function(o){
+    return '<option value="'+o.key+'|'+o.val+'">'+o.name+' → '+o.val+'</option>';
+  }).join('');
+
+  document.getElementById('btnRec').onclick = function(){
+    var parts = sel.value.split('|');
+    var key = parts[0], val = parts[1];
+    var recs = [];
+    dams.forEach(function(a){ sires.forEach(function(b){
+      var p = predictTarget(a.geno, b.geno, key, val);
+      if(p <= 0) return;
+      recs.push({dam:a.id, sire:b.id, prob:p, r:kinship(a.id, b.id)});
+    });});
+    recs.sort(function(x,y){ return (y.prob - x.prob) || (x.r - y.r); });
+    var feasible = recs.length;
+    var total = dams.length * sires.length;
+    document.getElementById('recHint').innerHTML =
+      '可行配对 <b>'+feasible+'</b> / '+total+' 组';
+    if(!recs.length){
+      document.getElementById('recOut').innerHTML =
+        '<div class="note bad">当前种群中<b>没有任何配对</b>能生出「'+val+'」。'
+        + '该等位在种群里频率为 0，只能等突变（3%/仔）。</div>';
+      return;
+    }
+    document.getElementById('recOut').innerHTML =
+      '<table><thead><tr><th>#</th><th>母本 ♀</th><th>父本 ♂</th><th class="num">后代概率</th>'
+      + '<th class="num">亲缘 r</th><th>近交判定</th></tr></thead><tbody>'
+      + recs.slice(0,12).map(function(x, i){
+          return '<tr><td>'+(i+1)+'</td><td>'+foxName(BYID[x.dam])+' · '+BYID[x.dam].pheno.color+'</td>'
+            + '<td>'+foxName(BYID[x.sire])+' · '+BYID[x.sire].pheno.color+'</td>'
+            + '<td class="num"><b>'+(x.prob*100).toFixed(1)+'%</b></td>'
+            + '<td class="num">'+x.r.toFixed(4)+'</td>'
+            + '<td>'+(x.r>=0.125?'<span class="tag bad">近交</span>':'<span class="tag rare">安全</span>')+'</td></tr>';
+        }).join('') + '</tbody></table>'
+      + '<div class="small" style="margin-top:8px">排序：概率降序，同概率时亲缘系数升序（优先不近交的组合）。</div>';
+  };
+  document.getElementById('btnRec').click();
+})();
+
+// =============================================================================
+// ⑤ 自检：JS 结果 vs Python 预计算
+// =============================================================================
+(function(){
+  var rows = [], pass = 0, fail = 0;
+  var pre = DATA.targets;
+  for(var k in pre){
+    var parts = k.split('|');
+    var key = parts[0], val = parts[1];
+    pre[k].forEach(function(x){
+      var jsP = predictTarget(BYID[x.dam].geno, BYID[x.sire].geno, key, val);
+      var ok = Math.abs(jsP - x.prob) < 1e-3
+            && Math.abs(kinship(x.dam, x.sire) - x.r) < 1e-3;
+      if(ok) pass++; else fail++;
+      rows.push('<tr><td>'+key+' → '+val+'</td><td class="mono">'+foxName(BYID[x.dam])+' × '+foxName(BYID[x.sire])+'</td>'
+        + '<td class="num">'+(x.prob*100).toFixed(2)+'%</td><td class="num">'+(jsP*100).toFixed(2)+'%</td>'
+        + '<td class="num">'+x.r.toFixed(4)+'</td><td class="num">'+kinship(x.dam,x.sire).toFixed(4)+'</td>'
+        + '<td>'+(ok?'<span class="tag rare">一致</span>':'<span class="tag bad">不一致</span>')+'</td></tr>');
+    });
+  }
+  document.getElementById('selfTest').innerHTML =
+      '<div class="note '+(fail?'bad':'ok')+'"><b>'+pass+' 项一致 / '+fail+' 项不一致</b>　'
+    + '（对照 Python 内核 export_panel_data.py 的预计算结果，容差 1e-3）</div>'
+    + '<table><thead><tr><th>目标性状</th><th>配对</th><th class="num">Python</th>'
+    + '<th class="num">本页 JS</th><th class="num">r (Py)</th><th class="num">r (JS)</th><th>结果</th></tr></thead>'
+    + '<tbody>' + rows.join('') + '</tbody></table>';
+})();
+
+// =============================================================================
+// Tab 切换
+// =============================================================================
+Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
+  t.onclick = function(){
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(x){ x.classList.remove('on'); });
+    Array.prototype.forEach.call(document.querySelectorAll('.page'), function(x){ x.classList.remove('on'); });
+    t.classList.add('on');
+    document.getElementById(t.dataset.p).classList.add('on');
+  };
+});
+</script>
+</body>
+</html>

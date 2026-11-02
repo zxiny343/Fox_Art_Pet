@@ -1,0 +1,52 @@
+{
+  "workflow_id": "d22d9c4f-7bfc-4529-acbf-25943f742502",
+  "state_version": 9,
+  "status": "draft",
+  "artifacts": {},
+  "submissions": {
+    "s1-base-view34": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户确认四项规格全选A，并授权使用灵感值出图；阶段1基础角色3/4站姿",
+      "input_hashes": {},
+      "status": "failed",
+      "generationId": "NONE"
+    },
+    "s1-base-view34-r1": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户要求重新对接可灵；重连后余额500；重试此前因余额不足失败的 s1-base-view34 一次",
+      "input_hashes": {},
+      "status": "submitted",
+      "generationId": "AWDxSkq99dQhczUKEwzalf-POe_ObXkFbx2EmIaDtIuhblSLj2zMbEYgY3MBNBu-X0A95C8R"
+    },
+    "s1-base-view34-r2": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "第一轮4张全部为四足着地姿态且有投影，不符合LOCK-C；用户已授权使用灵感值，重出一版强约束二足提示词",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s1-base-view34-q4": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户拍板改四足站姿；LOCK-C由二足改为四足；重出阶段1标准视图",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-parts-ears": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "阶段2部件表：耳5型/尾6型/眼型3/瞳孔3，隔离白底部件表用于连通域切分为可替换PNG",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    }
+  },
+  "pending_actions": [
+    "可灵余额0，text_to_image 返回 Insufficient credits，等待用户确认200灵感值到账"
+  ],
+  "delivery": null
+}

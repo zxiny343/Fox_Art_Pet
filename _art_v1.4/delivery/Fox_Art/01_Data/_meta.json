@@ -1,0 +1,96 @@
+{
+ "schemaVersion": "1.0",
+ "note": "v1.4 R6 新增：traits.json 的 values 与磁盘文件的对账表。回归脚本 run_regress_v14.py 会按本表逐 id 校验。",
+ "valueFileCheck": {
+  "rule": "traits.json categories[].values 的每个 id 必须满足其一：① fileMap 中列出的文件全部存在；② exemptions 中显式标注 procedural:true 或 composedOf（其引用的文件也须存在）。否则判 FAIL。",
+  "pathRoot": "Fox_Art/",
+  "fileMap": {
+   "white": ["assets/master/Base/fox_base_white_q4@1024.png"],
+   "orange": ["assets/master/Base/fox_base_orange_q4@1024.png"],
+   "black": ["assets/master/Base/fox_base_black_q4@1024.png"],
+   "grey": ["assets/master/Base/fox_base_grey_q4@1024.png"],
+   "blue": ["assets/master/Base/fox_base_blue_q4@1024.png"],
+   "purple": ["assets/master/Base/fox_base_purple_q4@1024.png"],
+   "sakura": ["assets/master/Base/fox_base_sakura_q4@1024.png"],
+   "mint": ["assets/master/Base/fox_base_mint_q4@1024.png"],
+   "caramel": ["assets/master/Base/fox_base_caramel_q4@1024.png"],
+   "obsidian_gold": ["assets/master/Base/fox_base_obsidian_gold_q4@1024.png"],
+   "mist_purple": ["assets/master/Base/fox_base_mist_purple_q4@1024.png"],
+   "haze_blue": ["assets/master/Base/fox_base_haze_blue_q4@1024.png"],
+
+   "ear_large": ["assets/master/Ears/ear_large_L.png", "assets/master/Ears/ear_large_R.png"],
+   "ear_small": ["assets/master/Ears/ear_small_L.png", "assets/master/Ears/ear_small_R.png"],
+   "ear_pointed": ["assets/master/Ears/ear_pointed_L.png", "assets/master/Ears/ear_pointed_R.png"],
+   "ear_round": ["assets/master/Ears/ear_round_L.png", "assets/master/Ears/ear_round_R.png"],
+   "ear_star": ["assets/master/Ears/ear_star_L.png", "assets/master/Ears/ear_star_R.png"],
+   "ear_fold": ["assets/master/Ears/ear_fold_L.png", "assets/master/Ears/ear_fold_R.png"],
+
+   "tail_normal": ["assets/master/Tails/tail_normal.png"],
+   "tail_long": ["assets/master/Tails/tail_long.png"],
+   "tail_fluffy": ["assets/master/Tails/tail_fluffy.png"],
+   "tail_short": ["assets/master/Tails/tail_short.png"],
+   "tail_curl": ["assets/master/Tails/tail_curl.png"],
+   "tail_twin": ["assets/master/Tails/tail_twin.png"],
+   "tail_triple": ["assets/master/Tails/tail_triple.png"],
+   "tail_quad": ["assets/master/Tails/tail_quad.png"],
+   "tail_quint": ["assets/master/Tails/tail_quint.png"],
+   "tail_nine": ["assets/master/Tails/tail_nine.png"],
+   "tail_thin": ["assets/master/Tails/tail_thin.png"],
+
+   "eye_round": ["assets/master/Eyes/eye_round.png"],
+   "eye_almond": ["assets/master/Eyes/eye_almond.png"],
+   "eye_sleepy": ["assets/master/Eyes/eye_sleepy.png"],
+
+   "eye_blue": ["assets/master/Eyes/eye_round_blue.png"],
+   "eye_gold": ["assets/master/Eyes/eye_round_gold.png"],
+   "eye_red": ["assets/master/Eyes/eye_round_red.png"],
+   "eye_green": ["assets/master/Eyes/eye_round_green.png"],
+   "eye_purple": ["assets/master/Eyes/eye_round_purple.png"],
+   "eye_copper": ["assets/master/Eyes/eye_round_copper.png"],
+   "eye_cyan": ["assets/master/Eyes/eye_round_cyan.png"],
+
+   "pupil_round": ["assets/master/Eyes/pupil_round.png"],
+   "pupil_slit": ["assets/master/Eyes/pupil_slit.png"],
+   "pupil_star": ["assets/master/Eyes/pupil_star.png"],
+
+   "fur_short": ["assets/master/Base/fox_base_blue_q4@1024.png"],
+   "fur_medium": ["assets/master/Base/fox_fur_medium_blue_q4@1024.png"],
+   "fur_long": ["assets/master/Base/fox_fur_long_blue_q4@1024.png"],
+   "fur_curly": ["assets/master/Base/fox_fur_curly_blue_q4@1024.png"],
+
+   "pattern_solid": ["assets/master/Patterns/pattern_solid_mask@1024.png"],
+   "pattern_spots": ["assets/master/Patterns/pattern_spots_mask@1024.png"],
+   "pattern_stripes": ["assets/master/Patterns/pattern_stripes_mask@1024.png"],
+   "pattern_gradient": ["assets/master/Patterns/pattern_gradient_mask@1024.png"],
+   "pattern_face_mark": ["assets/master/Patterns/pattern_facemark_mask@1024.png"],
+   "pattern_flame": ["assets/master/Patterns/pattern_flame_mask@1024.png"],
+   "pattern_tabby": ["assets/master/Patterns/pattern_tabby_mask@1024.png"],
+
+   "special_glow": ["assets/master/Special/special_glow@1024.png"],
+   "special_aura": ["assets/master/Special/special_aura@1024.png"],
+   "special_star_mark": ["assets/master/Special/special_star_mark@1024.png"]
+  },
+  "exemptions": {
+   "eye_hetero": {
+    "procedural": true,
+    "reason": "异色瞳 = 左右眼取不同 eyeColor，由组装器按 independentPerSide 合成，无单一素材文件"
+   },
+   "special_ear_star": {
+    "composedOf": ["assets/master/Ears/ear_star_L.png", "assets/master/Ears/ear_star_R.png"],
+    "reason": "星耳 = 换用 ear_star 成对部件，无独立 special 文件"
+   },
+   "special_pupil_star": {
+    "composedOf": ["assets/master/Eyes/pupil_star.png"],
+    "reason": "星瞳 = 叠加 pupil_star 附件，无独立 special 文件"
+   },
+   "special_twin_tail": {
+    "composedOf": ["assets/master/Tails/tail_twin.png"],
+    "reason": "双尾 = 换用 tail_twin 部件，无独立 special 文件"
+   }
+  },
+  "aliases": {
+   "pattern_face_mark": "组装器接受的花纹名是 facemark（pattern_facemark_mask@1024.png）；traits 保留语义化 id，不改名",
+   "fur_medium": "v1.4 已把母版/导出由 fox_fur_mid_blue_q4 统一改名为 fox_fur_medium_blue_q4，与 traits id 对齐"
+  }
+ }
+}

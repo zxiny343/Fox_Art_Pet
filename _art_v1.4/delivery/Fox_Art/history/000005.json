@@ -1,0 +1,28 @@
+{
+  "workflow_id": "d22d9c4f-7bfc-4529-acbf-25943f742502",
+  "state_version": 5,
+  "status": "draft",
+  "artifacts": {},
+  "submissions": {
+    "s1-base-view34": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户确认四项规格全选A，并授权使用灵感值出图；阶段1基础角色3/4站姿",
+      "input_hashes": {},
+      "status": "failed",
+      "generationId": "NONE"
+    },
+    "s1-base-view34-r1": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户要求重新对接可灵；重连后余额500；重试此前因余额不足失败的 s1-base-view34 一次",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    }
+  },
+  "pending_actions": [
+    "可灵余额0，text_to_image 返回 Insufficient credits，等待用户确认200灵感值到账"
+  ],
+  "delivery": null
+}

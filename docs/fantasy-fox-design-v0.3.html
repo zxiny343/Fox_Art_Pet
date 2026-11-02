@@ -1,0 +1,2793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>幻想小狐狸 · 桌面生态桌宠 设计稿 v0.3</title>
+<style>
+:root{
+  --bg:#F7F8FA; --card:#FFFFFF; --line:#E3E6EB; --line2:#D3D7DE;
+  --tx:#1F2328; --tx2:#5B6470; --tx3:#8A93A0;
+  --accent:#C2612B; --accent-bg:#FDF1E8;
+  --info:#185FA5; --info-bg:#E9F1FA;
+  --ok:#3B6D11; --ok-bg:#EDF5E2;
+  --warn:#854F0B; --warn-bg:#FBF0DA;
+  --rare:#534AB7; --rare-bg:#F0EDFC;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);
+  font-family:"Microsoft YaHei UI","PingFang SC","Hiragino Sans GB",-apple-system,"Segoe UI",sans-serif;
+  font-size:14px;line-height:1.75}
+.wrap{max-width:1120px;margin:0 auto;padding:32px 24px 80px}
+header.top{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:8px}
+h1{font-size:24px;font-weight:600;margin:0 0 6px}
+.sub{color:var(--tx2);font-size:13px}
+.meta{color:var(--tx3);font-size:12px;margin-top:8px}
+nav{position:sticky;top:0;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--line);
+  margin-bottom:28px;z-index:5}
+nav a{display:inline-block;margin:0 14px 4px 0;color:var(--tx2);text-decoration:none;font-size:13px}
+nav a:hover{color:var(--accent)}
+h2{font-size:19px;font-weight:600;margin:52px 0 6px;padding-top:8px}
+h2 .no{color:var(--accent);font-size:14px;margin-right:8px}
+h3{font-size:15px;font-weight:600;margin:26px 0 8px}
+h4{font-size:13px;font-weight:600;margin:16px 0 6px;color:var(--tx2)}
+p{margin:8px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#F2F4F7;font-weight:600;color:var(--tx2);font-size:12px}
+tbody tr:nth-child(even) td{background:#FAFBFC}
+.chip{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11.5px;
+  border:1px solid var(--line2);background:#F6F7F9;color:var(--tx2);margin:2px 3px 2px 0;white-space:nowrap}
+.chip.mono{font-family:Consolas,"Courier New",monospace}
+.chip.b-ok{background:var(--ok-bg);border-color:#C0DD97;color:var(--ok)}
+.chip.b-info{background:var(--info-bg);border-color:#B5D4F4;color:var(--info)}
+.chip.b-warn{background:var(--warn-bg);border-color:#FAC775;color:var(--warn)}
+.chip.b-rare{background:var(--rare-bg);border-color:#CECBF6;color:var(--rare)}
+.note{border-left:3px solid var(--accent);background:var(--accent-bg);padding:10px 14px;border-radius:0 8px 8px 0;
+  margin:12px 0;font-size:13px}
+.note.info{border-color:var(--info);background:var(--info-bg)}
+.note.warn{border-color:var(--warn);background:var(--warn-bg)}
+.note.ok{border-color:var(--ok);background:var(--ok-bg)}
+ul,ol{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+/* 狐狸卡 */
+.foxcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.foxcard.rare{border-color:#CECBF6;box-shadow:inset 0 0 0 1px #CECBF6}
+.foxcard .stage{background:#FBFCFD;border:1px solid var(--line);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;padding:6px;min-height:150px}
+.foxcard .nm{font-weight:600;font-size:14px;margin-top:8px}
+.foxcard .fid{font-family:Consolas,monospace;font-size:11px;color:var(--tx3)}
+.foxcard .ph{font-size:12px;color:var(--tx2);margin-top:6px;line-height:1.5}
+.gen{font-family:Consolas,"Courier New",monospace;font-size:11px;color:var(--tx2);
+  margin-top:8px;text-align:left;background:#FAFBFC;border:1px solid var(--line);
+  border-radius:8px;padding:7px 9px;line-height:1.7}
+.gen b{color:var(--tx);font-weight:600}
+/* 桌面模拟 */
+.desk{position:relative;height:400px;border-radius:12px;border:1px solid var(--line2);
+  background:#EAF0F6;overflow:hidden}
+.desk .iconrow{position:absolute;top:12px;left:12px;display:grid;grid-template-columns:repeat(2,58px);gap:16px}
+.desk .ico{width:46px;height:46px;border-radius:8px;background:#CBDCEB;border:1px solid #A9C4DA}
+.desk .win{position:absolute;left:60px;top:38px;width:340px;height:150px;background:#fff;
+  border:1px solid #A9C4DA;border-radius:8px 8px 0 0;box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.desk .win .bar{height:22px;background:#DCE7F1;border-radius:8px 8px 0 0;border-bottom:1px solid #C3D5E6}
+.desk .win2{position:absolute;right:40px;bottom:96px;width:300px;height:180px;background:#fff;
+  border:1px solid #A9C4DA;border-radius:8px 8px 0 0}
+.desk .win2 .bar{height:22px;background:#DCE7F1;border-radius:8px 8px 0 0;border-bottom:1px solid #C3D5E6}
+.desk .task{position:absolute;left:0;right:0;bottom:0;height:44px;background:#D6E2EE;border-top:1px solid #B9CCDE;
+  display:flex;align-items:center;gap:8px;padding:0 12px}
+.desk .task .st{width:26px;height:26px;border-radius:5px;background:#5B7092}
+.desk .task .it{width:74px;height:30px;border-radius:5px;background:#EEF3F8;border:1px solid #C3D5E6}
+.desk .foxabs{position:absolute}
+.legend{position:absolute;right:10px;top:10px;z-index:9;background:rgba(255,255,255,.94);border:1px solid var(--line2);
+  border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.7;max-width:210px;color:var(--tx2)}
+.legend b{color:var(--tx)}
+/* UI 草图 */
+.ui{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ui .ttl{background:#F2F4F7;border-bottom:1px solid var(--line);padding:9px 14px;font-weight:600;font-size:13px;
+  display:flex;justify-content:space-between;align-items:center}
+.ui .bd{padding:14px}
+.ui .row{display:flex;gap:12px;align-items:flex-start}
+.ui .row>div{flex:1;min-width:0}
+.field{border:1px dashed var(--line2);border-radius:8px;padding:10px;margin-bottom:10px;background:#FCFDFE}
+.field .lb{font-size:11.5px;color:var(--tx3);margin-bottom:6px}
+.btn{display:inline-block;border:1px solid var(--line2);border-radius:7px;padding:5px 12px;font-size:12.5px;
+  background:#fff;color:var(--tx)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.dis{opacity:.45}
+.bar-wrap{height:8px;background:#EDEFF2;border-radius:20px;overflow:hidden;margin:5px 0 10px}
+.bar{height:100%;border-radius:20px}
+.punnett{display:grid;grid-template-columns:52px 1fr 1fr;gap:4px;font-size:12px;text-align:center}
+.punnett div{padding:9px 4px;border:1px solid var(--line);border-radius:6px;background:#FAFBFC}
+.punnett .hd{background:#F2F4F7;font-weight:600;color:var(--tx2);font-family:Consolas,monospace}
+.probrow{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12.5px}
+.probrow .pb{flex:1;height:16px;background:#EDEFF2;border-radius:5px;overflow:hidden}
+.probrow .pf{height:100%}
+.probrow .pv{width:52px;text-align:right;color:var(--tx2);font-family:Consolas,monospace;font-size:11.5px}
+.sw{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.sw:last-child{border-bottom:none}
+.tg{width:34px;height:19px;border-radius:20px;background:#C9CFD6;position:relative;flex:none}
+.tg.on{background:var(--accent)}
+.tg i{position:absolute;top:2.5px;left:2.5px;width:14px;height:14px;border-radius:50%;background:#fff}
+.tg.on i{left:17px}
+small{color:var(--tx3)}
+.warn-band{border-left:4px solid #A33A12;background:#FBEDE6;padding:12px 16px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-size:13px;line-height:1.8}
+/* v0.2 新增：图表 / 家谱 / 弹窗 / 统计 */
+.fig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+.fig svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.fig .cap{font-size:12px;color:var(--tx3);margin-top:10px;text-align:center;line-height:1.6}
+.statgrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));margin:12px 0}
+.stat{background:#FBFCFD;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat .v{font-size:21px;font-weight:600;font-family:Consolas,"Courier New",monospace;line-height:1.3}
+.stat .l{font-size:11.5px;color:var(--tx3)}
+.stat .d{font-size:11px;color:var(--tx2);margin-top:2px}
+.dlg{max-width:430px;border:1px solid var(--line2);border-radius:12px;background:#fff;
+  box-shadow:0 8px 26px rgba(0,0,0,.10);overflow:hidden;margin:12px 0}
+.dlg .dh{background:#F7F9FB;border-bottom:1px solid var(--line);padding:9px 14px;font-weight:600;font-size:13.5px}
+.dlg .db{padding:13px 14px;font-size:12.5px}
+.dlg .df{padding:9px 14px;background:#F7F9FB;border-top:1px solid var(--line);text-align:right}
+.dlg.danger{border-color:#C2612B;box-shadow:0 8px 26px rgba(194,97,43,.16)}
+.dlg.danger .dh{background:var(--accent-bg);border-bottom-color:#E8C6AE;color:#8A3F13}
+.checkline{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px dotted var(--line);font-size:12.5px}
+.checkline:last-child{border-bottom:none}
+.stepbox{counter-reset:st}
+.steps{counter-increment:st;margin:8px 0;padding-left:38px;position:relative;min-height:34px}
+.steps:before{content:counter(st);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;
+  background:var(--accent);color:#fff;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.timeline-item{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px dotted var(--line);font-size:12.5px}
+.timeline-item:last-child{border-bottom:none}
+.timeline-item .gen{width:52px;flex:none;text-align:center;font-size:11.5px;margin:0;padding:2px 0}
+.tagline{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.loci{columns:2;column-gap:22px;font-size:12.5px}
+.loci div{break-inside:avoid;display:flex;justify-content:space-between;gap:8px;
+  border-bottom:1px dotted var(--line);padding:3px 0}
+.loci .k{font-family:Consolas,monospace;color:var(--tx2);font-size:11.5px}
+.loci .v{font-family:Consolas,monospace;font-weight:600}
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:var(--tx3);font-size:12px}
+.q{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:0;margin:12px 0;overflow:hidden}
+.q .qh{background:#F7F9FB;border-bottom:1px solid var(--line);padding:10px 16px;font-weight:600;font-size:13.5px}
+.q .qb{padding:12px 16px}
+.q .opt{font-size:12.5px;color:var(--tx2);margin:6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>幻想小狐狸 Fantasy Fox — 桌面生态桌宠</h1>
+  <div class="sub">角色设定 · 遗传表型 · 界面草图（v0.3 需求与美术设计稿 · 决策已固化）</div>
+  <div class="meta">本轮交付：角色形象 / 遗传组合样例 / 多狐同屏 / 动作设计 / 繁殖界面 / 基因档案 / 种群配置 / 突变表现 /
+  <b style="color:var(--accent)">密度制约繁殖 / 遗传谱系 / 锁定与收藏 / 种群进化统计</b> / 待确认问题<br>
+  <b>v0.2 新增：</b>拥挤度反馈的繁殖欲望（§09）· 家谱与基因溯源（§10）· 锁定收藏与删除保护（§11）· 种群进化统计（§12）<br>
+  <b>v0.3 变更：</b>§13 由「待确认问题」改为<b>决策汇总（用户已回答）</b>；新增 §14 世界时钟、§15 文件取食系统、§16 离场与迁徙、§17 纪念馆育种；剩 D1–D4 四项未决<br>
+  <b style="color:var(--accent)">v0.4 变更：新增 §18 基因与性状面板（隐性基因可视化 + 配对预测 + 种群濒危预警 + 目标育种推荐），
+  并新增拍板项 G1「濒危等位唯一携带者强制豁免自动淘汰」；§6 与 §5 的基因型展示改为复用 §18 的同一套算法</b><br>
+  范围说明：本文档只做需求与美术设计，不含技术实现方案与代码。</div>
+</header>
+
+<nav>
+  <a href="#s1">1 最终形象</a>
+  <a href="#s2">2 遗传组合</a>
+  <a href="#s3">3 多狐同屏</a>
+  <a href="#s4">4 动作设计</a>
+  <a href="#s5">5 繁殖界面</a>
+  <a href="#s6">6 基因档案</a>
+  <a href="#s7">7 种群配置</a>
+  <a href="#s8">8 突变与稀有</a>
+  <a href="#s9">9 密度与繁殖欲望</a>
+  <a href="#s10">10 遗传谱系</a>
+  <a href="#s11">11 锁定与收藏</a>
+  <a href="#s12">12 进化统计</a>
+  <a href="#s13">13 决策汇总</a>
+  <a href="#s14">14 世界时钟</a>
+  <a href="#s15">15 取食系统</a>
+  <a href="#s16">16 离场与迁徙</a>
+  <a href="#s17">17 纪念馆育种</a>
+  <a href="#s18">18 基因与性状面板</a>
+</nav>
+
+<main>
+
+<!-- ============ 1 ============ -->
+<h2 id="s1"><span class="no">01</span>最终小狐狸角色形象</h2>
+<p>采用 <b>2D 卡通 / chibi 比例</b>：头身比约 <b>1 : 1.1</b>，头部略大于躯干，耳朵与尾巴为主要视觉符号。
+整体轮廓控制在 5.5 个头宽以内，保证缩到 96 px 仍能一眼认出"这是只狐狸"。</p>
+
+<div class="grid g2">
+  <div class="card" style="text-align:center">
+    <h4 style="margin-top:0">标准个体「赤穗」— 正视标准站姿</h4>
+    <div id="heroFox"></div>
+    <small>基础渲染尺寸 150×148 本地坐标；桌面上实际显示 96 / 120 / 160 / 200 px 四档可调</small>
+  </div>
+  <div class="card">
+    <h4 style="margin-top:0">比例与栅格</h4>
+    <table>
+      <thead><tr><th>项目</th><th>规格</th></tr></thead>
+      <tbody>
+        <tr><td>画布内比例</td><td>头 : 躯干 = 1 : 1.05，头宽占整体宽度 36%</td></tr>
+        <tr><td>推荐显示尺寸</td><td>96 / 120 / 160 / 200 px（用户可调，含自定义）</td></tr>
+        <tr><td>最小可辨尺寸</td><td>72 px（低于此建议切换为简化渲染，见 §7）</td></tr>
+        <tr><td>安全边距</td><td>画布四周留 8% 余量，防止长尾 / 大耳被裁切</td></tr>
+        <tr><td>朝向</td><td>默认正视；移动时整体做 −9°~+9° 倾斜，不另画侧面</td></tr>
+        <tr><td>背景</td><td>透明（alpha 0），无边框，异形窗口</td></tr>
+      </tbody>
+    </table>
+    <div class="note info">所有部件均为<b>矢量路径 + 程序化上色</b>，一张 base 灰度图配 metalness 之类的做法<b>不适用</b>——
+    耳型、尾数、尾长这些是<b>几何差异</b>而非配色差异，必须换部件。</div>
+  </div>
+</div>
+
+<h3>1.1 模块化部件拆分</h3>
+<p>角色被拆成 <b>7 组可替换部件</b>，每组由基因位点驱动。这是"不能只靠改颜色区分个体"的实现基础。</p>
+<div id="partsGrid" class="grid g4"></div>
+<table>
+  <thead><tr><th>#</th><th>部件</th><th>可变维度</th><th>驱动基因位点</th></tr></thead>
+  <tbody>
+    <tr><td>①</td><td>躯干与胸腹</td><td>圆润度、胸腹色块面积</td><td>L₁ L₂（毛长）· D</td></tr>
+    <tr><td>②</td><td>头部与吻部</td><td>头型、吻部色、颊部绒毛量</td><td>A · L₁ L₂ · K</td></tr>
+    <tr><td>③</td><td>耳</td><td>形状（尖 / 圆 / 垂）· 大小（大中小）· 耳尖色 · 内耳色</td><td>Er · Ez · Tp · In</td></tr>
+    <tr><td>④</td><td>眼与鼻</td><td>瞳孔色 · 眼型（圆 / 杏 / 细）· 是否异色瞳</td><td>Ey · Ef · Ht</td></tr>
+    <tr><td>⑤</td><td>尾</td><td>数量（1–5 或 9）· 长度 · 蓬松度 · 尾尖色 · 特殊形态</td><td>Tn₁ Tn₂ · V · Tl · Tf · Tw · Fl</td></tr>
+    <tr><td>⑥</td><td>被毛外形</td><td>长短（5 档）· 卷曲（3 档）· 轮廓波浪层数</td><td>L₁ L₂ · K</td></tr>
+    <tr><td>⑦</td><td>花纹与特效</td><td>虎斑 / 斑点 / 渐变 / 纯色 · 星纹 · 发光 · 光环</td><td>P · St · G · Ha</td></tr>
+  </tbody>
+</table>
+<div class="note">⑦ 的花纹层用 <code>clipPath</code> 裁切到躯干与头部轮廓内，因此<b>换花纹不需要重画底图</b>，只需替换图层。
+这是个体数量可以做到很大而不炸美术成本的关键。</div>
+
+<h3>1.2 渲染层序（从后到前）</h3>
+<p><span class="chip">1 发光底层</span><span class="chip">2 尾</span><span class="chip">3 被毛外轮廓</span><span class="chip">4 躯干</span><span class="chip">5 脚掌</span><span class="chip">6 耳</span><span class="chip">7 头</span><span class="chip">8 吻鼻</span><span class="chip">9 眼</span><span class="chip">10 花纹层</span><span class="chip">11 特效层（星纹 / 光环）</span></p>
+<p class="note ok">第 10、11 层存在的意义：<b>花纹与特效永远可叠加在任何毛色之上</b>。
+也就是说「毛色」和「花纹」是两个<b>相互独立</b>的自由度，组合数是相乘而非相加，
+不需要为每一种「毛色 × 花纹」组合单独出图。</p>
+
+<!-- ============ 2 ============ -->
+<h2 id="s2"><span class="no">02</span>不同遗传组合的狐狸设计</h2>
+<p>下面 10 只个体全部由<b>同一套部件 + 同一渲染管线</b>生成，没有任何一张是单独画的。
+每张卡片列出了它的基因型与最终表型。</p>
+
+<h3>2.1 基因位点表（初版，22 个位点）</h3>
+<table>
+  <thead><tr><th style="width:96px">位点</th><th>名称</th><th>等位基因与显隐性</th><th>遗传定律演示点</th></tr></thead>
+  <tbody>
+    <tr><td><b>A</b></td><td>主毛色</td><td>A⁺ 赤橙 &gt; Aˢ 霜灰 &gt; Aᵛ 幽夜紫 &gt; Aᵇ 墨黑</td><td>复等位基因 · 完全显性序列</td></tr>
+    <tr><td><b>D</b></td><td>稀释</td><td>D 正常 &gt; d 稀释（隐性）</td><td>隐性性状隔代重现</td></tr>
+    <tr><td><b>W</b></td><td>白化遮罩</td><td>W 有色 &gt; w 雪绒白（隐性 + <b>上位效应</b>）</td><td>上位效应：ww 掩盖 A/D/P 全部表型</td></tr>
+    <tr><td><b>P</b></td><td>花纹</td><td>Pᵀ 虎斑 &gt; Pˢ 斑点 &gt; Pᵍ 渐变 &gt; p 纯色</td><td>复等位 · 隐性纯合才表现纯色</td></tr>
+    <tr><td><b>L₁ L₂</b></td><td>毛长</td><td>两对累加，显性等位基因个数 → 0/1/2/3/4 五档</td><td><b>多基因数量性状</b>（连续分布）</td></tr>
+    <tr><td><b>K</b></td><td>卷曲</td><td>K 卷 &gt; k 直</td><td>单位点显性</td></tr>
+    <tr><td><b>Er</b></td><td>耳型</td><td>Erᴾ 尖 &gt; Erᴿ 圆 &gt; Erᶠ 垂（都/droop）</td><td>复等位几何性状</td></tr>
+    <tr><td><b>Ez</b></td><td>耳大小</td><td>EzEz 大 / Ezez 中 / ezez 小</td><td><b>不完全显性</b>（中间型）</td></tr>
+    <tr><td><b>Tp</b></td><td>耳尖色</td><td>Tpᴰ 深尖 &gt; Tpᵂ 白尖 &gt; tp 同色</td><td>复等位</td></tr>
+    <tr><td><b>In</b></td><td>内耳色</td><td>Inᴸ 浅 &gt; in 深</td><td>单位点显性</td></tr>
+    <tr><td><b>Tn₁ Tn₂</b></td><td>尾数</td><td>两对累加：尾数 = 1 + 显性等位基因数 → 1–5 尾</td><td><b>多基因数量性状</b></td></tr>
+    <tr><td><b>V</b></td><td>九尾</td><td>V 九尾（<b>罕见显性突变 + 上位</b>）&gt; v 正常</td><td>显性突变 · 上位叠加 APGL</td></tr>
+    <tr><td><b>Tl</b></td><td>尾长</td><td>TlTl 长 / Tltl 中 / tltl 短</td><td><b>不完全显性</b></td></tr>
+    <tr><td><b>Tf</b></td><td>蓬松度</td><td>Tf 蓬 &gt; tf 纤</td><td>单位点显性</td></tr>
+    <tr><td><b>Tw</b></td><td>尾尖色</td><td>Twᵂ 白尖 &gt; Twᴷ 黑尖 &gt; tw 同色</td><td>复等位</td></tr>
+    <tr><td><b>Ey</b></td><td>眼色</td><td>Eyᴳ 金 &gt; Eyᶜ 青 &gt; Eyᴮ 蓝 &gt; Eyⱽ 紫（突变）</td><td>复等位 · 与毛色位点相互独立</td></tr>
+    <tr><td><b>Ef</b></td><td>眼型</td><td>EfEf 圆 / Efef 杏 / efef 细</td><td><b>不完全显性</b></td></tr>
+    <tr><td><b>Ht</b></td><td>异色瞳</td><td>Ht 异色 &gt; ht 同色（<b>不完全外显，外显率可配置</b>）</td><td>外显率与表现度</td></tr>
+    <tr><td><b>G</b></td><td>发光</td><td>G 发光 &gt; g 无（稀有突变，<b>带环境代价</b>）</td><td>见 §6 适应度反转</td></tr>
+    <tr><td><b>St</b></td><td>星纹</td><td>St 星纹 &gt; st 无（稀有突变）</td><td>—</td></tr>
+    <tr><td><b>Ha</b></td><td>光环</td><td>Ha 光环 &gt; ha 无（稀有突变，高维持成本）</td><td>—</td></tr>
+    <tr><td><b>Fl</b></td><td>焰尾</td><td>Fl 焰尾 &gt; fl 普通（稀有突变，<b>上位覆盖 Tw 尾尖色</b>）</td><td>上位效应</td></tr>
+  </tbody>
+</table>
+<div class="note warn">上表默认<b>各位点独立分配</b>（互不连锁）。是否引入<b>基因连锁</b>（同一条染色体上的位点倾向共同遗传）会直接影响实际分离比，属于待确认项（见 §13 问题 8）。</div>
+
+<h3>2.2 毛色换算规则</h3>
+<table>
+  <thead><tr><th>A 位点</th><th>+ D_ （正常）</th><th>+ dd （稀释）</th><th>+ ww （上位）</th></tr></thead>
+  <tbody>
+    <tr><td>A⁺_ 赤橙</td><td>赤橙</td><td>奶油金</td><td>雪绒白</td></tr>
+    <tr><td>Aˢ_ 霜灰</td><td>霜灰</td><td>淡银蓝</td><td>雪绒白</td></tr>
+    <tr><td>Aᵛ_ 幽夜紫</td><td>幽夜紫</td><td>淡雾紫</td><td>雪绒白</td></tr>
+    <tr><td>AᵇAᵇ 墨黑</td><td>墨黑</td><td>雾霭蓝</td><td>雪绒白</td></tr>
+  </tbody>
+</table>
+<div class="note info">白化个体（ww）上，<b>花纹位点仍然会以极淡的色差显现</b>——这是一条刻意保留的设计：
+它让"上位基因掩盖表型，但基因型还在"这件事肉眼可见，而不是只写在数据表里。</div>
+
+<h3>2.3 常见表型 6 例</h3>
+<div id="commonGrid" class="grid g3"></div>
+
+<h3>2.4 稀有 / 传说的个体 3 例</h3>
+<div id="rareGrid" class="grid g3"></div>
+
+<h3>2.5 关键教学演示：相同外观 ≠ 相同基因型</h3>
+<div class="grid g2">
+  <div class="card" style="text-align:center"><div id="twinA"></div>
+    <div class="gen" style="text-align:left"><b>赤穗 FX-0001</b><br>A：A⁺/Aˢ　D：D/d　W：W/w</div></div>
+  <div class="card" style="text-align:center"><div id="twinB"></div>
+    <div class="gen" style="text-align:left"><b>丹砂 FX-0002</b><br>A：A⁺/A⁺　D：D/D　W：W/W</div></div>
+</div>
+<div class="note">两只都是 <b>赤橙 + 正常浓度 + 有色</b>，<b>渲染结果完全一致</b>。但让它们分别与同一只「霜刃 (Aˢ/Aᵇ)」交配：
+<ul style="margin:6px 0 0">
+<li>赤穗 × 霜刃 → 子代 赤橙 50% / 霜灰 50%（Aˢ 已经藏在她身上）</li>
+<li>丹砂 × 霜刃 → 子代 赤橙 100%（尽管全部携带 Aˢ）</li>
+</ul>
+这正是<b>必须区分基因型与表型</b>的原因，也直接决定了档案界面要同时显示两者。</div>
+
+<!-- ============ 3 ============ -->
+<h2 id="s3"><span class="no">03</span>多只狐狸同时出现在桌面的效果</h2>
+<div class="desk" id="desk">
+  <div class="iconrow"><div class="ico"></div><div class="ico"></div><div class="ico"></div><div class="ico"></div></div>
+  <div class="win"><div class="bar"></div></div>
+  <div class="win2"><div class="bar"></div></div>
+  <div class="task"><div class="st" style="width:26px;height:26px;border-radius:5px;background:#5B7092"></div>
+    <div class="it"></div><div class="it"></div><div class="it"></div></div>
+  <div class="legend">
+    <b>层级</b>：全部 Topmost，位于所有窗口之上<br>
+    <b>点击</b>：默认<b>穿透</b>（不拦截任何鼠标事件），按住 Alt 或开启「交互模式」后才接收点击<br>
+    <b>边界</b>：不能越过任务栏；多显示器时认定光标所在屏为主栖息地<br>
+    <b>遮挡</b>：狐狸之间按 Z 序叠放，互相不遮挡超过 40% 轮廓
+  </div>
+</div>
+<table>
+  <thead><tr><th>要素</th><th>设计</th></tr></thead>
+  <tbody>
+    <tr><td>窗口模型</td><td>每只狐狸 = 一个无边框 / 分层 / 透明异形窗口（WS_EX_LAYERED + WS_EX_TRANSPARENT）</td></tr>
+    <tr><td>输入穿透</td><td>默认穿透 → 不影响其他窗口操作；拖拽与右键菜单走独立的「交互模式」开关（快捷键 + 托盘）</td></tr>
+    <tr><td>Z 序</td><td>全部 Topmost；狐狸之间按"最近活跃度"排序，避免互相永久压住</td></tr>
+    <tr><td>间距</td><td>个体间保持最小 0.6 倍身宽，自动避让，避免重叠成一团</td></tr>
+    <tr><td>幼崽</td><td>出生后跟随母亲活动，独立后才单独建窗口</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 4 ============ -->
+<h2 id="s4"><span class="no">04</span>狐狸动作设计</h2>
+<p>姿态由<b>同一套部件 + 姿态参数</b>驱动，不额外绘制序列帧。
+下表列出 6 个已出图的基准姿态，以及其余行为的规格参数。</p>
+<div id="poseGrid" class="grid g3"></div>
+
+<table>
+  <thead><tr><th style="width:110px">动作</th><th>关键参数</th><th>循环时长</th><th>触发条件</th></tr></thead>
+  <tbody>
+    <tr><td>站立 / 待机</td><td>呼吸（躯干 ±2% 缩放）、眨眼（随机 3–6 s 一次）、尾摆 ±6°</td><td>2.4 s</td><td>默认状态</td></tr>
+    <tr><td>行走 / 奔跑</td><td>整体倾斜 −5° / −9°，躯干上下 2 px 起伏，尾摆 ±14° / ±22°，步频 1.4 / 2.6 Hz</td><td>0.7 s</td><td>自主游荡、追配偶</td></tr>
+    <tr><td>坐</td><td>躯干压缩 24%，后肢不外露，尾收拢至身侧</td><td>3.0 s</td><td>长时间静止</td></tr>
+    <tr><td>睡眠</td><td>躯干压至 71% 高，眼闭合线，尾环绕自身</td><td>5.0 s</td><td>夜间 / 体力低</td></tr>
+    <tr><td>进食</td><td>头部下探 9 px 并前倾，咀嚼 4 Hz，食物模型逐帧缩小</td><td>1.2 s</td><td>喂食 / 找到资源</td></tr>
+    <tr><td>梳理毛发</td><td>头部转至侧后方，前肢小幅点动</td><td>2.0 s</td><td>清洁度高时随机</td></tr>
+    <tr><td>求偶展示</td><td>尾全幅展开 +16%，头上抬 4 px，叠加星星粒子</td><td>1.6 s</td><td>附近有可育异性</td></tr>
+    <tr><td>幼崽</td><td>整体缩放 55%，头部占比 1:1.35，步频更高、易摔倒</td><td>—</td><td>出生至成年</td></tr>
+    <tr><td>衰老</td><td>毛色降低饱和度 12%，步频 −40%，出现更多坐下与睡眠</td><td>—</td><td>进入老年阶段</td></tr>
+    <tr><td>濒死 / 死亡</td><td>卧倒，尾静止，透明度渐变，<b>不做惊悚表现</b></td><td>—</td><td>健康归零 / 寿命终点</td></tr>
+  </tbody>
+</table>
+<div class="note">所有动作共用同一套<b> Transform 参数动画</b>（旋转 / 位移 / 缩放）+ 少量形状替换，因此<b>新增姿态不需要新美术资源</b>，
+这对"个人长期迭代"至关重要。</div>
+
+<!-- ============ 5 ============ -->
+<h2 id="s5"><span class="no">05</span>繁殖：人工选育与自主繁殖 — 界面草图</h2>
+
+<div class="grid g2">
+  <div class="ui">
+    <div class="ttl"><span>人工选育 · 配对台</span><span class="chip b-info">估算仅对用户可见</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">① 选择亲代（拖动狐狸到此处，或在桌面上右键「送入配对台」）</div>
+        <div class="row">
+          <div id="pA" style="text-align:center"></div>
+          <div style="flex:0 0 auto;align-self:center;font-size:22px;color:var(--tx3)">×</div>
+          <div id="pB" style="text-align:center"></div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="lb">② 单基因座分离比预估（A 位点）</div>
+        <div class="punnett">
+          <div class="hd"></div><div class="hd">A⁺</div><div class="hd">Aˢ</div>
+          <div class="hd">A⁺</div><div>A⁺A⁺<br><small>赤橙</small></div><div>A⁺Aˢ<br><small>赤橙</small></div>
+          <div class="hd">Aˢ</div><div>A⁺Aˢ<br><small>赤橙</small></div><div>AˢAˢ<br><small>霜灰</small></div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="lb">③ 全位点联合表型概率（由 genotype 笛卡尔积计多塔）</div>
+        <div class="probrow"><span>赤橙 + 虎斑</span><span class="pb"><span class="pf" style="width:56%;background:#C2612B"></span></span><span class="pv">56.3%</span></div>
+        <div class="probrow"><span>赤橙 + 纯色</span><span class="pb"><span class="pf" style="width:18%;background:#E08A3C"></span></span><span class="pv">18.8%</span></div>
+        <div class="probrow"><span>霜灰 + 虎斑</span><span class="pb"><span class="pf" style="width:14%;background:#9BA5B0"></span></span><span class="pv">14.1%</span></div>
+        <div class="probrow"><span>其余组合</span><span class="pb"><span class="pf" style="width:11%;background:#D3D7DE"></span></span><span class="pv">10.8%</span></div>
+        <div class="probrow"><span>发生突变（每仔判定，可配置，默认 3.0%）</span><span class="pb"><span class="pf" style="width:3%;background:#534AB7"></span></span><span class="pv">3.0%</span></div>
+      </div>
+      <div class="tagline">
+        <span class="chip b-warn">注意：预估不改变结果</span>
+        <span class="chip">仍按实际配子随机组合</span>
+        <span class="chip">每窝仔数 3–6（Q9C；幼崽期夭折率 25–35%）</span>
+        <span class="chip">ρ ≥ 1 时本按钮置灰</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <span class="btn pri">确认繁殖</span><span class="btn">重新洗牌推荐配对</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui">
+    <div class="ttl"><span>自主繁殖 · 规则设置</span><span class="chip" id="autostate">运行中</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">开关</div>
+        <div class="sw"><span class="tg on"><i></i></span><div>允许狐狸自主寻找配偶<div><small>关闭后仅保留人工选育路径</small></div></div></div>
+        <div class="sw"><span class="tg on"><i></i></span><div>允许幼崽自动成长<div><small>关闭后幼崽停在幼年，需手动推进</small></div></div></div>
+        <div class="sw"><span class="tg"><i></i></span><div>强制一夫一妻制<div><small>关闭则允许多配偶，加速基因扩散</small></div></div></div>
+      </div>
+      <div class="field">
+        <div class="lb">进入繁殖的门槛</div>
+        <table style="margin:0">
+          <tbody>
+            <tr><td>最低繁殖年龄</td><td>成年后 12 游戏小时</td></tr>
+            <tr><td>最低健康值</td><td>≥ 65 / 100（可拖动调整）</td></tr>
+            <tr><td>最低饱食度</td><td>≥ 50 / 100</td></tr>
+            <tr><td>繁殖间隔</td><td>同一雌性 ≥ 72 游戏小时</td></tr>
+            <tr><td>妊娠耗时</td><td>48 游戏小时（加速模式按比例缩短）</td></tr>
+            <tr><td>亲缘回避</td><td>禁止直系亲子 / 全同胞交配<b>（见 §13 问题 6）</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="field">
+        <div class="lb">用户偏好加权（不绕过遗传规律）</div>
+        <div class="sw"><span class="tg on"><i></i></span><div>重点培育对象优先参与繁殖<div><small>作用于"谁获得交配机会"，不作用于配子概率</small></div></div></div>
+        <div class="sw"><span class="tg"><i></i></span><div>自动配对时对偏好基因加权打分<div><small>仍按孟德尔产生配子，只是挑选亲代时被加分</small></div></div></div>
+      </div>
+      <div class="note warn" style="margin:8px 0 0">红线：<b>人工选育只能改变"谁和谁生"以及"每窝多少仔"，绝不能直接指定后代基因型。</b>
+      提高某基因频率的唯一途径是反复选育 + 遗传漂变。<br>
+      另外按 Q16 的选择：<b>人工繁殖与自主繁殖一样受拥挤度约束</b>——ρ ≥ 1 时配对台按钮置灰并显示原因，
+      不允许用户手动绕过密度机制，否则 §09 整章就形同虚设。</div>
+    </div>
+  </div>
+</div>
+
+<h3>5.4 近亲交配检测（Q6B + 你的补充：50% 放弃本次交配）</h3>
+
+<p>你选的是「不禁止近交，但近交后代隐性缺陷概率上升」，并追加了一条：<b>触发交配前先检测，
+若为近交则有 50% 概率放弃本次交配</b>。这条落地如下。</p>
+
+<div class="card">
+  <div style="font-family:Consolas,'Courier New',monospace;font-size:12.5px;line-height:1.95">
+    两只个体产生交配意图<br>
+    → 查谱系计算<b>亲缘系数 r</b>（纯走家谱表，已死亡 / 已迁徙的祖先同样参与计算）<br>
+    → r &lt; 阈值（默认 0.125）　⇒ 正常交配<br>
+    → r ≥ 阈值　　　　　　　　⇒ 掷一次硬币：<br>
+    　　　├ 50% ⇒ <b>放弃本次交配</b>（表现为"求偶被拒绝"，双方掉头走开，短时间内不再重试）<br>
+    　　　└ 50% ⇒ 正常交配，但<b>后代隐性缺陷概率上升</b>
+  </div>
+</div>
+
+<table>
+  <thead><tr><th style="width:80px">r</th><th style="width:150px">典型关系</th><th style="width:100px">处置</th><th>若发生交配</th></tr></thead>
+  <tbody>
+    <tr><td>0.5</td><td>亲子 / 全同胞</td><td>50% 放弃</td><td>隐性缺陷概率 +25%</td></tr>
+    <tr><td>0.25</td><td>半同胞 / 祖孙 / 双重表亲</td><td>50% 放弃</td><td>+18%</td></tr>
+    <tr style="background:var(--accent-bg)"><td><b>0.125</b></td><td>表亲 / 曾祖孙（<b>默认阈值</b>）</td><td>50% 放弃</td><td>+10%</td></tr>
+    <tr><td>0.0625</td><td>二代堂表亲</td><td>不触发放弃</td><td>+4%</td></tr>
+    <tr><td>&lt; 0.0625</td><td>基本无亲缘</td><td>正常</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<div class="grid g2">
+  <div class="ui">
+    <div class="ttl"><span>配对台上的亲缘提示</span><span class="chip b-warn">近交风险：中</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">本次配对</div>
+        <table style="margin:0">
+          <tbody>
+            <tr><td style="width:80px">亲缘系数</td><td><b>r = 0.125</b>（曾祖孙关系）</td></tr>
+            <tr><td>是否近交</td><td><b style="color:var(--warn)">是</b> → 将掷一次硬币</td></tr>
+            <tr><td>放弃概率</td><td>50%（表现为"求偶被拒绝"）</td></tr>
+            <tr><td>若成功</td><td>后代隐性缺陷概率 +10%</td></tr>
+            <tr><td>共同祖先</td><td>FX-0007 ♂（第 3 代）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note" style="margin:0">这条提示<b>必须在用户点确认之前就显示</b>，
+      不能让玩家在不知情的情况下配出一窝病崽。</div>
+    </div>
+  </div>
+  <div class="card">
+    <h4 style="margin:0 0 6px">隐性缺陷的表现</h4>
+    <table style="margin:0">
+      <tbody>
+        <tr><td style="width:96px">健康上限</td><td>−10% ~ −25%</td></tr>
+        <tr><td>寿命</td><td>−15%</td></tr>
+        <tr><td>繁殖力</td><td>−20%</td></tr>
+        <tr><td>可见外观</td><td>体型偏小、尾巴形态异常、眼睛无光泽（<b>让玩家一眼看得出来</b>）</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:10px 0 0"><small>缺陷不是"当场死掉"，而是降低竞争力：<b>更容易被疾病淘汰、更难抢到配偶</b>，
+    于是这条血统会自己慢慢退出种群——这才是自然选择该有的样子。<br>
+    <b>§17 的育种供体同样参与 r 计算</b>，防止反复用同一始祖近交刷血统。</small></p>
+  </div>
+</div>
+
+<!-- ============ 6 ============ -->
+<h2 id="s6"><span class="no">06</span>个体基因档案界面草图</h2>
+<div class="ui">
+  <div class="ttl"><span>个体档案 — 赤穗</span><span class="chip mono">ID：FX-0001</span></div>
+  <div class="bd">
+    <div class="row" style="align-items:stretch">
+      <div style="flex:0 0 190px;text-align:center" id="profileFox"></div>
+      <div style="flex:1">
+        <div class="row">
+          <div>
+            <div class="lb" style="font-size:11px;color:var(--tx3)">基础信息</div>
+            <table style="margin:0">
+              <tbody>
+                <tr><td style="width:88px">名称</td><td>赤穗　<span class="chip">♀</span><span class="chip b-ok">已锁定</span></td></tr>
+                <tr><td>父母</td><td>FX-0000始祖 ♂ × FX-0000始祖 ♀</td></tr>
+                <tr><td>出生</td><td>第 12 代 · 已存活 41 游戏天</td></tr>
+                <tr><td>后代</td><td>7 只（存活 5）</td></tr>
+                <tr><td>生存状态</td><td>存活 · 成年 · 妊娠中（剩余 19 小时）</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="lb" style="font-size:11px;color:var(--tx3)">生理状态</div>
+            <small>健康</small><div class="bar-wrap"><div class="bar" style="width:88%;background:#639922"></div></div>
+            <small>饱食</small><div class="bar-wrap"><div class="bar" style="width:64%;background:#BA7517"></div></div>
+            <small>体力</small><div class="bar-wrap"><div class="bar" style="width:72%;background:#378ADD"></div></div>
+            <small>当前适应度估算</small><div class="bar-wrap"><div class="bar" style="width:54%;background:#7F77DD"></div></div>
+            <small style="display:block;margin-top:6px">适应度构成：毛色 × 桌面亮度 −8% ｜尾数 +12% 求偶 / −6% 代谢 ｜长毛 × 季节 +9%</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h4 style="margin-top:16px">基因型 / 表型对照</h4>
+    <div class="row">
+      <div class="loci" id="lociA"></div>
+      <div class="loci" id="lociB"></div>
+    </div>
+    <h4 style="margin-top:16px">遗传谱系（三代摘要 · 完整树见 §10）</h4>
+    <div class="card" style="margin:0;background:#FBFCFD">
+      <table style="margin:0;font-size:12px">
+        <tbody>
+          <tr><th style="width:70px">祖父母</th><td>FX-0000A ♂（A⁺/Aᵇ Dd）　×　FX-0000B ♀（Aˢ/Aˢ DD）</td></tr>
+          <tr><th>父母</th><td>♂ FX-0000C（A⁺/Aˢ）　→　<b>赤穗 FX-0001</b>　←　♀ FX-0000D（Aˢ/Aˢ）</td></tr>
+          <tr><th>后代</th><td>FX-0018（赤橙）· FX-0019 ♂（雾霭蓝，dd 重组）· FX-0031（幽夜紫，<b>Aᵛ 突变</b>）… 共 7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <span class="btn">☆ 收藏</span><span class="btn">🔒 锁定（免于自动淘汰）</span>
+      <span class="btn">设为重点培育对象</span><span class="btn pri">查看完整家谱 ▸</span>
+      <span class="btn">送入配对台</span><span class="btn">退役</span><span class="btn">导出基因</span><span class="btn dis">重命名</span>
+    </div>
+    <small style="display:block;margin-top:8px">收藏 = 情感标记，无系统后果；锁定 = 硬件级保护，自动淘汰不可选中；
+    退役 = 移入纪念馆，保留谱系链；彻底删除需二次确认且会打断家谱（详见 §11）。</small>
+  </div>
+</div>
+
+<!-- ============ 7 ============ -->
+<h2 id="s7"><span class="no">07</span>种群数量与资源控制 — 界面草图</h2>
+<div class="grid g2">
+  <div class="ui">
+    <div class="ttl"><span>种群数量</span><span><span class="chip">当前 12 / 上限 20</span> <span class="chip b-info">ρ 0.60 · 繁殖欲望 78%</span></span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">最大同时显示数量</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="btn">5</span><span class="btn">10</span><span class="btn pri">20</span><span class="btn">50</span><span class="btn">自定义…</span>
+        </div>
+        <div class="bar-wrap" style="margin-top:12px"><div class="bar" style="width:60%;background:#639922"></div></div>
+        <small style="color:var(--warn)">预估占用：CPU ~4% ｜ 内存 ~86 MB ｜ 渲染批次 12</small>
+      </div>
+      <div class="field">
+        <div class="lb">① 拥挤度反馈（软抑制，默认开启 · 详见 §09）</div>
+        <table style="margin:0">
+          <tbody>
+            <tr><td style="width:26px">◉</td><td><b>繁殖欲望随拥挤度连续衰减</b>
+              <div><small>L = 1 − ρᵏ，ρ = N<sub>eff</sub> / 上限，默认 k = 3。种群越接近上限，配对意愿越接近 0，无需硬性开关</small></div></td></tr>
+            <tr><td style="width:26px">○</td><td>关闭拥挤度反馈<div><small>回到「不到上限就全速繁殖」，适合只想观察遗传、不想被生态约束的用户</small></div></td></tr>
+            <tr><td style="width:26px">○</td><td>仅在 ≤ 某比例时才开始衰减<div><small>例如 ρ &lt; 0.6 完全不抑制，之后才开始下降（更宽松）</small></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="field">
+        <div class="lb">② ρ ≥ 100% 时的硬闸门（单选，与上面的软抑制叠加）</div>
+        <table style="margin:0">
+          <tbody>
+            <tr><td style="width:26px">◉</td><td><b>完全停止新配对（默认）</b><div><small>已完成受精的妊娠继续到分娩，不流产；数量自然回落后自动恢复</small></div></td></tr>
+            <tr><td style="width:26px">○</td><td>仅允许补位<div><small>只有死亡腾出名额后才可能新增，进化压力最大，种群波动最明显</small></div></td></tr>
+            <tr><td style="width:26px">○</td><td>自动「退役」综合评分最低者<div><small>需手动勾选；锁定 / 收藏 / 重点培育个体一律豁免；被选中者进入<b>纪念馆</b>（§11）而非删除</small></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warn" style="margin:8px 0 0">硬规则：<b>永远不因为达到数量上限而直接删除个体。</b>
+      上限只作用于「是否产生新生命」，不作用于「已有个体是否死亡」。两者是独立机制——
+      这条在 v0.2 里被进一步强化：拥挤度只压低<b>繁殖欲望</b>，不额外增加死亡率。<br>
+      <b>为什么区分两层：</b>软抑制让接近上限时种群自然放缓（曲线平滑、观感自然），
+      硬闸门负责保证「绝不超编」这件事在任何情况下都成立。只有软抑制的话，多胎妊娠仍可能一次性冲破上限。</div>
+    </div>
+  </div>
+
+  <div class="ui">
+    <div class="ttl"><span>自动淘汰评估维度（仅在显式开启时生效）</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">评分权重（可拖动，总和恒为 100%）</div>
+        <div class="probrow"><span>健康状况</span><span class="pb"><span class="pf" style="width:30%;background:#639922"></span></span><span class="pv">30%</span></div>
+        <div class="probrow"><span>年龄（越老越高风险）</span><span class="pb"><span class="pf" style="width:22%;background:#BA7517"></span></span><span class="pv">22%</span></div>
+        <div class="probrow"><span>环境适应度</span><span class="pb"><span class="pf" style="width:24%;background:#378ADD"></span></span><span class="pv">24%</span></div>
+        <div class="probrow"><span>繁殖贡献（后代存活数）</span><span class="pb"><span class="pf" style="width:14%;background:#7F77DD"></span></span><span class="pv">14%</span></div>
+        <div class="probrow"><span>基因稀有度<b>（默认 0，见下）</b></span><span class="pb"><span class="pf" style="width:10%;background:#D4537E"></span></span><span class="pv">10%</span></div>
+      </div>
+      <div class="note">「基因稀有度」可以<b>提高</b>保护优先级（保住罕见血统），也可以<b>设成 0</b> 表示完全不考虑。
+      默认建议设为 <b>0</b>——因为需求里明确要求「不要让稀有 = 优质」。</div>
+      <div class="field">
+        <div class="lb">性能自适应（LOD）</div>
+        <table style="margin:0">
+          <tbody>
+            <tr><td>1–15 只</td><td>全特效：花纹 / 发光 / 星纹 / 物理尾摆</td></tr>
+            <tr><td>16–30 只</td><td>关闭发光与星纹粒子，尾巴改用简化二次贝塞尔</td></tr>
+            <tr><td>31–50 只</td><td>进一步关闭花纹层，行为 tick 降到 4 Hz，刷新率降到 20 fps</td></tr>
+            <tr><td>&gt; 50 只</td><td>允许但会弹出性能警告；AI 与渲染解耦，后台个体只跑逻辑不出渲染</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 8 ============ -->
+<h2 id="s8"><span class="no">08</span>基因突变与稀有个体的视觉表现</h2>
+
+<h3>8.0 选择压力构成与死亡原因（按 v0.3 决策重排）</h3>
+<p>你定了两件直接改变自然选择结构的事：<b>① 饥饿不会致死（终点是休眠）；② Q9C 幼崽期夭折率较高。</b>
+所以原来的"压力清单"要重排一遍。</p>
+<table>
+  <thead><tr><th style="width:150px">压力</th><th style="width:80px">是否致死</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>饥饿</td><td><b style="color:var(--ok)">不致死</b></td><td>饱食↓ → 低活跃 → 休眠。见 §15.4</td></tr>
+    <tr><td>幼崽期夭折</td><td><b style="color:var(--accent)">致死</b></td><td>25–35%，主要发生在出生到成年之间；受母体健康、食物丰度、季节影响。<b>这是种群最大的输出口</b></td></tr>
+    <tr><td>疾病</td><td><b style="color:var(--accent)">致死</b></td><td>由低健康、先天缺陷、恶劣环境诱发；健康归零则死亡</td></tr>
+    <tr><td>衰老</td><td><b style="color:var(--accent)">致死</b></td><td>到达寿命上限自然死亡</td></tr>
+    <tr><td>繁殖竞争</td><td>不致死</td><td>抢不到配偶 = 基因不会被传递（不通过死亡也能完成淘汰）</td></tr>
+    <tr><td>迁徙（§16）</td><td>不致死</td><td>不适应 / 找不到配偶的个体主动离桌</td></tr>
+  </tbody>
+</table>
+<div class="note ok"><b>一个值得注意的副作用，我认为是好事：</b>休眠期间<b>生长与衰老停止</b>，
+所以长期饥饿的狐狸反而"活得更久"——但它同时<b>永久退出繁殖市场</b>。<br>
+结果就是：<b>饿肚子的个体不会死，但它的基因照样在种群里沉下去。</b>
+既满足了你"不会被饿死"的要求，又没有削弱自然选择的效力，
+而且这个现象本身（能量保存策略）在生物学上也是站得住的。</div>
+
+<div id="fitnessHost"></div>
+
+<h3>8.1 突变触发流程</h3>
+<table>
+  <thead><tr><th>环节</th><th>设计</th></tr></thead>
+  <tbody>
+    <tr><td>判定时机</td><td><b>每只幼崽独立判定一次</b>（v0.5 定稿：由「每窝一次」改为「每仔一次」——更符合生物学，且同窝可出现突变兄妹）</td></tr>
+    <tr><td>基础概率</td><td>默认 <b>3.0%</b>（每仔），用户可配置 0–10%；不再必然发生</td></tr>
+    <tr><td>命中后</td><td>按权重抽取一个位点 → 在该位点的等位基因池里随机替换为一个等位基因（含 8.1.1 的突变专属等位）</td></tr>
+    <tr><td>影响范围</td><td>只作用于<b>这只幼崽本人</b>，同窝兄弟姐妹各自独立判定</td></tr>
+    <tr><td>可遗传性</td><td>突变写入该个体的生殖细胞基因型 → 可通过繁殖稳定传给后代</td></tr>
+    <tr><td>效应分类</td><td>中性（约 60%）/ 有利（约 20%，条件性）/ 不利（约 20%）——由适应度表决定，不由稀有度决定</td></tr>
+  </tbody>
+</table>
+
+<h3>8.1.1 突变专属等位池（2026-11-01 拍板：美术追加素材全部挂突变）</h3>
+<p>美术交付包 <code>Fox_Art v1.2</code> 中有若干素材在 22 位点里<b>没有对应等位</b>（樱粉/薄荷/曜金、
+红瞳/绿瞳、星耳/星瞳、渐变纹/面纹）。用户拍板：<b>不新增主遗传位点，全部挂到突变池</b>，
+作为「突变专属等位」——初始频率为 0，只能经突变产生，产生后正常参与遗传。</p>
+<table>
+  <thead><tr><th style="width:180px">素材</th><th style="width:120px">落法</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>毛色 樱粉 / 薄荷 / 曜金</td><td>A 位点专属等位</td><td>新增 A<sup>sk</sup> / A<sup>mt</sup> / A<sup>og</sup>，插入显性序列（樱粉、薄荷置于 As 与 Av 之间；曜金与 Ab 并列罕见）；创始池与引入池频率 0</td></tr>
+    <tr><td>眼色 红瞳 / 绿瞳</td><td>Ey 位点专属等位</td><td>新增 Ey<sup>R</sup> / Ey<sup>G2</sup>，置于显性序列末尾（低于紫瞳）；频率 0</td></tr>
+    <tr><td>星耳 / 星瞳</td><td><b>并入 St 多效表达</b></td><td>St 携带者同时解锁<b>星纹 + 星耳 + 星瞳</b>。St 本身就是稀有突变等位，与「挂突变」一致，不单独新增位点</td></tr>
+    <tr><td>渐变纹 / 面部纹</td><td>P 位点专属等位</td><td>新增 P<sup>gr</sup> / P<sup>fm</sup>；频率 0</td></tr>
+    <tr><td>卷尾 <code>tail_curl</code></td><td><b>并入 K 多效表达</b></td><td>K=卷毛时尾巴自动切卷尾（不进突变池，走基因多效）；无新增位点</td></tr>
+    <tr><td>青瞳 <code>eye_cyan</code></td><td><b>直接映射</b></td><td>2026-11-01 更正：EyC 是<b>青瞳</b>而非铜瞳（§2.1「Eyᴳ 金 &gt; Eyᶜ 青 &gt; Eyᴮ 蓝 &gt; Eyⱽ 紫」），v1.2 素材已覆盖，<b>不需补做</b></td></tr>
+  </tbody>
+</table>
+<div class="note ok"><b>共性规则：</b>① 创始池与野外引入池均不出现（频率 0）；② 只能由 8.1 突变流程产生；
+③ 一旦产生即正常参与孟德尔遗传，可稳定传代；④ 档案与面板中永久标注
+<span class="chip b-warn">突变起源</span> 徽标；⑤ 稀有度按 §8.2 分级，<b>不等同于适应度加成</b>。</div>
+
+<h3>8.2 稀有度分级（仅用于展示与图鉴，<b>不等于适应度</b>）</h3>
+<table>
+  <thead><tr><th style="width:110px">等级</th><th>判定</th><th>视觉处理</th></tr></thead>
+  <tbody>
+    <tr><td><span class="chip">常见</span></td><td>种群内出现率 &gt; 25%</td><td>无特殊处理</td></tr>
+    <tr><td><span class="chip b-ok">少见</span></td><td>5% – 25%</td><td>档案 ID 边框为浅绿</td></tr>
+    <tr><td><span class="chip b-info">稀有</span></td><td>1% – 5%</td><td>档案加 badges + 首次出现时右下角提示</td></tr>
+    <tr><td><span class="chip b-rare">史诗</span></td><td>0.1% – 1%</td><td>个体周围常驻极淡光晕 + 图鉴解锁动画</td></tr>
+    <tr><td><span class="chip b-warn">传说</span></td><td>&lt; 0.1%</td><td>专属出生演出 + 终身记录「诞生时刻」到族谱</td></tr>
+  </tbody>
+</table>
+
+<h3>8.3 特殊性状的视觉签名</h3>
+<div id="mutationGrid" class="grid g4"></div>
+
+<h3>8.4 突变发生的那一刻 — 表现设计</h3>
+<div class="grid g2">
+  <div class="card" style="text-align:center">
+    <div id="mutBefore" style="display:inline-block"></div>
+    <p style="margin:6px 0 0"><small>亲代预期组合（正常）</small></p>
+  </div>
+  <div class="card" style="text-align:center;border-color:#CECBF6">
+    <div id="mutAfter" style="display:inline-block"></div>
+    <p style="margin:6px 0 0"><small>实际产出：位点 Ey 发生突变 Eyᶜ → Eyⱽ</small></p>
+  </div>
+</div>
+<table>
+  <thead><tr><th style="width:120px">阶段</th><th>表现</th></tr></thead>
+  <tbody>
+    <tr><td>出生瞬间</td><td>幼崽出现后停留 1.2 s，周围粒子按稀有度等级递增；史诗以上追加一次缓慢缩放</td></tr>
+    <tr><td>首次察觉</td><td>右下角弹出卡片「发现新性状：幽夜紫」＋ 该位点的高亮标记</td></tr>
+    <tr><td>档案标记</td><td>突变位点旁永久标注 <span class="chip b-warn">突变来源 FX-0012</span>，可点回溯源</td></tr>
+    <tr><td>后续</td><td>该性状进入图鉴；下一次再出现时不再演出，避免打扰</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 9 ============ -->
+<h2 id="s9"><span class="no">09</span>密度制约：拥挤度反馈的繁殖欲望</h2>
+
+<p><b>需求原文：</b>「当族群数量越靠近阈值，族群的繁育欲望越接近 0（因为生存空间被挤压）」。</p>
+
+<p>这条要求把 v0.1 里的<b>离散规则</b>（到 20 只 → 啪地一下停止繁殖）换成一条<b>连续函数</b>：
+不是"满了才停"，而是"越挤越不想生，到达上限时欲望恰好归零"。
+这里的好处不只是观感自然——它让<b>上限以下的每一次密度上升都有意义</b>，
+种群增长会自动呈现"S 形趋于平缓"的逻辑斯蒂曲线，而不是"匀速涨到顶再断崖式停住"。</p>
+
+<h3>9.1 公式</h3>
+<div class="card">
+  <div style="font-family:Consolas,'Courier New',monospace;font-size:15px;text-align:center;padding:4px 0 10px;line-height:2">
+    ρ = N<sub>eff</sub> / N<sub>max</sub><br>
+    <b style="color:var(--accent)">L(ρ) = clamp(1 − ρ<sup>k</sup>, 0, 1)</b>
+  </div>
+  <table style="margin:0">
+    <thead><tr><th style="width:88px">符号</th><th>含义</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><b>N<sub>max</sub></b></td><td>用户设置的上限</td><td>可在运行时调整；调小时见 §9.6 边界处理</td></tr>
+      <tr><td><b>N<sub>eff</sub></b></td><td>有效种群数</td><td>= 存活个体数 <b>+ 妊娠中胎儿的预占名额</b>。为什么必须加胎儿：否则 5 只同时怀孕会在同一天生出十来只，一次性冲破上限。预留名额会让 ρ 提前升高、欲望提前被压低</td></tr>
+      <tr><td><b>ρ</b></td><td>拥挤度</td><td>0（空荡）~ 1（挤满）；超过 1 一律按 1 处理</td></tr>
+      <tr><td><b>L</b></td><td>繁殖欲望乘子</td><td>0 ~ 1，乘在配对判定公式外层（见 §9.2）</td></tr>
+      <tr><td><b>k</b></td><td>曲线陡峭度</td><td>默认 <b>3</b>，可在 1–8 调节。k 越大，前期越无感、越接近阈值才急刹</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="densityChart" class="fig"></div>
+
+<table>
+  <thead><tr><th>ρ</th><th>0</th><th>0.2</th><th>0.4</th><th>0.6</th><th>0.8</th><th>0.9</th><th>0.95</th><th>1.0</th></tr></thead>
+  <tbody>
+    <tr><td>k = 1（线性）</td><td>100%</td><td>80%</td><td>60%</td><td>40%</td><td>20%</td><td>10%</td><td>5%</td><td>0%</td></tr>
+    <tr><td>k = 2</td><td>100%</td><td>96%</td><td>84%</td><td>64%</td><td>36%</td><td>19%</td><td>10%</td><td>0%</td></tr>
+    <tr style="background:var(--accent-bg)"><td><b>k = 3（推荐）</b></td><td>100%</td><td>99%</td><td>94%</td><td>78%</td><td><b>49%</b></td><td><b>27%</b></td><td>14%</td><td>0%</td></tr>
+    <tr><td>k = 5</td><td>100%</td><td>100%</td><td>99%</td><td>90%</td><td>67%</td><td>41%</td><td>23%</td><td>0%</td></tr>
+    <tr><td>k = 8</td><td>100%</td><td>100%</td><td>100%</td><td>97%</td><td>83%</td><td>57%</td><td>34%</td><td>0%</td></tr>
+  </tbody>
+</table>
+
+<div class="note ok"><b>为什么默认推荐 k = 3：</b>ρ &lt; 0.4 时几乎不抑制（99%~94%），正常规模的种群完全不受惩罚；
+ρ = 0.6 起明显感觉到变慢；ρ = 0.9 只剩 27%；到上限精确归零。
+既不惩罚正常玩法，又保证"快要挤满"这件事用户能明确感知到，不需要去看数字。</div>
+
+<table>
+  <thead><tr><th style="width:70px">k</th><th>手感</th><th>适合谁</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>从一开始就有持续压力，增长全程偏慢</td><td>想要"资源永远紧张"的生存向玩法</td></tr>
+    <tr><td>2</td><td>轻度</td><td>大上限（50 只）、想快速迭代基因</td></tr>
+    <tr><td><b>3</b></td><td><b>先快后缓，自然趋平</b></td><td><b>默认，多数用户</b></td></tr>
+    <tr><td>5</td><td>前期爆发式增长，接近上限才急刹</td><td>喜欢"先观察爆炸式繁衍，再进入稳定期"</td></tr>
+    <tr><td>8</td><td>近似阶跃开关</td><td>不推荐——等于退回了开关式逻辑</td></tr>
+  </tbody>
+</table>
+
+<h3>9.2 它在整个配对判定里的位置</h3>
+<div class="card" style="font-family:Consolas,'Courier New',monospace;font-size:13px;line-height:2.1;text-align:center">
+  P<sub>配对</sub> = Base × f(年龄) × f(健康) × f(饱食) × f(季节) × <b style="color:var(--accent)">L(ρ)</b> × f(配偶可得性) × (1 + w<sub>用户偏好</sub>)
+</div>
+<div class="note info">L(ρ) 是<b>乘在最外层的独立因子</b>，不修改任何其他因子的数值。
+这样做的好处是每个机制都能单独关掉调试：想验证"是不是季节导致的繁殖变慢"，把 L 设成恒等于 1 即可；
+不会因为两个机制耦合在一起而查不出问题。<br>
+注意最后一两项：<b>配偶可得性</b>是另一个独立因子——ρ 很低时 L≈1，但如果种群只剩一只，实际繁殖率仍然是 0。</div>
+
+<h3>9.3 让"挤"被看见 — 行为层面的表现</h3>
+<table>
+  <thead><tr><th style="width:96px">ρ 区间</th><th>L</th><th>行为变化</th><th>界面提示</th></tr></thead>
+  <tbody>
+    <tr><td>0 – 0.4</td><td>94–100%</td><td>常规行为，寻偶半径全桌面</td><td>无</td></tr>
+    <tr><td>0.4 – 0.6</td><td>78–94%</td><td>寻偶半径缩至 70%，移动节奏放缓</td><td>无</td></tr>
+    <tr><td>0.6 – 0.8</td><td>49–78%</td><td>求偶展示频率减半；进食出现排队</td><td>托盘图标加一点标记，主面板显示黄色提示</td></tr>
+    <tr><td>0.8 – 0.95</td><td>14–49%</td><td>倦怠：伏卧时长 +30%，互相理毛减少，幼崽成长略放缓</td><td>橙色提示「生存空间紧张」+ 提供"立即提高上限"按钮</td></tr>
+    <tr><td>≥ 0.95</td><td>≤ 14%</td><td>几乎不主动寻偶，多数时间在原地休息</td><td>红色提示「生存空间不足 · 繁育已停止」</td></tr>
+  </tbody>
+</table>
+<div class="note warn"><b>这里有一个真实的产品权衡：</b>让桌宠看起来"蔫了"，对一个天天盯着看的桌面摆件来说，
+未必是好事——用户打开桌宠是为了放松，不是来看一群动物挤在角落叹气。<br>
+所以建议提供一个 <b>「拥挤表现强度」滑条（0–100%，默认 40%）</b>：
+数值决定上述行为衰减有多少真正作用在画面上。调到 0 时，拥挤度只影响繁殖概率，
+桌面上的狐狸依旧活蹦乱跳——<b>生态机制照常运行，但情绪观感由用户自己决定。</b></div>
+
+<h3>9.4 UI 展示</h3>
+<div class="ui">
+  <div class="ttl"><span>种群密度与繁育欲望</span><span class="chip" id="dstate">运行中</span></div>
+  <div class="bd">
+    <div class="row">
+      <div>
+        <div class="field">
+          <div class="lb">生存空间</div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span style="font-size:22px;font-family:Consolas,monospace">12 / 20</span>
+            <span class="chip b-info">ρ = 0.60</span>
+          </div>
+          <div class="bar-wrap"><div class="bar" style="width:60%;background:#378ADD"></div></div>
+          <div class="lb" style="margin-top:10px">种群繁殖欲望 L</div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span style="font-size:22px;font-family:Consolas,monospace;color:var(--accent)">78%</span>
+            <small>正常时为 100%</small>
+          </div>
+          <div class="bar-wrap"><div class="bar" style="width:78%;background:#C2612B"></div></div>
+        </div>
+        <div class="sw"><span class="tg on"><i></i></span><div>拥挤度影响行为表现<div><small>关闭后只影响繁殖概率，不影响画面观感</small></div></div></div>
+        <div class="sw"><span class="tg on"><i></i></span><div>妊娠名额计入拥挤度<div><small>关闭后可能出现"一次性出生超过上限"的情况</small></div></div></div>
+        <div class="sw"><span class="tg"><i></i></span><div>达到上限时接受人工繁育预约排队<div><small>有名额后自动执行；不开放则按钮置灰</small></div></div></div>
+      </div>
+      <div>
+        <div class="field">
+          <div class="lb">曲线陡峭度 k</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <small>温和</small>
+            <div class="bar-wrap" style="flex:1;margin:0;height:6px">
+              <div class="bar" style="width:33%;background:#C2612B"></div></div>
+            <small>陡峭</small>
+            <span class="chip mono">k = 3</span>
+          </div>
+          <div id="densityMini" style="margin-top:8px"></div>
+        </div>
+        <div class="field">
+          <div class="lb">当前推算</div>
+          <small style="display:block">成年个体发起求偶尝试的平均间隔：<b>3.2 分钟</b>（不受限时期为 2.5 分钟）</small>
+          <small style="display:block">按当前趋势，预计约 <b>4 小时 20 分</b> 后达到数量上限</small>
+          <small style="display:block">上一世代一共产出 9 只，本世代至今 3 只</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>9.5 与自然选择的边界 — 这条不能含糊</h3>
+<table>
+  <thead><tr><th style="width:150px">机制</th><th>是否受拥挤度影响</th><th>理由</th></tr></thead>
+  <tbody>
+    <tr><td>繁殖欲望 / 配对概率</td><td><b>是（本次需求）</b></td><td>需求第七条明确要求的行为</td></tr>
+    <tr><td>妊娠 / 分娩 / 幼崽成长</td><td>否（除轻度成长放缓）</td><td>已经开始的过程不应被打断，否则观感诡异</td></tr>
+    <tr><td>死亡（衰老、疾病、饥饿）</td><td><b>否</b></td><td>需求第七条：「数量上限与自然选择是两个不同机制，不能为了满足上限就破坏遗传与进化逻辑」</td></tr>
+    <tr><td>食物竞争（可选联动）</td><td>可选，默认<b>关闭</b></td><td>见下方说明</td></tr>
+  </tbody>
+</table>
+<div class="note warn"><b>唯一被允许的间接通路：「拥挤 → 食物竞争」。</b>
+如果要让过度拥挤真的带来生存压力，正确的做法是让它作用于已有的<b>资源系统</b>——
+拥挤度上升 → 单位时间内可用食物被更多个体分摊 → 适应度低的个体更容易挨饿。
+这样死亡仍然源自"饥饿"这条已有规则，而不是新增一条"因为太挤所以死了"的特别法。<br>
+即便如此，这个联动也<b>默认关闭</b>，且一旦开启必须在 UI 上明示，让用户知道个体的死亡有一部分来自他自己设置的上限。</div>
+
+<h3>9.6 两个必须处理的边界情况</h3>
+<div class="grid g2">
+  <div class="q"><div class="qh">边界一：用户把上限从小往大/从大往小调</div><div class="qb">
+    <p>把上限从 20 调到 5，而当前有 12 只时，ρ 会瞬间跳到 2.4 &gt; 1 → L = 0。</p>
+    <ul>
+      <li><b>不允许因此淘汰任何个体</b>（这是需求第七条的硬约束）;</li>
+      <li>繁殖立即停止；已妊娠的继续到分娩（这一轮允许短暂超出上限，属于"历史遗留名额"）;</li>
+      <li>界面必须明确提示：<span class="chip b-warn">当前 12 只已超出上限 5，繁育已停止，超出部分将在自然死亡后不再补充</span>;</li>
+      <li>ρ 的显示要有 clamp 提示，不要让用户看到一个 240% 的进度条。</li>
+    </ul>
+  </div></div>
+  <div class="q"><div class="qh">边界二：种群过小 — 反向的 Allee 效应</div><div class="qb">
+    <p>ρ 很低时 L ≈ 1，但种群只剩 1–2 只时，繁殖率其实应该<b>更低</b>而不是更高——因为找不到配偶。
+    生态学上称为 <b>Allee 效应</b>（种群密度过低时适合度反而下降）。</p>
+    <p>实现上不需要新公式，只要保留 <b>f(配偶可得性)</b> 这一项：可用异性个体数 = 0 时该项为 0，
+     = 1 时约 0.5（只有 50% 概率遇到），≥ 3 时为 1。</p>
+    <div class="opt">是否启用更强的版本（如种群 &lt; 3 只时额外降低健康与觅食效率）属于待确认项，见 §13 问题 15。</div>
+  </div></div>
+</div>
+
+<!-- ============ 10 ============ -->
+<h2 id="s10"><span class="no">10</span>遗传谱系（家谱）与基因溯源</h2>
+
+<p>需求原文：<b>「能查看每只狐狸的父母、祖先、后代。例如发现一只特殊紫色狐狸，可以追溯它的紫色基因来自哪一代。」</b></p>
+
+<h3>10.1 功能拆解</h3>
+<table>
+  <thead><tr><th style="width:130px">能力</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>祖先树</td><td>向上追溯任意代数（默认展开 4 代，可一键展开全部）</td></tr>
+    <tr><td>后代树</td><td>向下展示全部子女 / 孙辈，支持按世代折叠</td></tr>
+    <tr><td>双向定位</td><td>点击任一节点直达该个体档案；档案里任一 ID 也能跳回家谱并自动居中高亮</td></tr>
+    <tr><td><b>基因溯源</b></td><td>选定一个等位基因，系统高亮所有携带者 + 标出<b>它最初出现在哪一代、哪一只个体身上</b></td></tr>
+    <tr><td>亲缘系数</td><td>任意两只个体的亲缘系数（COI），服务于近亲回避（§13 问题 6）与近交衰退判定</td></tr>
+    <tr><td>世代统计</td><td>当前世代、世代间隔、每代的奠基者数量（配合 §12 的趋势图）</td></tr>
+    <tr><td>导出</td><td>家谱 PNG / CSV 三代亲缘表（后续可考虑 Newick 格式给外部工具用）</td></tr>
+  </tbody>
+</table>
+
+<h3>10.2 需要的字段（逻辑层，不含存储实现）</h3>
+<div class="card">
+  <div style="font-family:Consolas,'Courier New',monospace;font-size:12.5px;line-height:1.95">
+    <b>Fox { </b><br>
+    &nbsp;&nbsp;id, name, sex, generation,<br>
+    &nbsp;&nbsp;father_id, mother_id, children_ids[&nbsp;],<br>
+    &nbsp;&nbsp;born_tick, death_tick|null, status,<br>
+    &nbsp;&nbsp;genotype{ 位点: [等位1, 等位2] }, phenotype,<br>
+    &nbsp;&nbsp;locked, favorite, priority_breed,<br>
+    &nbsp;&nbsp;is_proband&nbsp;&nbsp;// 本人是否为某新等位基因的首次出现者<br>
+    <b>}</b><br><br>
+    <b>AlleleOrigin { </b>&nbsp;&nbsp;// 全局「等位基因源头表」，是溯源功能能一次查出来的关键<br>
+    &nbsp;&nbsp;locus, allele, founder_id, generation, tick,<br>
+    &nbsp;&nbsp;source: "mutation" | "founder",&nbsp;&nbsp;parent_allele&nbsp;&nbsp;// 由哪个等位基因突变而来<br>
+    <b>}</b>
+  </div>
+  <div class="note info" style="margin:10px 0 0"><b>AlleleOrigin 这张表是本章的核心设计。</b>
+  如果没有它，想回答"紫色来自哪一代"就只能每次从目标个体<b>逐层向上遍历</b>，几十代下来开销很大，而且结果不稳定。
+  有了它，任意个体只要携带该等位基因，就能<b>一次查表</b>直接得到源头世代、源头个体、诞生时刻与来源类型。
+  这张表在每次突变成功时写一条记录，体积只随「出现过的等位基因种类」增长，不会随个体数膨胀。</div>
+</div>
+
+<h3>10.3 家谱树视图</h3>
+<div id="pedigreeFig" class="fig"></div>
+
+<table>
+  <thead><tr><th style="width:120px">视觉元素</th><th>含义</th></tr></thead>
+  <tbody>
+    <tr><td>白色节点框</td><td>存活个体</td></tr>
+    <tr><td>浅灰底 + ID 后的 †</td><td>已故个体，数据保留在<b>纪念馆</b>（见 §11.4），家谱链完整</td></tr>
+    <tr><td>紫色实线 / 边框</td><td>被追踪的 Aᵛ 等位基因传播路径</td></tr>
+    <tr><td>墨色虚线 / 边框</td><td>另一条被追踪路径（Aᵇ）</td></tr>
+    <tr><td><b>★ 徽标</b></td><td>该等位基因的<b>突变首现个体</b>（proband），点击可看"诞生那一刻"的记录</td></tr>
+    <tr><td>节点右下角空心点 ◌</td><td><b>隐性携带者</b>：基因型含该等位基因，但外观完全不表现</td></tr>
+    <tr><td>虚线框节点</td><td>折叠的未知分支（未在该视角展开的祖先 / 配偶）</td></tr>
+  </tbody>
+</table>
+
+<h3>10.4 基因溯源 — 完整示例</h3>
+<div class="grid g2" style="grid-template-columns:1.15fr .85fr">
+  <div class="ui">
+    <div class="ttl"><span>溯源结果 · A 位点 / 等位基因 Aᵛ（幽夜紫）</span><span class="chip b-warn">已锁定目标</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">结论</div>
+        <div style="font-size:14px;line-height:1.9">
+          诞生于 <b>第 7 代</b> · 来源 = <span class="chip b-warn">新发突变（de novo mutation）</span><br>
+          源头个体 <b>FX-0031 ♂「灰烬」</b> — 出生于第 7 代 03:14，双亲经查证<b>均不携带 Aᵛ</b>
+        </div>
+      </div>
+      <div class="field">
+        <div class="lb">传播时间线</div>
+        <div class="timeline-item"><span class="gen">第 7 代</span><div><b>FX-0031 ♂</b> 出现 Aᵛ（A⁺ → Aᵛ 突变）。本人外观<b>赤橙</b>，看不出任何异常</div></div>
+        <div class="timeline-item"><span class="gen">第 7–8 代</span><div>Aᵛ 以<b>杂合</b>形式传递，历经 <b>3 只携带者</b>，全部表现为赤橙（被 A⁺ 显性遮盖）。<b>这一时期在屏幕上完全不可见</b></div></div>
+        <div class="timeline-item"><span class="gen">第 9 代</span><div><b>FX-0062 ♀「暮霭」</b> 从父系获得 Aᵛ、从母系获得 Aᵇ → 组合为 <b>Aᵛ/Aᵇ</b>，
+        Aᵛ 首次得以表现，紫色第一次出现在桌面上</div></div>
+        <div class="timeline-item"><span class="gen">第 10 代</span><div>已扩散至 2 只；其中 FX-0072 ♀ 为紫色，FX-0071 ♂ 为隐性携带的赤橙</div></div>
+      </div>
+      <div class="note" style="margin:8px 0 0"><b>这就是需求里那句话的完整答案。</b>
+      用户看到紫色狐狸时的三个问题——「它从哪来」「为什么之前没见过」「我的哪些狐狸其实偷偷带着紫」——
+      这张面板一次性回答完了。</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="ui">
+      <div class="ttl"><span>溯源操作</span></div>
+      <div class="bd">
+        <div class="lb">怎么触发</div>
+        <div class="stepbox">
+          <div class="steps">在个体档案里点任意一个<b>基因型标记</b>（例如 <span class="chip mono">Aᵛ/Aᵇ</span> 里的 Aᵛ）</div>
+          <div class="steps">系统自动切换到家谱视图，并沿亲代链向上回溯</div>
+          <div class="steps">命中 AlleleOrigin 记录 → 停止，标出源头个体 ★</div>
+          <div class="steps">同时把种群内<b>所有携带该等位基因的旁系</b>一起淡化标出</div>
+        </div>
+        <div class="lb" style="margin-top:12px">筛选与视图</div>
+        <div class="checkline"><span class="chip">◉</span><div>只看携带者（其余淡化）</div></div>
+        <div class="checkline"><span class="chip">○</span><div>只看已表现个体</div></div>
+        <div class="checkline"><span class="chip">○</span><div>只看隐性携带者</div></div>
+        <div class="checkline"><span class="chip">✓</span><div>同时追踪第二个等位基因（可双色对照）</div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h4 style="margin:0 0 6px">为什么「隐性携带者」标记很重要</h4>
+      <ol style="margin:6px 0;padding-left:20px;font-size:12.5px">
+        <li>解释"紫色为什么突然出现"——它不是凭空来的，只是潜伏了几代;</li>
+        <li>支撑育种决策：两只<b>看起来都是橙色</b>的狐狸可能生出紫色后代，家谱能让你看见这条暗线;</li>
+        <li>防止误操作：正因为 §2.5 那两只外观完全相同的个体基因型不同，"随手淘汰一只橙狐狸"可能丢掉整个种群里唯一的 Aᵛ。</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<h3>10.5 规模、性能与「不能删除」的冲突</h3>
+<table>
+  <thead><tr><th style="width:150px">问题</th><th>处理方式</th></tr></thead>
+  <tbody>
+    <tr><td>祖先数爆炸</td><td>n 代祖先数量是 2ⁿ，10 代就是 1024 个。<b>默认只展开 4 代</b>，更远的用折叠节点「＋37 位祖先」表示，点击再展开</td></tr>
+    <tr><td>大量节点渲染</td><td>超过 200 个可见节点时自动切换为横向压缩视图（只画连线与色块，不画狐狸头像）</td></tr>
+    <tr><td>历史个体总量</td><td>估算每只约 1 KB 元数据 → 1 万只约 10 MB 量级。可接受的范围内，但需要纪念馆清理策略（§13 问题 21）</td></tr>
+    <tr><td style="color:var(--accent)"><b>删除导致的断链</b></td><td><b>这是本章最大的约束。</b>一旦某个个体被彻底删除，它的子女 father_id / mother_id 就悬空了，
+    家谱树断裂、溯源中断、亲缘系数算不出来。<br>
+    因此 v0.2 把「移出」拆成两级：<b>退役（推荐，保留谱系）</b> 与 <b>彻底删除（默认禁用，三重确认）</b> — 详见 §11.3</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 11 ============ -->
+<h2 id="s11"><span class="no">11</span>个体锁定与收藏</h2>
+
+<p>需求原文：<b>「喜欢的狐狸可以标记为收藏或重点培育对象。自动淘汰机制不得处理锁定个体，人工删除需要二次确认。」</b></p>
+
+<p>我在实现上把这件事拆成了<b>三种互不相同的标记</b>——它们听起来很像，但后果完全不同，
+如果混成一个「收藏」开关，后面一定会出问题（比如用户以为收藏了就不会死，结果它还是死了）。</p>
+
+<h3>11.1 三种标记的严格区分</h3>
+<table>
+  <thead><tr><th style="width:120px">标记</th><th>作用</th><th>自动淘汰</th><th>自然死亡</th><th>UI 位置</th></tr></thead>
+  <tbody>
+    <tr><td><b>★ 收藏</b><br><small>Favorite</small></td><td>纯情感标记：筛选、快速定位、批量操作白名单。可由用户勾选<b>是否顺便豁免自动淘汰</b></td><td>默认<b>不豁免</b>，可在设置里勾选</td><td>不豁免</td><td>名片右上角</td></tr>
+    <tr><td><b>🔒 锁定</b><br><small>Locked</small></td><td>硬保护：<b>自动淘汰绝对不可选中</b>，任何批量删除操作都需要额外确认</td><td><b>豁免（硬规则）</b></td><td>不豁免</td><td>名片右上角 + 档案</td></tr>
+    <tr><td><b>◎ 重点培育</b><br><small>Priority</small></td><td>繁育加权：提高获得交配机会的概率（§5 已有此机制）</td><td>不豁免</td><td>不豁免</td><td>档案 / 右键菜单</td></tr>
+  </tbody>
+</table>
+
+<div class="note warn"><b>必须明确的一条：锁定不能豁免自然死亡。</b><br>
+如果用户希望"这只狐狸永远不死"，唯一途径是全局设置里的
+<span class="chip b-warn">观赏模式（关闭自然死亡）</span>——而且一旦开启，必须在界面上明示
+「<b>自然选择已停用，种群进化不再进行</b>」。<br>
+理由很直接：需求第六条的整个自然选择机制建立在"个体会死"之上。
+如果允许逐个锁定就能永生，用户随手锁几只适应性最强的个体，选择压力就被悄悄取消了，
+而且是在用户<b>不知不觉</b>的情况下取消的——这比明着提供一个开关糟糕得多。</div>
+
+<h3>11.2 自动淘汰如何跳过保护区</h3>
+<div class="card">
+  <div style="font-family:Consolas,'Courier New',monospace;font-size:12.5px;line-height:1.95">
+    候选集 = 存活个体 − <b>锁定</b> − 收藏(若勾选) − 重点培育(若勾选) − 未成年 − 妊娠中<br>
+    <b>若候选集为空 → 不执行任何淘汰</b>，改为「停止繁殖 + 向用户提示」，绝不降级为"那就删一只吧"<br>
+    否则 → 按 §7 综合评分排序 → 取最低者 → 推送预警 → 执行
+  </div>
+  <div class="note ok" style="margin:10px 0 0">界面上要显示<b>「本次跳过 N 只受保护个体」</b>，
+  让用户知道保护规则真的生效了，而不是只有一个冷冰冰的"已淘汰 X"。
+  另外候选集为空时的降级处理方式很重要：宁停种群增长，也不碰保护区。</div>
+</div>
+
+<h3>11.3 三级删除保护</h3>
+<div class="grid g3">
+  <div class="ui">
+    <div class="ttl"><span>① 退役（推荐）</span><span class="chip b-ok">默认选项</span></div>
+    <div class="bd" style="font-size:12.5px">
+      <p style="margin:0 0 8px">把这只狐狸<b>移出桌面</b>，但保留它在纪念馆里的完整记录。</p>
+      <div class="checkline"><span class="chip b-ok">✓</span><div>家谱链<b>完整保留</b></div></div>
+      <div class="checkline"><span class="chip b-ok">✓</span><div>后代溯源不受影响</div></div>
+      <div class="checkline"><span class="chip b-ok">✓</span><div>随时可以从纪念馆查看（不能复活）</div></div>
+      <div style="margin-top:10px"><span class="btn pri">退役</span></div>
+    </div>
+  </div>
+  <div class="ui">
+    <div class="ttl"><span>② 彻底删除</span><span class="chip b-warn">默认隐藏</span></div>
+    <div class="bd" style="font-size:12.5px">
+      <p style="margin:0 0 8px">连同所有历史记录一起清除。</p>
+      <div class="checkline"><span class="chip b-warn">✕</span><div>它的 <b>8 只后代</b>将失去父系连接</div></div>
+      <div class="checkline"><span class="chip b-warn">✕</span><div>祖先溯源链在此断开</div></div>
+      <div class="checkline"><span class="chip b-warn">✕</span><div>不可逆</div></div>
+      <div style="margin-top:10px"><span class="btn dis">需在高级设置中解锁</span></div>
+    </div>
+  </div>
+  <div class="ui">
+    <div class="ttl"><span>③ 批量操作</span></div>
+    <div class="bd" style="font-size:12.5px">
+      <div class="checkline"><span class="chip">批量退役</span><div>逐只列出并二次勾选</div></div>
+      <div class="checkline"><span class="chip">一键保护</span><div>锁定全部「收藏 / 稀有」个体</div></div>
+      <div class="checkline"><span class="chip">名额提示</span><div>已保护 <b>3 / 12</b>，超过一半时提示</div></div>
+      <div class="note warn" style="margin:8px 0 0;font-size:11.5px">若全部个体都被锁定，自动淘汰将无法工作 →
+      界面应明示「保护名额已满，自动淘汰已停止」，而不是静默失效。</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid g2">
+  <div class="dlg">
+    <div class="dh">退役确认 — 赤穗 FX-0001</div>
+    <div class="db">
+      <table style="margin:0;font-size:12px">
+        <tbody>
+          <tr><td style="width:78px">年龄</td><td>41 游戏天（老年）</td></tr>
+          <tr><td>后代</td><td>7 只（存活 5）</td></tr>
+          <tr><td>携带基因</td><td><span class="chip mono">Aᵛ 隐性携带者</span></td></tr>
+        </tbody>
+      </table>
+      <div class="checkline" style="margin-top:8px"><span class="tg"><i></i></span><div>我确认将其移入纪念馆，<b>谱系记录完整保留</b></div></div>
+      <div style="margin-top:10px"><span class="btn pri">确认退役</span> <span class="btn">取消</span></div>
+    </div>
+  </div>
+  <div class="dlg danger">
+    <div class="dh">⚠ 彻底删除 — 这将不可逆地破坏家谱</div>
+    <div class="db">
+      <p style="margin:0 0 8px">FX-0001 是 <b>8 只后代</b>的亲本，也是 <b>Aᵛ 等位基因</b>溯源链上的第 3 环。
+      删除后，这些后代的亲本字段将变为「未知」，该基因的传播路径无法再被追溯。</p>
+      <div class="checkline"><span class="tg"><i></i></span><div>我理解家谱链会断裂</div></div>
+      <div class="checkline"><span class="tg"><i></i></span><div>我已导出 / 不再需要这些谱系数据</div></div>
+      <div class="field" style="margin:10px 0 0;background:#fff">
+        <div class="lb">请输入个体 ID 后四位以继续</div>
+        <span class="chip mono" style="padding:4px 12px">0001</span>
+      </div>
+      <div style="margin-top:10px"><span class="btn pri" style="background:#A33A12;border-color:#A33A12">永久删除</span> <span class="btn">取消</span></div>
+    </div>
+  </div>
+</div>
+<div class="note">左边是<b>退役</b>确认：一个勾选框即可，因为后果可逆性高。
+右边是<b>彻底删除</b>：两个勾选框 + 输入 ID + 明确写出"会破坏 8 只后代的家谱"。
+两者<b>必须长得不一样</b>——如果长得一样，用户在快速点击时会分不清自己在做哪种操作。</div>
+
+<h3>11.4 纪念馆（Archive）</h3>
+<table>
+  <thead><tr><th style="width:130px">项目</th><th>设计</th></tr></thead>
+  <tbody>
+    <tr><td>收纳对象</td><td>自然死亡个体 + 退役个体。两者合并为一个「纪念馆」列表，并标注离场原因</td></tr>
+    <tr><td>是否占上限</td><td><b>不占活跃数量上限</b>，但计入磁盘占用</td></tr>
+    <tr><td>能否复活</td><td>不能（否则快照与 statistics 的时间序列会自相矛盾）。仅可查看与导出</td></tr>
+    <tr><td>查看方式</td><td>按世代 / 按毛色 / 按携带基因筛选；可查看它生前的最后一张立绘</td></tr>
+    <tr><td>保留策略</td><td>默认无限保留；可选「仅保留最近 N 代」或「超过 X 只后，<b>只清理未被任何存活个体引用的旁支</b>」<br>
+    <small>注意这里的措辞——即使是自动清理，也只清理"删了不会影响任何现存家谱"的个体。</small></td></tr>
+  </tbody>
+</table>
+
+<h3>11.5 桌面上的视觉标记</h3>
+<div id="markFig" class="fig"></div>
+<table>
+  <thead><tr><th style="width:120px">时机</th><th>表现</th></tr></thead>
+  <tbody>
+    <tr><td>默认</td><td><b>只在鼠标悬停时</b>显示角标，平时画面完全干净——毕竟这是天天看的桌面，不该布满 UI 贴纸</td></tr>
+    <tr><td>多选 / 管理模式</td><td>所有标记常规显示，方便批量操作</td></tr>
+    <tr><td>角标位置</td><td>个体包围盒右上角，跟随移动与翻转；尺寸随个体缩放，最小不低于 10 px</td></tr>
+    <tr><td>锁定</td><td>额外一层极淡的描边光环（可在设置关闭），让"这只我保护了"在远处也能一眼认出</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 12 ============ -->
+<h2 id="s12"><span class="no">12</span>种群进化统计</h2>
+
+<p>需求原文：<b>「统计不同毛色的数量、特殊基因频率、出生和死亡数量、世代变化。
+让你能够观察一个基因如何在几十代之后逐渐成为优势基因。」</b></p>
+
+<p>这一章的产品目标是：把"我的种群正在发生什么"从<b>感觉</b>变成<b>可读的数据</b>。
+最关键的那张图是 §12.3 的基因频率折线图——它是唯一能回答"几十代之后呢"的可视化。</p>
+
+<h3>12.1 面板总览</h3>
+<div class="ui">
+  <div class="ttl"><span>种群进化统计</span><span><span class="chip b-info">第 40 代</span> <span class="chip">范围：全部世代 ▾</span></span></div>
+  <div class="bd">
+    <div class="statgrid">
+      <div class="stat"><div class="v">12</div><div class="l">现存个体</div><div class="d">上限 20</div></div>
+      <div class="stat"><div class="v">247</div><div class="l">累计出生</div><div class="d">+9 本代</div></div>
+      <div class="stat"><div class="v">235</div><div class="l">累计死亡</div><div class="d">平均寿命 28 天</div></div>
+      <div class="stat"><div class="v">40</div><div class="l">当前世代</div><div class="d">世代间隔 6.2 天</div></div>
+      <div class="stat"><div class="v">4</div><div class="l">奠基者</div><div class="d">初始引入个体</div></div>
+      <div class="stat"><div class="v">0.61</div><div class="l">观察杂合度 Ho</div><div class="d">起点 0.72 ↓</div></div>
+      <div class="stat"><div class="v">0.09</div><div class="l">平均近交系数</div><div class="d" style="color:var(--warn)">较上代 +0.02</div></div>
+      <div class="stat"><div class="v">31%</div><div class="l">隐性潜伏比例</div><div class="d">外观未表现</div></div>
+    </div>
+    <div class="note warn" style="margin:10px 0 0">⚠ <b>遗传多样性预警：</b>观察杂合度连续 6 代下降（0.72 → 0.61），
+    近交系数上升至 0.09。建议提高上限或引入外部个体。<span class="btn" style="margin-left:6px">查看建议</span></div>
+  </div>
+</div>
+
+<h3>12.2 毛色分布（表型统计）</h3>
+<div id="coatChart" class="fig"></div>
+
+<h3>12.3 基因频率趋势 — 核心图表</h3>
+<div id="freqChart" class="fig"></div>
+<table>
+  <thead><tr><th style="width:110px">世代</th><th>发生了什么</th><th>图上痕迹</th></tr></thead>
+  <tbody>
+    <tr><td>第 1–6 代</td><td>Aᵛ 尚未出现，种群以 A⁺ 为主</td><td>紫线贴地不动</td></tr>
+    <tr><td><b>第 7 代</b></td><td>一次 de novo 突变，Aᵛ 出现在 FX-0031 身上，频率约 1/(2N) ≈ 4%</td><td>★ 标记点</td></tr>
+    <tr><td>第 8–27 代</td><td>深色 / 夜间主题环境下 Aᵛ 有微弱优势，叠加<b>遗传漂变</b>，20 代里缓慢升到 ~29%</td><td>长坡</td></tr>
+    <tr><td><b>第 28 代</b></td><td>用户换成<b>浅色壁纸</b> → 深色个体暴露率上升 → Aᵛ 转入劣势</td><td>蓝色竖虚线</td></tr>
+    <tr><td>第 29–32 代</td><td>Aᵛ 从 29% 跌到 12%，A⁺ 反向回升</td><td>下行段</td></tr>
+    <tr><td><b>第 33 代</b></td><td>用户切回深色主题，Aᵛ 重新获得优势</td><td>第二条竖虚线</td></tr>
+    <tr><td>第 34–40 代</td><td>Aᵛ 回升到 26%，但没能回到巅峰——因为低谷期丢失了一部分多样性</td><td>不对称的 V 形</td></tr>
+  </tbody>
+</table>
+<div class="note ok"><b>这张图同时演示了需求里的三句话：</b><br>
+①「生存优势应该和环境条件有关」→ 同一个基因在 28 代前后判若两狐;<br>
+②「允许劣势基因在特定环境下重新获得优势」→ 33 代之后的回升段;<br>
+③「稀有 ≠ 优质」→ Aᵛ 全程是种群里最稀有的等位基因，但它的起伏完全由环境决定，而不是由稀有度决定。</div>
+
+<h3>12.4 出生与死亡</h3>
+<div id="bdChart" class="fig"></div>
+
+<h3>12.5 表型 vs 基因型 — 看到的和实际的不一样</h3>
+<div class="grid g2">
+  <div class="card">
+    <div class="lb">屏幕上看到的（表型）</div>
+    <div class="probrow"><span>赤橙系</span><span class="pb"><span class="pf" style="width:82%;background:#E08A3C"></span></span><span class="pv">82%</span></div>
+    <div class="probrow"><span>霜灰系</span><span class="pb"><span class="pf" style="width:12%;background:#9BA5B0"></span></span><span class="pv">12%</span></div>
+    <div class="probrow"><span>紫 / 黑系</span><span class="pb"><span class="pf" style="width:6%;background:#8367AE"></span></span><span class="pv">6%</span></div>
+  </div>
+  <div class="card">
+    <div class="lb">实际等位基因频率（基因型）</div>
+    <div class="probrow"><span>A⁺</span><span class="pb"><span class="pf" style="width:45%;background:#E08A3C"></span></span><span class="pv">45%</span></div>
+    <div class="probrow"><span>Aᵛ</span><span class="pb"><span class="pf" style="width:26%;background:#8367AE"></span></span><span class="pv">26%</span></div>
+    <div class="probrow"><span>Aˢ</span><span class="pb"><span class="pf" style="width:20%;background:#9BA5B0"></span></span><span class="pv">20%</span></div>
+    <div class="probrow"><span>Aᵇ</span><span class="pb"><span class="pf" style="width:9%;background:#4C4653"></span></span><span class="pv">9%</span></div>
+  </div>
+</div>
+<div class="note warn">紫 / 黑系在画面上只占 <b>6%</b>，但 Aᵛ 等位基因已经占到 <b>26%</b>——
+推算下来，当前大约有 <b>23%</b> 的个体是 A⁺/Aᵛ 杂合的隐性携带者，<b>它们看起来全都是普通橙色狐狸</b>。<br>
+这张对照卡是「为什么要看数据」的最好理由，也是 §2.5「相同外观 ≠ 相同基因型」在种群尺度上的呼应。
+建议把它放在统计面板最显眼的位置，而不是折线图下面。</div>
+
+<h3>12.6 其它统计项</h3>
+<table>
+  <thead><tr><th style="width:150px">指标</th><th>用途</th></tr></thead>
+  <tbody>
+    <tr><td>世代结构</td><td>各世代现存数量金字塔；能看出种群是扩张期还是收缩期</td></tr>
+    <tr><td>世代间隔</td><td>相邻两代的平均年龄差，配合加速倍数换算真实时间</td></tr>
+    <tr><td>平均寿命 / 死因分布</td><td>区分是饿死、病死还是老死——直接反映当前是哪种选择压力在起作用</td></tr>
+    <tr><td>特殊基因扩散速度</td><td>每个稀有个体的「首现世代 → 当前频率」曲线，图鉴里可直接查看</td></tr>
+    <tr><td>奠基者贡献度</td><td>每只初始个体的基因在当前种群中的占比；能看到"某只始祖的血统已经消失了"</td></tr>
+    <tr><td>多样性指标</td><td>观察杂合度 Ho / 期望杂合度 He / 有效等位基因数 / 平均近交系数</td></tr>
+    <tr><td>环境日志</td><td>壁纸更换、季节切换、手动投喂、上限调整都会打时间戳，<b>并作为竖线画在折线图上</b>——
+    这样"为什么这一代突然变了"永远有答案可查</td></tr>
+    <tr><td>导出</td><td>CSV（每世代一行）/ PNG；便于用户自己拿去做图</td></tr>
+  </tbody>
+</table>
+<div class="note info"><b>数据量控制：</b>统计不需要保存每一帧。
+建议<b>每个世代或每 30 分钟</b>写一条汇总记录（约 200 字节），1000 条不足 200 KB。
+为了避免长期运行无上限膨胀，用<b>环形缓冲</b>：超过上限后，对老数据降采样（两代合并成一个点），
+<b>趋势形状保留，精度逐渐降低</b>——总比直接丢掉历史要好。</div>
+
+<!-- ============ 13 ============ -->
+<!-- ============ 13 ============ -->
+<h2 id="s13"><span class="no">13</span>决策汇总：你的回答与落地方式</h2>
+
+<p>v0.2 里那 25 个待确认问题，你已经回答了大部分。这一节把答案固化成<b>可直接执行</b>的条款，
+后面四章是其中四条带出来的新子系统。<b style="color:var(--accent)">有异议的行直接划改，我在下一轮按你改的版本执行。</b></p>
+
+<h3>13.1 决策表</h3>
+<table>
+  <thead><tr><th style="width:38px">#</th><th style="width:170px">问题</th><th style="width:120px">你的选择</th><th>落地方式</th></tr></thead>
+  <tbody>
+    <tr><th colspan="4" style="background:#F7F9FB">繁育与遗传</th></tr>
+    <tr><td>Q1</td><td>性别模型</td><td><b>A 严格两性 + 异配</b></td><td>♂/♀ 两性，必须异配；同性或单只无法繁殖，保留性选择玩法</td></tr>
+    <tr><td>Q5</td><td>突变率</td><td><b>A 0–10%，默认 3.0%</b></td><td><b>v0.5 起改为每只幼崽独立判定</b>（原设计为每窝一次），同窝可出现突变兄妹；滑条 &gt; 5% 时提示"已进入抽卡模式"</td></tr>
+    <tr><td>Q6</td><td>近亲繁殖</td><td><b>B + 50% 放弃</b></td><td>见 §5.4 近交检测：r ≥ 0.125 判定近交 → 掷硬币，50% 放弃本次交配，50% 发生且后代隐性缺陷概率上升</td></tr>
+    <tr><td>Q8</td><td>基因连锁</td><td><b>A 全部独立</b></td><td>22 位点独立分配；数据结构保留 <span class="chip mono">linkage_group</span> 字段备用</td></tr>
+    <tr><td>Q9</td><td>一窝仔数</td><td><b>C 3–6 只 + 高夭折</b></td><td>每窝 3–6 只，幼崽期夭折率约 25–35%，受母代健康 / 食物丰度 / 季节影响</td></tr>
+    <tr><td>Q16</td><td>人工繁殖是否受拥挤度限制</td><td><b>A 同样受限</b></td><td>ρ ≥ 1 时配对台按钮置灰并说明原因；不允许手动绕过密度机制</td></tr>
+
+    <tr><th colspan="4" style="background:#F7F9FB">生存与离场</th></tr>
+    <tr><td>Q2</td><td>死亡是否需要用户许可</td><td><b>A 完全自主死亡</b></td><td>不弹任何确认；死亡后右下角安静弹一张卡片"XXX 离开了（享年 X 天）"，点击进入纪念馆</td></tr>
+    <tr><td>Q4</td><td>饥饿后果</td><td><b>不会饿死</b></td><td>饱食↓ → 低活跃 → <b>休眠</b>，终点是休眠不是死亡。见 §15.4</td></tr>
+    <tr><td>Q7</td><td>非死亡退出</td><td><b>需要离场 / 迁徙</b></td><td>第三种离桌方式，与死亡、退役并列，见 §16</td></tr>
+    <tr><td>Q17</td><td>锁定能否免死</td><td><b>A 不能</b></td><td>锁定只挡自动退役，不挡衰老病死；永生请开全局观赏模式并明示"自然选择已停用"</td></tr>
+
+    <tr><th colspan="4" style="background:#F7F9FB">环境与时间</th></tr>
+    <tr><td>Q3</td><td>环境数据来源</td><td><b>绑定但不绑死时间</b></td><td>光照读真实壁纸亮度；昼夜 / 季节跑<b>独立生态时钟</b>，流速可调。见 §14</td></tr>
+    <tr><td>Q10</td><td>多显示器</td><td><b>单屏锁定</b></td><td>全部个体锁定主显示器工作区；托盘提供"切换到第 N 屏"，切换是一次性迁移而非自由游荡</td></tr>
+
+    <tr><th colspan="4" style="background:#F7F9FB">种群与展示</th></tr>
+    <tr><td>Q11</td><td>快照粒度</td><td><b>A 只存逻辑状态</b></td><td>存个体 ID / 基因型 / 表型 / 年龄 / 健康 / 繁殖关系 / 亲缘 / 统计 / 纪念馆索引；<b>不存坐标朝向动画相位</b>。恢复后重新随机散布，与"狐狸活动本就是随机的"一致</td></tr>
+    <tr><td>Q12</td><td>初始种群</td><td><b>10 只幼崽，非近亲</b></td><td>10 对虚构始祖分别产生，彼此 r = 0；幼崽夭折照常适用，见 §17.6 创始世代</td></tr>
+    <tr><td>Q13</td><td>胎儿计入 ρ</td><td><b>A 计入</b></td><td>妊娠名额预占，防止多胎同日分娩冲破上限</td></tr>
+    <tr><td>Q14</td><td>拥挤行为强度</td><td><b>A 默认 40%</b></td><td>0 = 只压繁殖概率画面照常活泼；100 = 全额倦怠</td></tr>
+    <tr><td>Q15</td><td>Allee 效应</td><td><b>A 只保留配偶可得性</b></td><td>找不到配偶 → 繁殖率低，但不额外惩罚健康与觅食效率</td></tr>
+    <tr><td>Q18–25</td><td>其余</td><td><b>按默认推荐</b></td><td>彻底删除藏高级设置 + 三重确认；收藏默认不豁免淘汰；纪念馆清理"无人引用的旁支"；提供野外引入；采样世代 + 30 min；家谱默认 4 代可导出；<b>快照回滚 = 时间线分叉，ID 永不复用</b></td></tr>
+  </tbody>
+</table>
+
+<div class="note warn"><b>Q2 选了「完全自主死亡」，这是一个不小的决定。</b>
+它意味着需求第六条的整个自然选择可以真正跑通——种群里会持续有个体死去，用户无法干预。
+配套的补偿措施我安排了三处：① 死亡演出要克制（安静退场，不做惨烈动画）；
+② 个体死亡后立即进入纪念馆并可被提取基因参与 §17 的育种，血统不会真正消失；
+③ 提供全局「陪伴模式」（关闭自然死亡）给不想看到死亡的玩家，但开启时界面必须明示"自然选择已停用"。</div>
+
+<h3>13.2 还剩 4 项没定</h3>
+<table>
+  <thead><tr><th style="width:44px">#</th><th style="width:230px">问题</th><th>我的推荐</th></tr></thead>
+  <tbody>
+    <tr><td><b>D1</b></td><td>文件的可食范围<br><small style="color:var(--accent)">涉及删除你的真实数据</small></td><td><b>A：全桌面可识别可围观，但只吃投喂区内的条目</b>。备选 B 全桌面可吃（误删风险显著更高）、C 只认投喂区且不出区。详见 §15.2</td></tr>
+    <tr><td><b>D2</b></td><td>是否提供「严酷模式」（允许饿到病死）</td><td>提供，但<b>默认关闭</b>并藏进高级设置——它实质上绕过了你刚定的"不会饿死"</td></tr>
+    <tr><td><b>D3</b></td><td>创始世代是否享受夭折减半保护</td><td><b>是</b>：10 只幼崽按正常夭折率的一半计算，约剩 7–8 只成年；否则开局性别一旦失衡，前期会直接卡死</td></tr>
+    <tr><td><b>D4</b></td><td>迁徙是否受拥挤度加权</td><td><b>默认权重 0</b>：让"达到上限"去诱发迁徙，本质上是变相的人口清除，违反需求第七条</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 14 ============ -->
+<h2 id="s14"><span class="no">14</span>世界时钟：环境绑定真实系统，但不绑死真实时间</h2>
+
+<p>你的原话：<b>「壁纸亮度 → 光照」「系统时钟 → 昼夜」「系统日期 → 季节」—— 但不要完全绑死真实时间和日期，
+现实中 1 天不能等于环境中 1 天，用户可以加速或调整时间流速。</b></p>
+
+<h3>14.1 为什么要拆成两条通道</h3>
+<p>如果季节直接读 Windows 日期，那么一个种群要跑完四个季节需要<b>真实的 365 天</b>——这个产品的进化节奏就废了。
+反过来，如果完全脱离系统，桌面上会凭空出现一个和你所在真实季节无关的世界，"桌面即栖息地"的沉浸感也没了。</p>
+<p>所以拆成：<b>不需要时间参与的（光照）直接读真实系统；需要时间参与的（昼夜、季节、温度）跑独立的生态时钟，由用户控制流速。</b></p>
+
+<div id="clockFig" class="fig"></div>
+
+<h3>14.2 生态时钟参数</h3>
+<table>
+  <thead><tr><th style="width:170px">参数</th><th style="width:110px">默认值</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>1 游戏小时</td><td>1 真实分钟</td><td>基础换算率，可改；妊娠 48 游戏小时 ≈ 48 真实分钟</td></tr>
+    <tr><td>1 游戏天</td><td>24 游戏小时</td><td>昼夜周期</td></tr>
+    <tr><td>1 生态年</td><td>24 游戏天</td><td>四季各 6 游戏天；与现实日历<b>完全无关</b></td></tr>
+    <tr><td>流速档位</td><td>1×</td><td>暂停 / 1× / 2× / 5× / 10× / 自定义；加速同时推进妊娠、成长、衰老、季节与统计采样</td></tr>
+    <tr><td>光照</td><td>自动</td><td>即时读取壁纸主色亮度与系统主题明暗，<b>不经过时钟</b></td></tr>
+    <tr><td>食物丰度</td><td>由投喂决定</td><td>见 §15</td></tr>
+  </tbody>
+</table>
+
+<div class="warn-band"><b>硬约束：所有与时间相关的状态必须走同一个时钟。</b><br>
+饱食下降速率、妊娠倒计时、幼崽成长、衰老与寿命突变累积、季节推进、患病进程、统计采样节拍——
+<b>全部以 WorldTime 的 tick 为准，不允许任何模块自己读系统时间。</b>
+只要有一个模块偷跑系统时钟，用户一按加速，就会出现"肚子饿得比怀孕快"、"季节跳了但年龄没涨"这种诡异的不同步。</div>
+
+<h3>14.3 环境面板</h3>
+<div class="ui">
+  <div class="ttl"><span>环境</span><span><span class="chip b-info">流速 2×</span> <span class="chip">第 3 生态年 · 秋</span></span></div>
+  <div class="bd">
+    <div class="row">
+      <div>
+        <div class="field">
+          <div class="lb">环境读数</div>
+          <table style="margin:0">
+            <tbody>
+              <tr><td style="width:74px">光照</td><td>偏亮 72 / 100　<span class="chip b-info">来源：壁纸</span></td></tr>
+              <tr><td>昼夜</td><td>黄昏（19:42 游戏时）　<span class="chip">来源：生态时钟</span></td></tr>
+              <tr><td>季节</td><td>秋季 · 第 3 生态年　<span class="chip">来源：生态时钟</span></td></tr>
+              <tr><td>温度</td><td>偏凉　<span class="chip">随季节连续变化</span></td></tr>
+              <tr><td>食物丰度</td><td>38 / 100　<span class="chip b-warn">已 6 小时未投喂</span></td></tr>
+              <tr><td>拥挤度 ρ</td><td>0.60　<span class="chip">12 / 20</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="field">
+          <div class="lb">时间流速</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="btn">暂停</span><span class="btn">1×</span><span class="btn pri">2×</span>
+            <span class="btn">5×</span><span class="btn">10×</span><span class="btn">自定义…</span>
+          </div>
+          <small style="display:block;margin-top:8px">加速会同时推进：妊娠、幼崽成长、衰老、季节、饱食、患病进程。<br>
+          这些状态共用同一个 WorldTime tick，不会出现不同步。</small>
+        </div>
+        <div class="field">
+          <div class="lb">手动覆盖（每单项可锁）</div>
+          <div class="sw"><span class="tg"><i></i></span><div>锁定光照为固定值<div><small>覆盖后该项打「手动」标记，不再读系统</small></div></div></div>
+          <div class="sw"><span class="tg"><i></i></span><div>锁定季节<div><small>例如一直保持在冬季，专门观察长毛基因扩散</small></div></div></div>
+          <div class="sw"><span class="tg on"><i></i></span><div>季节允许自然推进</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note" style="margin:8px 0 0">「手动」标记很重要：当某个 Bloomantics 实验结果反常时，用户要能一眼看出
+    "这是系统自动算出来的，还是我上次手贱锁死了某个参数"。</div>
+  </div>
+</div>
+
+<!-- ============ 15 ============ -->
+<h2 id="s15"><span class="no">15</span>取食系统：桌面上的文件就是食物</h2>
+
+<p>你的原话：<b>「特定的文件夹、文件名字可以被当做食物……吃掉 = 删除这个文件、文件夹（进回收站）。
+如果不投喂，饱食度降低会进入低活跃度直至休眠，不会被饿死。」</b></p>
+
+<div class="warn-band"><b>这是整个项目里唯一会改动你真实数据的功能，所以规格写得最重。</b>
+本章的四条安全红线（§15.2）不会因为任何便利性理由让步。</div>
+
+<h3>15.1 什么能吃：三重门槛</h3>
+<table>
+  <thead><tr><th style="width:110px">门槛</th><th>规则</th></tr></thead>
+  <tbody>
+    <tr><td><b>① 位置</b></td><td>只能吃位于<b>「投喂区」</b>内的条目。投喂区是你显式指定的一个文件夹，<b>默认为空</b>（即默认状态下狐狸什么都吃不了）。<br>
+    桌面上其他位置的文件<b>永远不可食用</b>——最多被狐狸嗅闻、扒拉、绕开作为氛围互动，绝不删除</td></tr>
+    <tr><td><b>② 名称</b></td><td>投喂区内还要匹配你设定的规则，例如 <span class="chip mono">*.tmp</span>、包含 <span class="chip mono">_old</span>、形如 <span class="chip mono">Scrap*</span></td></tr>
+    <tr><td><b>③ 属性</b></td><td>非隐藏、非系统、非只读、未被其它进程占用、不在同步冲突状态、大小 ≤ 上限（默认 10 MB / 个）</td></tr>
+  </tbody>
+</table>
+
+<h3>15.2 删除安全红线</h3>
+<ol>
+  <li><b>只送回收站，永不永久删除。</b>不走 <span class="chip mono">del / rm / DeleteFile</span> 直删路径；删除后仍可用标准方式还原。</li>
+  <li><b>每笔进食写入取食日志</b>：时间、完整原始路径、大小、吃它的狐狸 ID、回收站内的位置。</li>
+  <li><b>提供「撤销这次进食」</b>——直接在程序内还原刚被吃掉的条目，不用用户去回收站里翻。</li>
+  <li><b>以下一律不吃</b>：隐藏文件、系统文件、只读文件、正在被占用的文件、超过上限的文件、投喂区之外的任何东西。</li>
+</ol>
+<table>
+  <thead><tr><th style="width:150px">文件夹的额外门槛</th><th>规则</th></tr></thead>
+  <tbody>
+    <tr><td>默认开关</td><td><b>关闭</b>，需在设置里显式开启「允许吞噬文件夹」</td></tr>
+    <tr><td>开启后仍须满足</td><td>位于投喂区内、含文件数 ≤ 20、总大小 ≤ 50 MB、且内部不含任何隐藏或系统文件</td></tr>
+    <tr><td>确认方式</td><td>与单文件同规格的明细确认（路径 / 文件数 / 总大小 / 最早创建时间）</td></tr>
+  </tbody>
+</table>
+
+<h3>15.3 界面</h3>
+<div class="grid g2">
+  <div class="ui">
+    <div class="ttl"><span>投喂区设置</span><span class="chip b-warn">默认：未设置</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">投喂区目录</div>
+        <div class="chip mono" style="padding:6px 12px">（未设置 — 当前狐狸无法进食）</div>
+        <div style="margin-top:8px"><span class="btn">选择文件夹…</span></div>
+        <small style="display:block;margin-top:8px">建议专门建一个空文件夹（例如 <span class="chip mono">D:\FoxFeed</span>），
+        只往里丢确定不要的东西。</small>
+      </div>
+      <div class="field">
+        <div class="lb">可食名称规则（全部匹配才吃）</div>
+        <div class="tagline">
+          <span class="chip mono">*.tmp</span><span class="chip mono">*_old.*</span>
+          <span class="chip mono">Scrap*</span><span class="chip">+ 自定义…</span>
+        </div>
+      </div>
+      <div class="sw"><span class="tg"><i></i></span><div>允许吞噬文件夹<div><small>默认关闭；开启后仍需逐次确认</small></div></div></div>
+      <div class="sw"><span class="tg on"><i></i></span><div>进食前总是弹出明细确认<div><small>关闭后改为首次确认 + 之后同目录静默</small></div></div></div>
+      <div class="sw"><span class="tg on"><i></i></span><div>单个体上限 10 MB</div></div>
+    </div>
+  </div>
+  <div class="ui">
+    <div class="ttl"><span>觅食确认</span><span class="chip">赤穗 FX-0001 想去吃</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">它找到了这个</div>
+        <table style="margin:0">
+          <tbody>
+            <tr><td style="width:74px">名称</td><td><span class="chip mono">report_old.docx</span></td></tr>
+            <tr><td>完整路径</td><td style="font-family:Consolas,monospace;font-size:11.5px">D:\FoxFeed\2025\report_old.docx</td></tr>
+            <tr><td>大小 / 时间</td><td>1.4 MB · 创建于 2025-03-11</td></tr>
+            <tr><td>匹配规则</td><td><span class="chip mono">*_old.*</span></td></tr>
+            <tr><td>饱食度</td><td>41% → 进食后约 58%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="checkline"><span class="tg on"><i></i></span><div>移入回收站（<b>不是永久删除</b>）</div></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <span class="btn pri">让它吃</span><span class="btn">这只不吃</span><span class="btn">查看取食日志</span>
+      </div>
+      <small style="display:block;margin-top:8px">被吃后可在本界面或取食日志里「撤销这次进食」。</small>
+    </div>
+  </div>
+</div>
+
+<h3>15.4 饱食三级状态 —— 终点是休眠，不是死亡</h3>
+<div id="satietyFig" class="fig"></div>
+<table>
+  <thead><tr><th style="width:110px">饱食度</th><th style="width:110px">状态</th><th>表现</th><th>后果</th></tr></thead>
+  <tbody>
+    <tr><td>100 – 60%</td><td><b>活跃</b></td><td>正常行为，正常繁殖</td><td>—</td></tr>
+    <tr><td>60 – 25%</td><td><b>低活跃</b></td><td>移动变慢、减少奔跑、更多伏卧、不再主动求偶</td><td>繁殖欲望下降；免疫力轻度下降（见下）</td></tr>
+    <tr><td>25 – 0%</td><td><b>休眠（torpor）</b></td><td>蜷缩、尾巴裹身、呼吸极缓、眼睛半闭、几乎不动</td><td><b>停止生长与衰老推进（代谢几乎冻结）、不繁殖、不死</b></td></tr>
+  </tbody>
+</table>
+<div class="note ok"><b>休眠可以无限持续，投喂后立即苏醒。</b>
+休眠个体仍然可点击、可查看、可被直接投喂唤醒。
+休眠期间 <b>ID 与基因型照常计入种群统计</b>，但它不占繁殖位，也不产生新的谱系分支。</div>
+<div class="note warn"><b>注意这个机制对自然选择的实际含义：</b>休眠期间生长与衰老停止，所以饥饿的狐狸活得反而更久；
+但<b>它永远退出了繁殖市场</b>——基因不会传给下一代。<br>
+也就是说<b>"不会饿死"与"自然选择有效"这两件事同时成立</b>：个体活着，血统消失。见 §8.0。</div>
+
+<div class="note warn"><b>关于「严酷模式」（待你确认 D2）：</b>你明确要求不会被饿死，
+所以<b>默认饥饿只到休眠为止，健康不再继续下降</b>。
+是否额外提供一个开关，让深度休眠过久后健康缓慢下降并可能病死？
+我建议做，但<b>默认关闭并藏进高级设置</b>——因为它实质上就是把"饿死"悄悄放回系统。</div>
+
+<h3>15.5 饱食度怎么接进其它系统</h3>
+<table>
+  <thead><tr><th style="width:130px">下游</th><th>作用方式</th></tr></thead>
+  <tbody>
+    <tr><td>繁殖欲望</td><td>饱食 &lt; 50% 时按曲线下降，&lt; 25% 归零（与拥挤度 L(ρ) 相乘，不是相加）</td></tr>
+    <tr><td>一窝仔数</td><td>母体孕期营养影响仔数，饥饿时偏向 3 只下限</td></tr>
+    <tr><td>幼崽夭折率</td><td>哺乳期食物丰度低 → 夭折率上升（呼应 Q9C）</td></tr>
+    <tr><td>迁徙倾向</td><td>长期低活跃会提高 §16 的迁徙权重</td></tr>
+    <tr><td>免疫</td><td>仅在开启严酷模式后才参与；默认不因饥饿患病</td></tr>
+    <tr><td>环境反作用</td><td>投喂会短暂提升局部「食物丰度」读数，间接影响所有个体的竞争强度</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 16 ============ -->
+<h2 id="s16"><span class="no">16</span>离场与迁徙：非死亡的第三种退出</h2>
+
+<p>你的原话：<b>「需要「离场 / 迁徙」这种非死亡退出机制」。</b></p>
+
+<h3>16.1 三种离开桌面方式的区别</h3>
+<table>
+  <thead><tr><th style="width:110px">方式</th><th style="width:110px">谁触发</th><th>血统是否终结</th><th>能否回来</th><th>记录在哪</th></tr></thead>
+  <tbody>
+    <tr><td><b>死亡</b></td><td>衰老 / 疾病 / 意外</td><td><b>终结</b>（但基因可经 §17 育种延续）</td><td>不能</td><td>纪念馆</td></tr>
+    <tr><td><b>迁徙</b></td><td>个体自身状态</td><td>不终结，仍可作为亲本参与育种</td><td><b>低概率回乡</b></td><td><b>迁徙名录</b></td></tr>
+    <tr><td><b>退役</b></td><td>用户手动</td><td>不终结</td><td>不可（除非走育种）</td><td>纪念馆</td></tr>
+  </tbody>
+</table>
+
+<h3>16.2 触发条件</h3>
+<table>
+  <thead><tr><th style="width:190px">条件</th><th style="width:80px">默认权重</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>连续求偶失败次数</td><td>高</td><td>最自然的动机：找不到配偶就换个地方</td></tr>
+    <tr><td>长期低活跃 / 反复休眠</td><td>中</td><td>呼应 §15.4，食物长期短缺时会想走</td></tr>
+    <tr><td>健康偏低或年老</td><td>中</td><td>注意：这条与死亡竞争，谁先到算谁</td></tr>
+    <tr><td>适应度显著低于种群均值</td><td>低</td><td>让"不适应的个体离开"成为一个比死亡温和的输出口</td></tr>
+    <tr><td style="color:var(--accent)"><b>达到种群数量上限</b></td><td><b>0</b></td><td>见下方红字说明</td></tr>
+  </tbody>
+</table>
+<div class="warn-band"><b>为什么拥挤度的默认权重是 0：</b>需求第七条写死了"不能为了满足数量上限就处理个体"。
+如果让"达到上限"去诱发迁徙，那本质上就是用一个好听的名字做人口清除，违反该条。<br>
+所以<b>上限只压「出生」（§09 的 L 曲线），不催「离场」</b>。
+拥挤度能不能加权，留成可配置项（D4），但如果用户把它调上去，界面必须明确提示"这相当于允许因拥挤而清退个体"。</div>
+
+<h3>16.3 演出设计</h3>
+<table>
+  <thead><tr><th style="width:80px">时间</th><th>画面</th><th>音频 / 提示</th></tr></thead>
+  <tbody>
+    <tr><td>0.0 s</td><td>目标个体停下当前行为，转向最近的屏幕边缘</td><td>无</td></tr>
+    <tr><td>0.5 – 4 s</td><td>缓慢走向边缘，中途偶尔回头看一眼群体</td><td>无</td></tr>
+    <tr><td>4 – 6 s</td><td>停在边缘，转过身面向画面内侧，尾巴缓慢摆动两次</td><td>轻微铃音</td></tr>
+    <tr><td>6 – 8 s</td><td>整体淡出（不要向下"掉出屏幕"，那是死亡的语言）</td><td>无</td></tr>
+    <tr><td>8 s 后</td><td>右下角弹一张安静的卡片「XXX 启程离开了桌面」</td><td>可点击直达迁徙名录</td></tr>
+  </tbody>
+</table>
+<div class="note info"><b>演出要和死亡明确区分：</b>死亡是"倒下 + 静止 + 逐渐变淡"，迁徙是"走出去 + 回头 + 淡出"。
+用户第一次看到时必须能立刻分辨这两件事，否则迁徙就变成一个用来自我安慰的假象。</div>
+
+<h3>16.4 迁徙名录与回乡</h3>
+<table>
+  <thead><tr><th style="width:150px">项目</th><th>设计</th></tr></thead>
+  <tbody>
+    <tr><td>记录内容</td><td>完整基因型、出发时刻、当时的年龄与健康、迁徙前的最后位置（仅用于还原氛围，不用于恢复）</td></tr>
+    <tr><td>是否占上限</td><td><b>不占</b>活跃数量上限</td></tr>
+    <tr><td>回乡概率</td><td>默认极低（可调，可设 0 = 永不回来）；回乡时<b>沿用原 ID 与基因型</b>，年龄按出发时的值继续</td></tr>
+    <tr><td>能否育种</td><td><b>能</b>：与 §17 的纪念馆个体同待遇，可作为基因供体</td></tr>
+    <tr><td>UI</td><td>独立于纪念馆的一个列表，标注"已迁徙"与"在场"，两者都可以在 §17 育种台里被选作供体</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 17 ============ -->
+<h2 id="s17"><span class="no">17</span>纪念馆育种：把逝去个体的基因带回种群</h2>
+
+<p>你的原话：<b>「可以选择优等或喜欢的个体进纪念馆（原来的个体该死亡还是死亡），
+在纪念馆的基因可以被用来承载到个体身上进行繁育（简称育种）」。</b></p>
+
+<p>这条需求很关键，它解决了一个真实痛点：<b>玩家好不容易养出一只紫色九尾，它老死之后这条血统就断了</b>。
+有了育种，优秀的基因型不会因为个体死亡而彻底消失，同时又不违反"不绕过孟德尔"的原则——下面 17.3 解释怎么做到的。</p>
+
+<h3>17.1 概念与边界</h3>
+<table>
+  <thead><tr><th style="width:150px">概念</th><th>定义</th></tr></thead>
+  <tbody>
+    <tr><td><b>种源 / 基因样本</b></td><td>从某个体身上提取的一份基因型快照，是一个<b>消耗品</b></td></tr>
+    <tr><td><b>受体会長</b></td><td>当前存活的、实际生下后代的那只个体</td></tr>
+    <tr><td><b>育种</b></td><td>用「供体样本」+「存活受体」产生后代的过程</td></tr>
+    <tr><td style="color:var(--accent)"><b>边界</b></td><td><b>育种不能复活个体</b>，也不能复制个体。它只是让一份基因型重新参与一次受精——后代仍然是两个基因型随机组合的结果，不是克隆</td></tr>
+  </tbody>
+</table>
+
+<h3>17.2 流程</h3>
+<div class="grid g2">
+  <div class="ui">
+    <div class="ttl"><span>① 取样</span><span class="chip">随时可做</span></div>
+    <div class="bd">
+      <p style="margin:0 0 8px">在任何个体档案里点「提取基因样本」。</p>
+      <div class="checkline"><span class="chip b-ok">✓</span><div>活体也能取样，每只一生<b>上限 3 次</b></div></div>
+      <div class="checkline"><span class="chip b-ok">✓</span><div>个体死亡瞬间自动询问是否取样</div></div>
+      <div class="checkline"><span class="chip b-ok">✓</span><div>取多少次都是同一份基因型（除非发生新的体细胞突变）</div></div>
+      <div style="margin-top:10px"><span class="btn pri">提取样本</span> <span class="chip">剩余 2 / 3</span></div>
+    </div>
+  </div>
+  <div class="ui">
+    <div class="ttl"><span>② 育种台</span><span class="chip b-warn">供体来自纪念馆</span></div>
+    <div class="bd">
+      <div class="field">
+        <div class="lb">基因供体</div>
+        <div class="chip mono" style="padding:5px 10px">FX-0031 ♂「灰烬」· 第 7 代 · 已故</div>
+        <small>基因型：A⁺/Aᵛ · Erᴾ/Erᴿ · Tn₁tn₁ Tn₂tn₂ …</small>
+      </div>
+      <div class="field">
+        <div class="lb">存活受体</div>
+        <div class="chip mono" style="padding:5px 10px">FX-0062 ♀「暮霭」· 第 9 代</div>
+      </div>
+      <div class="probrow"><span>Aᵛ 紫</span><span class="pb"><span class="pf" style="width:50%;background:#8367AE"></span></span><span class="pv">50%</span></div>
+      <div class="probrow"><span>Aᵇ 黑</span><span class="pb"><span class="pf" style="width:25%;background:#4C4653"></span></span><span class="pv">25%</span></div>
+      <div class="probrow"><span>A⁺ 橙</span><span class="pb"><span class="pf" style="width:25%;background:#E08A3C"></span></span><span class="pv">25%</span></div>
+      <div class="tagline">
+        <span class="chip b-warn">消耗样本 ×1</span><span class="chip">冷却 6 游戏小时</span>
+        <span class="chip">亲缘 r = 0.00</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px"><span class="btn pri">确认育种</span><span class="btn">取消</span></div>
+    </div>
+  </div>
+</div>
+
+<h3>17.3 为什么这不违反孟德尔</h3>
+<div class="card" style="font-family:Consolas,'Courier New',monospace;font-size:12.5px;line-height:2;text-align:center">
+  后代基因型 = 配子(供体基因型) × 配子(受体基因型)<br>
+  <span style="color:var(--accent)">↑ 与两只活体配对完全相同的算法，没有任何一步被跳过或直接指定</span>
+</div>
+<table>
+  <thead><tr><th style="width:150px">可能的"作弊"</th><th>本设计</th></tr></thead>
+  <tbody>
+    <tr><td>直接复制整只狐狸</td><td><b>不允许</b>。后代必然是供体与受体各出一半</td></tr>
+    <tr><td>指定某个性状必须出现</td><td><b>不允许</b>。配子随机生成，界面只显示概率不修改结果</td></tr>
+    <tr><td>绕过种群上限</td><td><b>不允许</b>。育种产生的新生命同样计入 N_eff、同样受 L(ρ) 限制</td></tr>
+    <tr><td>无限次使用同一供体</td><td><b>不允许</b>。样本是消耗品且有冷却</td></tr>
+  </tbody>
+</table>
+
+<h3>17.4 限制清单</h3>
+<table>
+  <thead><tr><th style="width:170px">限制</th><th style="width:110px">默认值</th><th>目的</th></tr></thead>
+  <tbody>
+    <tr><td>每只一生取样次数</td><td>3 次</td><td>血统可以延续，但不能无限刷</td></tr>
+    <tr><td>样本消耗</td><td>每次育种消耗 1 枚</td><td>优秀基因终究会耗尽，逼玩家做取舍</td></tr>
+    <tr><td>育种冷却</td><td>6 游戏小时</td><td>不让育种变成比正常繁殖更快的主流路径</td></tr>
+    <tr><td>近交检测</td><td><b>同样适用</b></td><td>供体参与 r 计算，防止反复用同一始祖近交刷血统（见 §5.4）</td></tr>
+    <tr><td>上限 / 拥挤度</td><td>同样受限</td><td>育种不能绕过密度机制</td></tr>
+  </tbody>
+</table>
+
+<h3>17.5 家谱里的 DONOR 节点</h3>
+<div id="donorFig" class="fig"></div>
+
+<h3>17.6 创始世代：开局 10 只幼崽</h3>
+<table>
+  <thead><tr><th style="width:150px">项目</th><th>设计</th></tr></thead>
+  <tbody>
+    <tr><td>数量与年龄</td><td>10 只幼崽，统一接近成年边界，让玩家亲眼看到成长过程</td></tr>
+    <tr><td>亲缘</td><td>由 10 对虚构始祖分别产生，<b>彼此之间 r = 0</b>，开局就能自由交配而不触发近交检测</td></tr>
+    <tr><td>性别</td><td>随机；建议保底不少于 3♂3♀，避免前期直接卡死</td></tr>
+    <tr><td>夭折</td><td>照常适用（你的要求）。<b>但我建议加「创始者保护」：首世代夭折率减半 → 约剩 7–8 只成年</b>（D3 待确认）</td></tr>
+    <tr><td>理由</td><td>若按 35% 打满，开局可能只剩 6 只，一旦性别失衡（例如 1♂5♀），前几个小时什么都发生不了，新用户会直接卸载</td></tr>
+    <tr><td>谱系</td><td>10 对虚构始祖记入族谱并标注「创始 X 号」，它们本身不出现在桌面上，但可以在纪念馆里看到，保证溯源链从一开始就完整</td></tr>
+  </tbody>
+</table>
+
+<!-- ============ 18 ============ -->
+<h2 id="s18"><span class="no">18</span>基因与性状面板（人工育种决策台）</h2>
+
+<div class="note warn">
+<b>需求来源（用户原话）：</b>「隐性基因虽然不可见，我希望有面板可以查看基因与性状，有助于我人工选择育种。」<br>
+v0.3 的 §6「个体基因档案」只做了<b>单个个体</b>的基因型/表型对照，§5 配对台只算了 <b>A 一个位点</b>的分离比。
+两者都不足以支撑人工育种 —— 玩家真正需要的是「这只藏着什么」「这两只配能开出什么」「整个种群还剩什么」。
+本章补齐这四块。
+</div>
+
+<h3>18.1 隐性基因不可见的三种情形</h3>
+<p>面板要同时揭示下面三类，缺任何一类玩家都会做出错误判断：</p>
+<table>
+  <thead><tr><th style="width:130px">类型</th><th style="width:230px">机制</th><th>为什么玩家看不出来</th></tr></thead>
+  <tbody>
+    <tr><td><b>隐性携带</b></td><td>杂合子里的隐性等位被显性盖住<br><span class="mono">例：A⁺/Aᵇ 表现为赤橙，但携带墨黑</span></td>
+        <td>外观上和 A⁺/A⁺ 的赤橙<b>完全无法区分</b>，育种价值却差一个数量级</td></tr>
+    <tr><td><b>上位遮蔽</b></td><td>w/w 雪绒白完全掩盖 A、D、P 三个位点</td>
+        <td>一只雪绒白狐狸可能同时藏着幽夜紫、稀释、虎斑，外观一片白，<b>连血统线索都没有</b></td></tr>
+    <tr><td><b>种群层面濒危</b></td><td>某等位在种群中只剩极少数拷贝</td>
+        <td>玩家不知道自己正准备淘汰的那只，是全群<b>唯一</b>的幽夜紫携带者</td></tr>
+  </tbody>
+</table>
+
+<h3>18.2 面板由四个视图组成</h3>
+<table>
+  <thead><tr><th style="width:150px">视图</th><th style="width:130px">回答的问题</th><th>内容</th></tr></thead>
+  <tbody>
+    <tr><td><b>① 个体基因档案</b></td><td>这只藏着什么</td>
+        <td>24 位点逐行列出：基因型 / <b>表现出来的</b> / <b>藏着没显示的</b>；
+        顶部高亮「看不见的部分」；紫底 = 上位遮蔽，橙底 = 隐性携带</td></tr>
+    <tr><td><b>② 配对预测</b></td><td>这两只能开出什么</td>
+        <td>12 个可见性状的完整概率分布 + <b>隐性解锁概率清单</b> +
+        亲缘系数 r 与近交判定（§5.4）</td></tr>
+    <tr><td><b>③ 种群基因库</b></td><td>全群还剩什么</td>
+        <td>每个等位的频率 / 拷贝数 / 携带者数 / 纯合数；
+        <b>濒危等位红色预警并点名具体个体</b></td></tr>
+    <tr><td><b>④ 育种目标推荐</b></td><td>想要 X，该配谁</td>
+        <td>选定目标性状 → 列出概率最高且 r 最低的配对组合，并显示「可行配对 N/总数」</td></tr>
+  </tbody>
+</table>
+
+<h3>18.3 视图① — 个体：看得见 vs 藏着</h3>
+<div class="card">
+  <div class="lb">面板行格式（24 行，每行一个位点）</div>
+  <div class="loci" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+    <div class="locus carry" style="border:1px solid #EDDFC0;background:#FFFBF0;border-radius:6px;padding:6px 9px">
+      <div class="lt" style="font-size:11px;color:#8A94A0;display:flex;justify-content:space-between">
+        <span>主毛色</span><span class="mono">A</span></div>
+      <div class="lg" style="font-family:Consolas,monospace;font-size:12.5px">赤橙 / 墨黑</div>
+      <div class="lp" style="font-size:12px">→ 赤橙</div>
+      <div class="lh" style="font-size:11px;color:#BA7517">◈ 隐藏：墨黑</div>
+    </div>
+    <div class="locus mask" style="border:1px solid #DAD1F0;background:#EFEAFB;border-radius:6px;padding:6px 9px">
+      <div class="lt" style="font-size:11px;color:#8A94A0;display:flex;justify-content:space-between">
+        <span>斑纹</span><span class="mono">P</span></div>
+      <div class="lg" style="font-family:Consolas,monospace;font-size:12.5px">虎斑 / 纯色</div>
+      <div class="lp" style="font-size:12px">→ 虎斑（不可见）</div>
+      <div class="lm" style="font-size:11px;color:#7F77DD">⚠ 被上位遮蔽 · 雪绒白掩盖</div>
+    </div>
+  </div>
+  <div class="small" style="margin-top:6px">左：隐性携带（橙底）｜右：上位遮蔽（紫底）—— 这是 §2.5「相同外观 ≠ 相同基因型」在界面上的落地。</div>
+</div>
+
+<h3>18.4 视图② — 配对预测的算法口径</h3>
+<div class="card" style="font-family:Consolas,'Courier New',monospace;font-size:12.5px;line-height:2">
+每个性状只枚举它的<b>依赖位点</b>（每位点 ≤4 种后代基因型）→ 联合相乘<br>
+　毛色 = f(A, D, W)　尾数 = f(Tn₁, Tn₂, V)　毛长 = f(L₁, L₂)　斑纹 = f(P) …<br>
+<span style="color:var(--accent)">↑ 无需 22 位点全笛卡尔积（4²²），每性状最多 4×4×4 = 64 种组合</span><br>
+概率<b>不含突变</b>（突变 3%/仔另计）—— 每只幼崽都有 3% 概率出现表里没有的新性状
+</div>
+<div class="note warn">口径必须写死在文档里：这里的概率是<b>真实配子随机组合</b>的结果，
+<b>只显示、不干预</b>。玩家看到 25% 就是 25%，不会因为"看了"就变成 100%（沿用 §5 红线）。</div>
+
+<h3>18.5 实测：面板在真实种群上揭示的四件事</h3>
+<p>在 v0.6 规则（--variant v3）、种子 20261031、5 生态年、36 只存活、第 9 代这批数据上实测：</p>
+
+<table>
+  <thead><tr><th style="width:180px">场景</th><th>肉眼所见</th><th>面板揭示</th></tr></thead>
+  <tbody>
+    <tr><td><b>外观完全相同的两只</b><br><span class="small">赤橙/虎斑/2尾/毛长2/直毛，共 2 只</span></td>
+        <td>一模一样，只能随机挑一只淘汰</td>
+        <td>FX-0107 藏着 <b>稀释 + 雪绒白 + 纯色</b><br>FX-0135 藏着 <b>墨黑 + 雪绒白 + 纯色</b><br>→ 育种价值完全不同</td></tr>
+    <tr><td><b>想培育雪绒白</b></td><td>盲配，可能几十窝不出</td>
+        <td>208 组配对中 <b>99 组可行</b>，最优组合 <b>100%</b> 命中（FX-0112 × FX-0094，r=0.059 安全）</td></tr>
+    <tr><td><b>想培育 5 尾</b></td><td>反复失败，以为是 bug</td>
+        <td>仅 <b>4/208</b> 组可行，最优 <b>6.2%</b> → 面板明确告诉玩家这是<b>长期选育目标</b>，不是几次能成的</td></tr>
+    <tr><td><b>想培育紫瞳</b></td><td>反复失败</td>
+        <td><b>0/208 组可行</b> —— Eʸⱽ 在该种群频率为 0，只能等突变。面板直接显示"无法培育"，避免玩家白等</td></tr>
+    <tr><td><b>自动淘汰谁</b></td><td>按外观/评分，可能误删</td>
+        <td><b>幽夜紫仅剩 1 拷贝，全押在 FX-0102</b>；斑点仅剩 1 拷贝在 FX-0131 → 这两只必须豁免自动淘汰</td></tr>
+  </tbody>
+</table>
+
+<div class="note ok"><b>由此新增一条规则（本轮拍板项 G1）：</b>自动淘汰（§11）与「综合评分最低者退役」在执行前，
+必须检查该个体是否属于<b>濒危等位的唯一携带者</b>；若是，则<b>强制豁免</b>并在面板上给出提示。
+这条不新增 UI 负担 —— 沿用已有的濒危名单即可。</div>
+
+<h3>18.6 与既有章节的关系（不重复造轮子）</h3>
+<table>
+  <thead><tr><th style="width:130px">章节</th><th style="width:120px">职责</th><th>§18 的变化</th></tr></thead>
+  <tbody>
+    <tr><td>§6 个体基因档案</td><td>单只狐狸的档案页</td>
+        <td><b>保持不变</b>，但其中的「基因型/表型对照」区块改为调用 §18 视图①的完整 24 位点渲染，
+        并补上「隐蔽」标注。入口按钮增加「查看隐藏基因」</td></tr>
+    <tr><td>§5 配对台</td><td>人工选育的操作界面</td>
+        <td>其中「② 单基因座分离比预估（A 位点）」<b>扩展为全 12 性状</b>；
+        「③ 全位点联合表型概率」改为调用 §18 视图②的同一套算法，两处数字必须一致</td></tr>
+    <tr><td>§11 锁定与收藏</td><td>淘汰保护</td>
+        <td>新增 G1：濒危等位唯一携带者<b>自动豁免</b>自动淘汰</td></tr>
+    <tr><td>§17 纪念馆育种</td><td>已故个体作为基因供体</td>
+        <td>供体选择界面复用 §18 视图①的携带者视图 —— 选供体的本质就是「谁藏着我要的等位」</td></tr>
+  </tbody>
+</table>
+
+<h3>18.7 红线与边界</h3>
+<table>
+  <thead><tr><th style="width:130px">事项</th><th>规则</th></tr></thead>
+  <tbody>
+    <tr><td>预测的作用</td><td>仅对玩家可见，<b>不改变配子随机组合</b></td></tr>
+    <tr><td>人工选育权限</td><td>只能决定<b>谁和谁生</b>、<b>每窝多少仔</b>，绝不能直接指定后代基因型（§5 红线不变）</td></tr>
+    <tr><td>密度约束</td><td>人工繁殖同样受 L(ρ) 约束，ρ ≥ 1 时配对按钮置灰，面板<b>不提供绕过入口</b>（Q16）</td></tr>
+    <tr><td>近交</td><td>r ≥ 0.125 标为近交并提示 §5.4 的 50% 放弃判定；<b>面板只提示，不代替判定</b></td></tr>
+    <tr><td>突变</td><td>面板概率不含突变（3%/仔另计），界面需注明</td></tr>
+    <tr><td>性能</td><td>种群 40 只 → 每帧不做全量重算；仅在<b>打开面板 / 更换选择</b>时计算</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+<b>可交互原型：</b><code>docs/gene-panel-v0.4.html</code>（自包含单文件，数据来自真实模拟种群）。
+引擎实现见 <code>sim/breeding.py</code>，自检 <code>sim/verify_breeding.py</code>（26 项断言全通过，
+含解析概率 vs 30000 次蒙特卡洛交叉验证）。
+</div>
+
+<footer>
+幻想小狐狸 Fantasy Fox · 桌面生态桌宠 — 需求与美术设计稿 v0.4<br>
+v0.2 变更：新增 §09 密度制约的繁殖欲望、§10 遗传谱系与基因溯源、§11 个体锁定与收藏、§12 种群进化统计；
+原「待确认问题」顺延为 §13 并补充 Q13–Q25。<br>
+v0.4 变更：新增 §18 基因与性状面板（隐性基因可视化 / 配对预测 / 种群濒危预警 / 目标育种推荐），
+新增拍板项 G1；配 <code>docs/gene-panel-v0.4.html</code> 可交互原型。<br>
+本文档中的狐狸形象与图表由程序化分层矢量生成，用于确认<b>部件拆分</b>与<b>配色规格</b>，不代表最终成稿精度。<br>
+下一轮（待 D1–D4 确认后开始）：配子生成算法、突变权重表、按新选择压力重排的适应度函数、种群 / 谱系 / 样本的数据 schema、快照格式与回滚策略。
+</footer>
+
+</main>
+</div>
+
+<script>
+/* ============ 配色表 ============ */
+var COLORS = {
+  orange:   {n:'赤橙',   base:'#E08A3C', shade:'#B9651F', belly:'#FBEAD6', line:'#7A3F12', ear:'#F3C6A0'},
+  cream:    {n:'奶油金', base:'#EFD8AC', shade:'#D2B37C', belly:'#FFFAF1', line:'#96733A', ear:'#FBEBD0'},
+  silver:   {n:'霜灰',   base:'#9BA5B0', shade:'#6C7681', belly:'#EFF2F5', line:'#4E565F', ear:'#DCE2E8'},
+  paleblue: {n:'淡银蓝', base:'#B7CBD9', shade:'#8FA9BC', belly:'#F4F9FC', line:'#5E7488', ear:'#DCE8F0'},
+  black:    {n:'墨黑',   base:'#4C4653', shade:'#332F3C', belly:'#DCD8E2', line:'#241F2B', ear:'#736C7F'},
+  blue:     {n:'雾霭蓝', base:'#7BA7CE', shade:'#56809F', belly:'#E6F1F9', line:'#33556E', ear:'#BAD6E9'},
+  violet:   {n:'幽夜紫', base:'#A98AD2', shade:'#8367AE', belly:'#F0E8FA', line:'#553F78', ear:'#D6C5EC'},
+  mist:     {n:'淡雾紫', base:'#C3B2DC', shade:'#9C88BE', belly:'#F7F2FD', line:'#6B5A87', ear:'#E6DEF3'},
+  white:    {n:'雪绒白', base:'#F6F4F1', shade:'#DCD7D0', belly:'#FFFFFF', line:'#9E968C', ear:'#F5E3DF'}
+};
+var EYES = {gold:'#E8A33D', teal:'#29A398', blue:'#3E7BD6', violet:'#8B5CF6', red:'#DB4B62'};
+
+/* ============ 工具函数 ============ */
+function wavyEllipse(cx,cy,rx,ry,amp,waves){
+  var pts=[],N=48;
+  for(var i=0;i<N;i++){
+    var a=i/N*Math.PI*2, k=1+amp*Math.sin(a*waves);
+    pts.push((cx+Math.cos(a)*rx*k).toFixed(1)+','+(cy+Math.sin(a)*ry*k).toFixed(1));
+  }
+  return 'M'+pts.join(' L ')+' Z';
+}
+function starPath(cx,cy,r){
+  var d='';
+  for(var i=0;i<8;i++){
+    var a=i*Math.PI/4, rr=(i%2)?r*0.36:r;
+    d+=(i?' L':'M')+(cx+Math.sin(a)*rr).toFixed(1)+' '+(cy-Math.cos(a)*rr).toFixed(1);
+  }
+  return d+' Z';
+}
+var _uid=0;
+
+/* ============ 狐狸渲染器 ============ */
+function foxSVG(p, size){
+  size = size || 150;
+  var C = COLORS[p.coat] || COLORS.orange;
+  var W=150,H=158;
+  var CX=75;
+  var by=97, brx=26, bry=28;
+  var hy=47, hrx=27, hry=25;
+  var rot=0, eyesClosed=false, tailSpread=1, tailL=44, wrap=false;
+
+  switch(p.pose){
+    case 'sit':    by=100; brx=30; bry=24; hy=50; break;
+    case 'sleep':  by=104; brx=33; bry=20; hy=56; eyesClosed=true; tailL=32; wrap=true; break;
+    case 'walk':   rot=-5; hy=49; break;
+    case 'run':    rot=-9; hy=49; tailL=48; tailSpread=1.12; break;
+    case 'eat':    hy=55; eyesClosed=true; break;
+    case 'display':tailSpread=1.18; tailL=50; hy=44; break;
+    case 'young':  brx=21; bry=22; by=101; hrx=25; hry=24; hy=62; break;
+  }
+
+  var id='fx'+(++_uid);
+  var hipY=by+8;
+  var o=[];
+  o.push('<svg viewBox="0 0 '+W+' '+H+'" width="'+size+'" height="'+Math.round(size*H/W)+'" role="img" aria-label="'+((p.name||'狐狸')+' '+(p.pose||''))+'">');
+  o.push('<g transform="translate(0 8)">');
+
+  if(p.glow){
+    o.push('<ellipse cx="'+CX+'" cy="'+(by-18)+'" rx="'+(brx+24)+'" ry="'+(bry+28)+'" fill="#FFF0BE" opacity="0.42"/>');
+    o.push('<ellipse cx="'+CX+'" cy="'+(by-18)+'" rx="'+(brx+13)+'" ry="'+(bry+15)+'" fill="#FFFBE9" opacity="0.5"/>');
+  }
+  o.push('<g transform="rotate('+rot+' '+CX+' '+by+')">');
+
+  /* --- 尾 --- */
+  var tails=p.tails||{};
+  var n=tails.count||1;
+  if(n>0){
+    var L=tailL*(tails.len==='long'?1.16:tails.len==='short'?0.78:1);
+    var tw2=tails.fluff==='fluffy'?15:tails.fluff==='thin'?7:11;
+    var tColor=(tails.color&&COLORS[tails.color])?COLORS[tails.color].base:C.base;
+    var leftN=Math.ceil(n/2), rightN=n-leftN;
+    var drawSide=function(cnt,s){
+      for(var j=0;j<cnt;j++){
+        var t=(cnt===1)?0.42:(j/(cnt-1));
+        var ang=18+t*44;
+        var rad=ang*Math.PI/180;
+        var LL=L*(0.85+0.15*(1-t));
+        var tx=CX+s*Math.cos(rad)*LL*tailSpread;
+        var ty=hipY-Math.sin(rad)*LL*tailSpread;
+        var cpx=CX+s*(LL*0.66), cpy=hipY+7-Math.sin(rad)*LL*0.18;
+        var d='M'+CX+' '+(hipY-2)+' Q'+cpx.toFixed(1)+' '+cpy.toFixed(1)+' '+tx.toFixed(1)+' '+ty.toFixed(1);
+        o.push('<path d="'+d+'" fill="none" stroke="'+C.line+'" stroke-width="'+(tw2+3)+'" stroke-linecap="round"/>');
+        o.push('<path d="'+d+'" fill="none" stroke="'+tColor+'" stroke-width="'+tw2+'" stroke-linecap="round"/>');
+        var r1=tw2*0.66;
+        if(tails.tip==='ember'){
+          o.push('<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="'+(r1*1.25).toFixed(1)+'" fill="#FFB347" stroke="#FF7A2F" stroke-width="1.6"/>');
+          o.push('<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="'+(r1*0.55).toFixed(1)+'" fill="#FFE8A7"/>');
+        } else if(tails.tip==='white'){
+          o.push('<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="'+r1.toFixed(1)+'" fill="#FFFDF9" stroke="'+C.line+'" stroke-width="1.2"/>');
+        } else if(tails.tip==='black'){
+          o.push('<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="'+r1.toFixed(1)+'" fill="#2E2A33" stroke="'+C.line+'" stroke-width="1.2"/>');
+        }
+      }
+    }
+    drawSide(leftN,-1);
+    drawSide(rightN,1);
+  }
+
+  /* --- 被毛外轮廓 --- */
+  var fur=p.fur||{};
+  var flen=fur.len===undefined?2:fur.len;
+  var fc=fur.curl||0;
+  if(flen>0){
+    var amp=0.03+flen*0.022+fc*0.012;
+    var wv=8+flen+fc*3;
+    o.push('<path d="'+wavyEllipse(CX,by,brx+flen*1.6,bry+flen*1.5,amp,wv)+'" fill="'+C.shade+'" opacity="0.55"/>');
+    o.push('<path d="'+wavyEllipse(CX,hy,hrx+flen*1.4,hry+flen*1.3,amp*0.8,wv)+'" fill="'+C.shade+'" opacity="0.5"/>');
+  }
+
+  /* --- 躯干 --- */
+  o.push('<clipPath id="'+id+'_b"><ellipse cx="'+CX+'" cy="'+by+'" rx="'+brx+'" ry="'+bry+'"/></clipPath>');
+  o.push('<ellipse cx="'+CX+'" cy="'+by+'" rx="'+brx+'" ry="'+bry+'" fill="'+C.base+'" stroke="'+C.line+'" stroke-width="2.4"/>');
+  o.push('<g clip-path="url(#'+id+'_b)">');
+  o.push('<ellipse cx="'+CX+'" cy="'+(by+5)+'" rx="'+(brx*0.56).toFixed(1)+'" ry="'+(bry*0.62).toFixed(1)+'" fill="'+C.belly+'"/>');
+  /* 花纹 */
+  var pat=p.pattern||{type:'none'};
+  var pcol=(p.coat==='white')?C.shade:C.shade;
+  var pop=(p.coat==='white')?0.22:0.55;
+  if(pat.type==='tabby'){
+    for(var i2=0;i2<3;i2++){
+      var yy=by-12+i2*13;
+      o.push('<path d="M'+(CX-brx-4)+' '+yy+' Q'+CX+' '+(yy-9)+' '+(CX+brx+4)+' '+yy+'" fill="none" stroke="'+pcol+'" stroke-width="5" opacity="'+pop+'" stroke-linecap="round"/>');
+    }
+  } else if(pat.type==='spots'){
+    var sp=[[-14,-9,5.5],[13,-13,4.6],[3,11,6],[-9,17,4.6],[15,7,4]];
+    for(var s2=0;s2<sp.length;s2++){
+      o.push('<ellipse cx="'+(CX+sp[s2][0])+'" cy="'+(by+sp[s2][1])+'" rx="'+sp[s2][2]+'" ry="'+(sp[s2][2]*0.85).toFixed(1)+'" fill="'+pcol+'" opacity="'+pop+'"/>');
+    }
+  } else if(pat.type==='gradient'){
+    o.push('<defs><linearGradient id="'+id+'_g" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="'+C.base+'"/><stop offset="100%" stop-color="'+C.shade+'"/></linearGradient></defs>');
+    o.push('<ellipse cx="'+CX+'" cy="'+(by+4)+'" rx="'+(brx*1.05).toFixed(1)+'" ry="'+(bry*0.95).toFixed(1)+'" fill="url(#'+id+'_g)"/>');
+  }
+  if(p.stars){
+    var stx=[[-15,-6,4.6],[12,-11,4],[2,13,5],[-7,20,3.8],[16,8,3.6]];
+    for(var t2=0;t2<stx.length;t2++){
+      o.push('<path d="'+starPath(CX+stx[t2][0],by+stx[t2][1],stx[t2][2])+'" fill="#FFF6C9" opacity="0.95"/>');
+    }
+  }
+  o.push('</g>');
+
+  /* --- 脚掌 --- */
+  var fy=by+bry-5;
+  o.push('<ellipse cx="'+(CX-14)+'" cy="'+fy+'" rx="9.5" ry="6" fill="'+C.base+'" stroke="'+C.line+'" stroke-width="2"/>');
+  o.push('<ellipse cx="'+(CX+14)+'" cy="'+fy+'" rx="9.5" ry="6" fill="'+C.base+'" stroke="'+C.line+'" stroke-width="2"/>');
+
+  /* --- 耳 --- */
+  var ears=p.ears||{};
+  var esz=ears.size||1, w=18*esz, h=23*esz;
+  var eSides=[-1,1];
+  for(var k=0;k<2;k++){
+    var sd=eSides[k];
+    var bxp=CX+sd*20, byp=hy-11;
+    var shape;
+    if(ears.shape==='round'){
+      shape='M'+(bxp-w/2)+' '+byp+' Q'+(bxp-w/2)+' '+(byp-h*0.66)+' '+bxp+' '+(byp-h*0.88)+
+            ' Q'+(bxp+w/2)+' '+(byp-h*0.66)+' '+(bxp+w/2)+' '+byp+' Z';
+    } else {
+      shape='M'+(bxp-w/2)+' '+byp+' L'+(bxp-w*0.2)+' '+(byp-h)+' L'+(bxp+w/2)+' '+byp+' Z';
+    }
+    var tr=ears.shape==='flop'?' rotate('+(sd*40)+' '+(bxp+sd*w/2)+' '+byp+')':'';
+    o.push('<g'+(tr?' transform="'+tr+'"':'')+'>');
+    o.push('<path d="'+shape+'" fill="'+C.base+'" stroke="'+C.line+'" stroke-width="2.4" stroke-linejoin="round"/>');
+    o.push('<ellipse cx="'+bxp+'" cy="'+(byp-h*0.36)+'" rx="'+(w*0.24).toFixed(1)+'" ry="'+(h*0.3).toFixed(1)+'" fill="'+((ears.inner==='dark')?C.shade:C.ear)+'"/>');
+    if(ears.tip==='dark'){
+      o.push('<path d="M'+(bxp-w*0.34)+' '+(byp-h*0.5)+' L'+(bxp-w*0.2)+' '+(byp-h)+' L'+(bxp+w*0.05)+' '+(byp-h*0.55)+' Z" fill="'+C.shade+'"/>');
+    } else if(ears.tip==='white'){
+      o.push('<path d="M'+(bxp-w*0.34)+' '+(byp-h*0.5)+' L'+(bxp-w*0.2)+' '+(byp-h)+' L'+(bxp+w*0.05)+' '+(byp-h*0.55)+' Z" fill="#FFFDF9"/>');
+    }
+    o.push('</g>');
+  }
+
+  /* --- 头 --- */
+  o.push('<clipPath id="'+id+'_h"><ellipse cx="'+CX+'" cy="'+hy+'" rx="'+hrx+'" ry="'+hry+'/></clipPath>');
+  o.push('<ellipse cx="'+CX+'" cy="'+hy+'" rx="'+hrx+'" ry="'+hry+'" fill="'+C.base+'" stroke="'+C.line+'" stroke-width="2.4"/>');
+  o.push('<g clip-path="url(#'+id+'_h)">');
+  o.push('<ellipse cx="'+CX+'" cy="'+(hy+13)+'" rx="14" ry="10" fill="'+C.belly+'"/>');
+  if(pat.type==='tabby'){
+    o.push('<path d="M'+(CX-hrx-4)+' '+(hy-14)+' Q'+CX+' '+(hy-22)+' '+(CX+hrx+4)+' '+(hy-14)+'" fill="none" stroke="'+pcol+'" stroke-width="5" opacity="'+pop+'" stroke-linecap="round"/>');
+  }
+  if(p.stars){
+    o.push('<path d="'+starPath(CX-17,hy-8,4)+'" fill="#FFF6C9"/>');
+    o.push('<path d="'+starPath(CX+18,hy-11,3.4)+'" fill="#FFF6C9"/>');
+  }
+  o.push('</g>');
+
+  /* --- 脸 --- */
+  o.push('<ellipse cx="'+CX+'" cy="'+(hy+13)+'" rx="13.5" ry="9.5" fill="'+C.belly+'" opacity="0.9"/>');
+  o.push('<path d="M'+(CX-4.5)+' '+(hy+7)+' Q'+CX+' '+(hy+2)+' '+(CX+4.5)+' '+(hy+7)+' Q'+CX+' '+(hy+13)+' '+(CX-4.5)+' '+(hy+7)+' Z" fill="#2F2A31"/>');
+  o.push('<path d="M'+CX+' '+(hy+13)+' L'+CX+' '+(hy+16)+' M'+CX+' '+(hy+16)+' q-5 4 -8 1 M'+CX+' '+(hy+16)+' q5 4 8 1" fill="none" stroke="#2F2A31" stroke-width="1.2" stroke-linecap="round"/>');
+
+  var eyes=p.eyes||{color:'gold',shape:'round'};
+  var ecol=EYES[eyes.color]||EYES.gold;
+  var ecol2=eyes.hetero?(EYES[eyes.heteroTo]||'#FFFFFF'):ecol;
+  function eye(ex,col){
+    if(eyesClosed){
+      o.push('<path d="M'+(ex-6)+' '+(hy+1)+' q6 6 12 0" fill="none" stroke="#2F2A31" stroke-width="2" stroke-linecap="round"/>');
+      return;
+    }
+    if(eyes.shape==='narrow'){
+      o.push('<ellipse cx="'+ex+'" cy="'+(hy+1)+'" rx="6.5" ry="3.4" fill="'+col+'"/>');
+      o.push('<ellipse cx="'+(ex-1.5)+'" cy="'+hy+'" rx="1.8" ry="1.5" fill="#FFFFFF" opacity="0.85"/>');
+    } else if(eyes.shape==='almond'){
+      o.push('<ellipse cx="'+ex+'" cy="'+(hy+1)+'" rx="5.6" ry="6.6" fill="'+col+'"/>');
+      o.push('<ellipse cx="'+(ex-1.5)+'" cy="'+(hy-1)+'" rx="2.1" ry="2.2" fill="#FFFFFF" opacity="0.9"/>');
+    } else {
+      o.push('<ellipse cx="'+ex+'" cy="'+(hy+1)+'" rx="6.2" ry="6.2" fill="'+col+'"/>');
+      o.push('<ellipse cx="'+(ex-1.8)+'" cy="'+(hy-1.2)+'" rx="2.3" ry="2.3" fill="#FFFFFF" opacity="0.92"/>');
+    }
+  }
+  eye(CX-13,ecol);
+  eye(CX+13,ecol2);
+
+  /* --- 特效层 --- */
+  if(p.halo){
+    o.push('<ellipse cx="'+CX+'" cy="'+(hy-hry-13)+'" rx="21" ry="6.5" fill="none" stroke="#FFD98A" stroke-width="3.2" opacity="0.95"/>');
+    o.push('<ellipse cx="'+CX+'" cy="'+(hy-hry-13)+'" rx="14" ry="4" fill="none" stroke="#FFF1C9" stroke-width="2" opacity="0.9"/>');
+  }
+  if(p.sparkle){
+    o.push('<path d="'+starPath(CX-hrx-6,hy-14,6)+'" fill="#FFE07A"/>');
+    o.push('<path d="'+starPath(CX+hrx+7,hy-18,4.6)+'" fill="#FFE07A"/>');
+    o.push('<path d="'+starPath(CX+hrx+3,hy+2,3.6)+'" fill="#FFEFAE"/>');
+  }
+  o.push('</g></g></svg>');
+  return o.join('');
+}
+
+/* ============ 个体数据 ============ */
+function G(a){return a;}
+var FOXES = {
+  chisui:{name:'赤穗', id:'FX-0001', sex:'♀', tier:'常见',
+    coat:'orange', pattern:{type:'tabby'}, fur:{len:2,curl:0},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},
+    tails:{count:3,len:'short',fluff:'fluffy',tip:'white'},
+    eyes:{color:'gold',shape:'round'},
+    geno:{A:'A⁺/Aˢ',D:'D/d',W:'W/w',P:'Pᵀ/p',L:'L₁l₁ L₂l₂',K:'k/k',Er:'Erᴾ/Erᴿ',Ez:'Ez/ez',Tp:'Tpᴰ/tp',In:'Inᴸ/in',
+          Tn:'Tn₁tn₁ Tn₂tn₂',V:'v/v',Tl:'tl/tl',Tf:'Tf/tf',Tw:'Twᵂ/tw',Ey:'Eyᴳ/Eyᶜ',Ef:'Ef/Ef',Ht:'ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'赤橙 · 虎斑 · 中直毛<br>尖立耳（中）· 3 短蓬尾白尖<br>金色圆眼'},
+
+  dansha:{name:'丹砂', id:'FX-0002', sex:'♀', tier:'常见', note:'与赤穗同表型不同基因型',
+    coat:'orange', pattern:{type:'tabby'}, fur:{len:2,curl:0},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},
+    tails:{count:3,len:'short',fluff:'fluffy',tip:'white'},
+    eyes:{color:'gold',shape:'round'},
+    geno:{A:'A⁺/A⁺',D:'D/D',W:'W/W',P:'Pᵀ/Pᵀ',L:'L₁l₁ L₂l₂',K:'k/k',Er:'Erᴾ/Erᴾ',Ez:'Ez/ez',Tp:'Tpᴰ/Tpᴰ',In:'Inᴸ/Inᴸ',
+          Tn:'Tn₁tn₁ Tn₂tn₂',V:'v/v',Tl:'tl/tl',Tf:'Tf/tf',Tw:'Twᵂ/Twᵂ',Ey:'Eyᴳ/Eyᴳ',Ef:'Ef/Ef',Ht:'ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'<b>外观与赤穗完全一致</b><br>但 A 位点为纯合显性'},
+
+  shuangren:{name:'霜刃', id:'FX-0007', sex:'♂', tier:'常见',
+    coat:'silver', pattern:{type:'gradient'}, fur:{len:1,curl:1},
+    ears:{shape:'pointy',size:0.85,tip:'dark',inner:'light'},
+    tails:{count:3,len:'mid',fluff:'normal',tip:'black'},
+    eyes:{color:'teal',shape:'almond'},
+    geno:{A:'Aˢ/Aᵇ',D:'D/d',W:'W/W',P:'Pᵍ/p',L:'L₁l₁ l₂l₂',K:'K/k',Er:'Erᴾ/Erᶠ',Ez:'ez/ez',Tp:'Tpᴰ/tp',In:'Inᴸ/in',
+          Tn:'Tn₁Tn₁ tn₂tn₂',V:'v/v',Tl:'Tl/tl',Tf:'Tf/tf',Tw:'Twᴷ/tw',Ey:'Eyᶜ/Eyᶜ',Ef:'Ef/ef',Ht:'ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'霜灰 · 渐变 · 短微卷毛<br>尖立耳（小）· 3 中尾黑尖<br>青色杏眼'},
+
+  mowan:{name:'墨丸', id:'FX-0012', sex:'♀', tier:'少见',
+    coat:'black', pattern:{type:'none'}, fur:{len:4,curl:2},
+    ears:{shape:'flop',size:1.2,tip:'none',inner:'dark'},
+    tails:{count:1,len:'long',fluff:'fluffy',tip:'same'},
+    eyes:{color:'violet',shape:'narrow'},
+    geno:{A:'Aᵇ/Aᵇ',D:'D/d',W:'W/w',P:'p/p',L:'L₁L₁ L₂L₂',K:'K/K',Er:'Erᶠ/Erᶠ',Ez:'Ez/Ez',Tp:'tp/tp',In:'in/in',
+          Tn:'tn₁tn₁ tn₂tn₂',V:'v/v',Tl:'Tl/Tl',Tf:'Tf/Tf',Tw:'tw/tw',Ey:'Eyⱽ/Eyᶜ',Ef:'ef/ef',Ht:'ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'墨黑 · 纯色 · 长卷毛<br>垂耳（大）· 1 长蓬尾<br>紫色细眼'},
+
+  wuai:{name:'雾霭', id:'FX-0019', sex:'♂', tier:'少见',
+    coat:'blue', pattern:{type:'spots'}, fur:{len:2,curl:0},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},
+    tails:{count:2,len:'mid',fluff:'normal',tip:'white'},
+    eyes:{color:'blue',shape:'round'},
+    geno:{A:'Aᵇ/Aᵇ',D:'d/d',W:'W/W',P:'Pˢ/p',L:'L₁l₁ L₂l₂',K:'k/k',Er:'Erᴾ/Erᴾ',Ez:'Ez/ez',Tp:'Tpᴰ/Tpᴰ',In:'Inᴸ/in',
+          Tn:'Tn₁tn₁ tn₂tn₂',V:'v/v',Tl:'Tl/tl',Tf:'tf/tf',Tw:'Twᵂ/Twᵂ',Ey:'Eyᴮ/Eyᴮ',Ef:'Ef/Ef',Ht:'ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'雾霭蓝（AᵇAᵇ + dd）<br>· 斑点 · 中直毛<br>尖立耳（中）· 2 中尾白尖'},
+
+  xuetuan:{name:'雪团', id:'FX-0023', sex:'♀', tier:'少见',
+    coat:'white', pattern:{type:'tabby'}, fur:{len:3,curl:0},
+    ears:{shape:'round',size:0.85,tip:'white',inner:'light'},
+    tails:{count:2,len:'mid',fluff:'fluffy',tip:'white'},
+    eyes:{color:'blue',shape:'round',hetero:true,heteroTo:'violet'},
+    geno:{A:'A⁺/Aᵇ',D:'D/d',W:'w/w',P:'Pᵀ/Pˢ',L:'L₁L₁ L₂l₂',K:'k/k',Er:'Erᴿ/Erᴿ',Ez:'ez/ez',Tp:'Tpᵂ/Tpᵂ',In:'Inᴸ/in',
+          Tn:'tn₁tn₁ Tn₂tn₂',V:'v/v',Tl:'Tl/tl',Tf:'Tf/tf',Tw:'Twᵂ/tw',Ey:'Eyᴮ/Eyᶜ',Ef:'Ef/Ef',Ht:'Ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'雪绒白（ww 上位掩盖 A/D）<br>花纹以极淡色差可见 · 长直毛<br>圆耳（小）· 2 尾<br><b>异色瞳</b>（蓝 / 紫）'},
+
+  zitan:{name:'紫昙', id:'FX-0031', sex:'♂', tier:'稀有',
+    coat:'violet', pattern:{type:'tabby'}, fur:{len:2,curl:1},
+    ears:{shape:'pointy',size:1.15,tip:'dark',inner:'dark'},
+    tails:{count:4,len:'long',fluff:'fluffy',tip:'black'},
+    eyes:{color:'gold',shape:'almond',hetero:true,heteroTo:'violet'},
+    geno:{A:'Aᵛ/Aᵇ',D:'D/d',W:'W/w',P:'Pᵀ/Pᵍ',L:'L₁l₁ L₂l₂',K:'K/k',Er:'Erᴾ/Erᴿ',Ez:'Ez/ez',Tp:'Tpᴰ/tp',In:'in/in',
+          Tn:'Tn₁Tn₁ Tn₂tn₂',V:'v/v',Tl:'Tl/Tl',Tf:'Tf/tf',Tw:'Twᴷ/tw',Ey:'Eyᴳ/Eyⱽ',Ef:'Ef/ef',Ht:'Ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'幽夜紫 · 虎斑 · 中微卷<br>尖立耳（大）· 4 长蓬尾黑尖<br>金眼 + 异色瞳（紫）'},
+
+  jiuyao:{name:'九曜', id:'FX-0044', sex:'♂', tier:'史诗',
+    coat:'black', pattern:{type:'spots'}, fur:{len:3,curl:0},
+    ears:{shape:'pointy',size:1.2,tip:'dark',inner:'dark'},
+    tails:{count:9,len:'long',fluff:'fluffy',tip:'white'},
+    eyes:{color:'violet',shape:'almond'}, stars:true, sparkle:true,
+    geno:{A:'Aᵇ/Aᵇ',D:'D/d',W:'W/w',P:'Pˢ/p',L:'L₁L₁ L₂l₂',K:'k/k',Er:'Erᴾ/Erᴾ',Ez:'Ez/Ez',Tp:'Tpᴰ/Tpᴰ',In:'in/in',
+          Tn:'tn₁tn₁ tn₂tn₂（被 V 掩盖）',V:'V/v',Tl:'Tl/Tl',Tf:'Tf/Tf',Tw:'Twᵂ/tw',Ey:'Eyⱽ/Eyⱽ',Ef:'Ef/ef',Ht:'ht/ht',G:'g/g',St:'St/st',Ha:'ha/ha',Fl:'fl/fl'},
+    ph:'墨黑 + <b>九尾（V 显性突变）</b><br>全身星纹 · 长直毛<br>长蓬尾白尖 · 紫色杏眼'},
+
+  liuying:{name:'流萤', id:'FX-0050', sex:'♀', tier:'传说',
+    coat:'cream', pattern:{type:'gradient'}, fur:{len:2,curl:0},
+    ears:{shape:'round',size:1,tip:'white',inner:'light'},
+    tails:{count:2,len:'mid',fluff:'normal',tip:'white'},
+    eyes:{color:'teal',shape:'round'}, glow:true, halo:true, sparkle:true,
+    geno:{A:'A⁺/A⁺',D:'d/d',W:'W/W',P:'Pᵍ/p',L:'L₁l₁ L₂l₂',K:'k/k',Er:'Erᴿ/Erᴿ',Ez:'Ez/ez',Tp:'Tpᵂ/tp',In:'Inᴸ/in',
+          Tn:'Tn₁tn₁ tn₂tn₂',V:'v/v',Tl:'Tl/tl',Tf:'tf/tf',Tw:'Twᵂ/tw',Ey:'Eyᶜ/Eyᶜ',Ef:'Ef/Ef',Ht:'ht/ht',G:'G/g',St:'st/st',Ha:'Ha/ha',Fl:'fl/fl'},
+    ph:'奶油金（A⁺A⁺ + dd）<br><b>发光 + 光环（双突变）</b><br>渐变被毛 · 圆耳 · 青色圆眼'},
+
+  tongyu:{name:'彤羽', id:'FX-0055', sex:'♀', tier:'稀有',
+    coat:'orange', pattern:{type:'tabby'}, fur:{len:1,curl:0},
+    ears:{shape:'pointy',size:1.05,tip:'dark',inner:'light'},
+    tails:{count:3,len:'long',fluff:'fluffy',tip:'ember'},
+    eyes:{color:'blue',shape:'round',hetero:true,heteroTo:'gold'},
+    geno:{A:'A⁺/Aˢ',D:'D/d',W:'W/w',P:'Pᵀ/Pᵀ',L:'L₁l₁ l₂l₂',K:'k/k',Er:'Erᴾ/Erᴿ',Ez:'Ez/ez',Tp:'Tpᴰ/tp',In:'Inᴸ/in',
+          Tn:'Tn₁Tn₁ tn₂tn₂',V:'v/v',Tl:'Tl/Tl',Tf:'Tf/Tf',Tw:'Twᵂ/tw（被 Fl 掩盖）',Ey:'Eyᴮ/Eyᴳ',Ef:'Ef/Ef',Ht:'Ht/ht',G:'g/g',St:'st/st',Ha:'ha/ha',Fl:'Fl/fl'},
+    ph:'赤橙 · 虎斑 · 短直毛<br><b>焰尾（尾尖焚的建筑修正 Tw）</b><br>3 长蓬尾 · 蓝眼 + 异色瞳（金）'}
+};
+
+/* ============ 渲染到页面 ============ */
+function setHTML(sel, html){
+  var el=document.querySelector(sel);
+  if(el) el.innerHTML=html;
+}
+function foxCard(spec, key, size, pose){
+  size=size||150;
+  var tierCls={'常见':'','少见':'b-ok','稀有':'b-info','史诗':'b-rare','传说':'b-warn'};
+  return '<div class="foxcard'+(spec.glow||spec.tails.count>5?' rare':'')+'">'+
+    '<div class="stage">'+foxSVG(spec,size)+'</div>'+
+    '<div class="nm">'+spec.name+' <span style="font-size:12px;color:var(--tx3)">'+spec.sex+'</span></div>'+
+    '<div class="fid">'+spec.id+'</div>'+
+    '<div style="margin-top:6px"><span class="chip '+tierCls[spec.tier]+'">'+spec.tier+'</span></div>'+
+    '<div class="ph">'+spec.ph+'</div>'+
+    '</div>';
+}
+
+/* 主图 */
+setHTML('#heroFox', foxSVG(FOXES.chisui, 230));
+
+/* 常见 6 例 */
+setHTML('#commonGrid',
+  foxCard(FOXES.chisui,'a',150)+foxCard(FOXES.shuangren,'b',150)+
+  foxCard(FOXES.mowan,'c',150)+foxCard(FOXES.wuai,'d',150)+
+  foxCard(FOXES.xuetuan,'e',150)+foxCard(FOXES.zitan,'f',150));
+
+/* 稀有 3 例 */
+setHTML('#rareGrid',
+  foxCard(FOXES.jiuyao,'g',150)+foxCard(FOXES.liuying,'h',150)+foxCard(FOXES.tongyu,'i',150));
+
+/* 同表型对照 */
+setHTML('#twinA', foxSVG(FOXES.chisui,175));
+setHTML('#twinB', foxSVG(FOXES.dansha,175));
+
+/* 桌面上的多只狐狸 */
+(function(){
+  var desk=document.querySelector('#desk');
+  if(!desk) return;
+  var items=[
+    {k:'chisui',  left:'28px',  bot:'52px', sz:120, pose:'walk'},
+    {k:'mw',      left:'210px', bot:'48px', sz:104, pose:'sit'},
+    {k:'slp',     left:'470px', bot:'50px', sz:100, pose:'sleep'},
+    {k:'young',   left:'370px', bot:'46px', sz:74,  pose:'young'},
+    {k:'xue',     left:'600px', bot:'52px', sz:112, pose:'stand'},
+    {k:'run',     left:'300px', bot:'66px', sz:88,  pose:'run'}
+  ];
+  var html='';
+  for(var i=0;i<items.length;i++){
+    var it=items[i];
+    var base=FOXES[it.k==='mw'?'mowan':it.k==='slp'?'shuangren':it.k==='young'?'mowan':it.k==='xue'?'xuetuan':it.k==='run'?'wuai':'chisui'];
+    var sp={};
+    for(var kk in base){sp[kk]=base[kk];}
+    sp.pose=it.pose;
+    if(it.k==='young'){sp.tails={count:1,len:'short',fluff:'normal',tip:'white'};}
+    html+='<div class="foxabs" style="left:'+it.left+';bottom:'+it.bot+'">'+foxSVG(sp,it.sz)+'</div>';
+  }
+  desk.insertAdjacentHTML('beforeend',html);
+})();
+
+/* 动作 6 例 */
+(function(){
+  var poses=[
+    {k:'stand', t:'站立 / 待机', d:'默认状态，呼吸 + 随机眨眼'},
+    {k:'walk',  t:'行走',       d:'倾斜 −5°，躯干起伏，尾摆 ±14°'},
+    {k:'run',   t:'奔跑',       d:'倾斜 −9°，步频 2.6 Hz，尾完全展开'},
+    {k:'sit',   t:'坐',         d:'躯干压缩 24%，尾收至身侧'},
+    {k:'sleep', t:'睡眠',       d:'高度压至 71%，眼闭合，尾环绕'},
+    {k:'eat',   t:'进食',       d:'头下探 9 px 并前倾，咀嚼 4 Hz'},
+    {k:'display',t:'求偶展示',  d:'尾全幅展开，头上抬，星星粒子'},
+    {k:'young', t:'幼崽',       d:'缩放 55%，头身比 1:1.35'}
+  ];
+  var list=poses.slice(0,8);
+  var html='';
+  for(var i=0;i<list.length;i++){
+    var sp={};
+    for(var kk in FOXES.chisui){sp[kk]=FOXES.chisui[kk];}
+    sp.pose=list[i].k;
+    html+='<div class="foxcard"><div class="stage">'+foxSVG(sp,132)+'</div>'+
+          '<div class="nm">'+list[i].t+'</div><div class="ph">'+list[i].d+'</div></div>';
+  }
+  setHTML('#poseGrid',html);
+})();
+
+/* 部件拆分小图 */
+(function(){
+  function mini(title, inner){
+    return '<div class="foxcard"><div class="stage" style="min-height:112px">'+inner+'</div>'+
+           '<div class="nm" style="font-size:13px">'+title+'</div></div>';
+  }
+  var tag=function(attr){return attr;};
+  var html='';
+  html+=mini('① 躯干','<svg viewBox="0 0 120 120" width="100"><ellipse cx="60" cy="62" rx="34" ry="36" fill="#E08A3C" stroke="#7A3F12" stroke-width="3"/><ellipse cx="60" cy="70" rx="19" ry="23" fill="#FBEAD6"/><ellipse cx="44" cy="92" rx="12" ry="8" fill="#E08A3C" stroke="#7A3F12" stroke-width="3"/><ellipse cx="76" cy="92" rx="12" ry="8" fill="#E08A3C" stroke="#7A3F12" stroke-width="3"/></svg>');
+  html+=mini('② 头部','<svg viewBox="0 0 120 120" width="100"><ellipse cx="60" cy="60" rx="36" ry="33" fill="#E08A3C" stroke="#7A3F12" stroke-width="3"/><ellipse cx="60" cy="76" rx="18" ry="13" fill="#FBEAD6"/><path d="M54 68 Q60 62 66 68 Q60 76 54 68 Z" fill="#2F2A31"/></svg>');
+  html+=mini('③ 耳（尖/圆/垂）','<svg viewBox="0 0 120 120" width="100"><g transform="translate(0,6)"><path d="M8 64 L24 18 L40 64 Z" fill="#E08A3C" stroke="#7A3F12" stroke-width="3" stroke-linejoin="round"/></g><g transform="translate(26,6)"><path d="M8 64 Q8 26 24 22 Q40 26 40 64 Z" fill="#E08A3C" stroke="#7A3F12" stroke-width="3"/></g><g transform="translate(54,6) rotate(40 16 64)"><path d="M2 64 L16 22 L30 64 Z" fill="#E08A3C" stroke="#7A3F12" stroke-width="3" stroke-linejoin="round"/></g></svg>');
+  html+=mini('④ 眼（圆/杏/细）','<svg viewBox="0 0 120 120" width="100"><circle cx="24" cy="60" r="13" fill="#E8A33D"/><circle cx="19" cy="55" r="4.5" fill="#fff"/><ellipse cx="60" cy="60" rx="11" ry="14" fill="#29A398"/><ellipse cx="56" cy="54" r="4.5" fill="#fff"/><ellipse cx="96" cy="60" rx="13" ry="7" fill="#8B5CF6"/><ellipse cx="93" cy="58" r="3.6" fill="#fff"/><ellipse cx="96" cy="88" rx="9" ry="5" fill="#E8A33D" opacity="0.5"/></svg>');
+  html+=mini('⑤ 尾（1/3/9）','<svg viewBox="0 0 120 120" width="100"><path d="M60 96 Q34 92 24 74" fill="none" stroke="#E08A3C" stroke-width="11" stroke-linecap="round"/><circle cx="24" cy="74" r="7" fill="#FFFDF9" stroke="#7A3F12" stroke-width="2"/><path d="M60 96 Q34 92 24 74" fill="none" stroke="#7A3F12" stroke-width="0" /><text x="60" y="112" font-size="11" fill="#8A93A0" text-anchor="middle">数量 1–5 / 突变 9</text></svg>');
+  html+=mini('⑥ 被毛（短→长卷）','<svg viewBox="0 0 120 120" width="100"><ellipse cx="60" cy="62" rx="26" ry="28" fill="#EFD8AC" stroke="#96733A" stroke-width="2.5"/><ellipse cx="24" cy="62" rx="16" ry="22" fill="#F0E8FA" stroke="#553F78" stroke-width="2.5"/><path d="M90 44 q6 6 0 12 M96 58 q7 6 2 13 M92 74 q6 5 1 11" fill="none" stroke="#96733A" stroke-width="2.5" stroke-linecap="round"/></svg>');
+  html+=mini('⑦ 花纹（4 种）','<svg viewBox="0 0 120 120" width="100"><ellipse cx="60" cy="62" rx="30" ry="32" fill="#9BA5B0" stroke="#4E565F" stroke-width="2.5"/><path d="M32 48 Q60 40 88 48" fill="none" stroke="#6C7681" stroke-width="4"/><path d="M34 62 Q60 54 86 62" fill="none" stroke="#6C7681" stroke-width="4"/><ellipse cx="48" cy="78" rx="5" ry="4.5" fill="#6C7681"/><ellipse cx="72" cy="78" rx="5" ry="4.5" fill="#6C7681"/></svg>');
+  html+=mini('⑧ 特效（星纹/发光/光环）','<svg viewBox="0 0 120 120" width="100"><ellipse cx="60" cy="70" rx="40" ry="40" fill="#FFF0BE" opacity="0.6"/><ellipse cx="60" cy="70" rx="24" ry="26" fill="#A98AD2" stroke="#553F78" stroke-width="2.5"/><ellipse cx="60" cy="26" rx="17" ry="5.5" fill="none" stroke="#FFD98A" stroke-width="3"/><path d="M42 60 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 Z" fill="#FFF6C9"/><path d="M78 78 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 Z" fill="#FFF6C9"/></svg>');
+  setHTML('#partsGrid',html);
+})();
+
+/* 档案界面里的狐狸 */
+setHTML('#profileFox', foxSVG(FOXES.chisui, 150));
+
+/* 配对台亲代 */
+setHTML('#pA', foxSVG(FOXES.chisui, 116)+'<div class="fid">赤穗 FX-0001 ♀</div>');
+setHTML('#pB', foxSVG(FOXES.shuangren, 116)+'<div class="fid">霜刃 FX-0007 ♂</div>');
+
+/* 档案基因型面板 */
+(function(){
+  var g=FOXES.chisui.geno;
+  var phv={
+    A:'赤橙（携带 Aˢ）',D:'正常浓度',W:'有色（携带 w）',P:'虎斑',
+    L:'中毛（2/4 显性等位）',K:'直毛',Er:'尖耳（携带 Erᴿ）',Ez:'中耳（不完全显性中间型）',
+    Tp:'深色耳尖',In:'浅色内耳',Tn:'3 尾（2 个显性等位）',V:'非九尾',
+    Tl:'短尾',Tf:'蓬松',Tw:'白尾尖',Ey:'金眼（携带 Eyᶜ）',Ef:'圆眼',
+    Ht:'同色瞳',G:'无发光',St:'无星纹',Ha:'无光环',Fl:'普通尾'
+  };
+  var order=['A','D','W','P','L','K','Er','Ez','Tp','In','Tn','V','Tl','Tf','Tw','Ey','Ef','Ht','G','St','Ha','Fl'];
+  var half=Math.ceil(order.length/2);
+  var a='',b='';
+  for(var i=0;i<order.length;i++){
+    var k=order[i];
+    var row='<div><span class="k">'+k+'　'+g[k]+'</span><span class="v" style="font-family:inherit;font-weight:400;color:var(--tx2)">'+
+            (phv[k]||'—')+'</span></div>';
+    if(i<half) a+=row; else b+=row;
+  }
+  setHTML('#lociA','<div style="font-size:11px;color:var(--tx3);margin-bottom:4px">左列：基因型 Genotype ｜ 揭示后可查看</div>'+a);
+  setHTML('#lociB','<div style="font-size:11px;color:var(--tx3);margin-bottom:4px">右列：表型 Phenotype ｜ 实际表现</div>'+b);
+})();
+
+/* 突变对照 */
+(function(){
+  var base=FOXES.shuangren;
+  var before={},after={};
+  for(var k in base){before[k]=base[k];after[k]=base[k];}
+  before.eyes={color:'teal',shape:'almond'};
+  after.eyes={color:'violet',shape:'almond'};
+  after.sparkle=true;
+  setHTML('#mutBefore', foxSVG(before,140));
+  setHTML('#mutAfter', foxSVG(after,140));
+})();
+
+/* 稀有度与适应度对照表注入 */
+(function(){
+  var rows=[
+    ['深毛色 Aᵇ_ / Aᵛ_','亮色壁纸：反差大 → 受惊扰概率↑ <b>劣势</b>','暗色壁纸：隐蔽 → <b>优势</b>'],
+    ['浅毛色 ww / A⁺_dd','亮色壁纸：<b>优势</b>','暗色壁纸：<b>劣势</b>'],
+    ['长毛 L ≥ 3','秋冬季：保温，能量损耗↓ <b>优势</b>','夏季：散热差 <b>劣势</b>'],
+    ['多尾 ≥3 / V_','任何环境：求偶成功率↑ <b>+12%</b>','食物稀缺时：基础代谢↑ <b>−6%</b>'],
+    ['G 发光','夜间：求偶加成 <b>优势</b>','白天或亮环境：暴露↑ <b>劣势</b>'],
+    ['St 星纹','纯外观，无环境加成','维持成本微增，<b>中性偏负</b>'],
+    ['Ha 光环','食物充足时中性','食物匮乏时维持成本高 <b>劣势</b>'],
+    ['Fl 焰尾','冬季：尾端保温 <b>优势</b>','夏季：代谢负担 <b>劣势</b>'],
+    ['Eyⱽ 紫眼','夜间觅食效率↑ <b>微优势</b>','白天无差别'],
+    ['Erᶠ 垂耳','听觉略降，觅食效率 <b>轻微劣势</b>','无补偿优势']
+  ];
+  var html='<table><thead><tr><th style="width:150px">基因型</th><th>有利环境</th><th>不利环境</th></tr></thead><tbody>';
+  for(var i=0;i<rows.length;i++){
+    html+='<tr><td><span class="chip mono">'+rows[i][0]+'</span></td><td>'+rows[i][1]+'</td><td>'+rows[i][2]+'</td></tr>';
+  }
+  html+='</tbody></table>';
+  setHTML('#fitnessHost',
+      '<h3 style="margin-top:18px">8.0 环境 × 适应度对照表（核心：稀有 ≠ 优质）</h3>'+
+      '<p>环境参数的建议取值，全部来自真实系统状态：<span class="chip">壁纸 / 系统主题亮度 → 光照</span>'+
+      '<span class="chip">系统时钟 → 昼夜</span><span class="chip">系统日期 → 季节</span>'+
+      '<span class="chip">投喂设置 → 食物丰度</span><span class="chip">个体数/上限 → 拥挤度</span></p>'+html+
+      '<div class="note">没有任何一条把「稀有」直接写成「强」。<b>每一个特殊突变都至少有一个让它变成劣势的环境</b>，'+
+      '这正是需求的第 6 条要求。另：随时间或外部事件改变环境，可以让<b>曾经被淘汰的基因重新获得优势</b>。</div>');
+})();
+
+/* ============ v0.2 图表通用工具 ============ */
+function T(x,y,s,fill,size,anchor,weight){
+  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||'#1F2328')+'" font-size="'+(size||12)+'"'+
+    (anchor?' text-anchor="'+anchor+'"':'')+(weight?' font-weight="'+weight+'"':'')+'>'+s+'</text>';
+}
+function clamp01(v){return v<0?0:(v>1?1:v);}
+function libido(rho,k){return clamp01(1-Math.pow(clamp01(rho),k));}
+function foxAt(p,size,x,y){
+  return foxSVG(p,size).replace('<svg viewBox','<svg x="'+x+'" y="'+y+'" viewBox');
+}
+function interp(anch,g){
+  if(g<=anch[0][0]) return anch[0][1];
+  for(var i=0;i<anch.length-1;i++){
+    if(g>=anch[i][0]&&g<=anch[i+1][0]){
+      var t=(g-anch[i][0])/(anch[i+1][0]-anch[i][0]);
+      return anch[i][1]+(anch[i+1][1]-anch[i][1])*t;
+    }
+  }
+  return anch[anch.length-1][1];
+}
+
+/* ============ 9.1 密度—繁殖欲望曲线 ============ */
+(function(){
+  var W=690,H=310,L=54,R=20,TP=18,B=46;
+  var pxx=function(r){return L+r*(W-L-R);};
+  var pyy=function(v){return H-B-v*(H-B-TP);};
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  o.push('<rect x="'+L+'" y="'+TP+'" width="'+(W-L-R)+'" height="'+(H-B-TP)+'" fill="#FCFDFE" stroke="none"/>');
+  var i,j;
+  for(i=0;i<=5;i++){
+    var v=i*0.2, yy=pyy(v);
+    o.push('<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" stroke="#E3E6EB" stroke-width="1"/>');
+    o.push(T(L-9,yy+4,(v*100)+'%','#8A93A0',11,'end'));
+  }
+  for(i=0;i<=10;i++){
+    var r=i*0.1, xx=pxx(r);
+    o.push('<line x1="'+xx+'" y1="'+TP+'" x2="'+xx+'" y2="'+(H-B)+'" stroke="#F0F2F5" stroke-width="1"/>');
+    if(i%2===0) o.push(T(xx,H-B+18,r.toFixed(1),'#8A93A0',11,'middle'));
+  }
+  o.push('<line x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'" stroke="#D3D7DE" stroke-width="1.4"/>');
+  o.push(T((L+W-R)/2,H-10,'拥挤度 ρ = N_eff / N_max','#5B6470',12,'middle','600'));
+  o.push(T(14,TP-2,'繁殖欲望 L','#5B6470',11));
+  var ks=[{k:1,c:'#C9D1D9',w:1.6,d:''},{k:2,c:'#9AA7B4',w:1.8,d:''},
+          {k:3,c:'#C2612B',w:3,d:''},{k:5,c:'#7F77DD',w:1.8,d:'5 3'}];
+  for(j=0;j<ks.length;j++){
+    var pts=[];
+    for(i=0;i<=100;i++){var rr=i/100; pts.push(pxx(rr).toFixed(1)+','+pyy(libido(rr,ks[j].k)).toFixed(1));}
+    o.push('<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+ks[j].c+
+      '" stroke-width="'+ks[j].w+'"'+(ks[j].d?' stroke-dasharray="'+ks[j].d+'"':'')+' stroke-linejoin="round"/>');
+  }
+  var cx=pxx(0.6),cy=pyy(libido(0.6,3));
+  o.push('<line x1="'+L+'" y1="'+cy+'" x2="'+cx+'" y2="'+cy+'" stroke="#C2612B" stroke-width="1" stroke-dasharray="3 3"/>');
+  o.push('<line x1="'+cx+'" y1="'+(H-B)+'" x2="'+cx+'" y2="'+cy+'" stroke="#C2612B" stroke-width="1" stroke-dasharray="3 3"/>');
+  o.push('<circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="#fff" stroke="#C2612B" stroke-width="2.4"/>');
+  o.push(T(cx+11,cy-9,'当前 ρ=0.60 → L=78%','#8A3F13',11.5,null,'600'));
+  o.push(T(pxx(1)-4,pyy(0.02)+16,'ρ=1.0 欲望归零','#C2612B',11,'end','600'));
+  for(j=0;j<ks.length;j++){
+    var ly=H-B-78+j*19;
+    o.push('<line x1="'+(L+12)+'" y1="'+ly+'" x2="'+(L+36)+'" y2="'+ly+'" stroke="'+ks[j].c+
+      '" stroke-width="'+ks[j].w+'"'+(ks[j].d?' stroke-dasharray="'+ks[j].d+'"':'')+'/>');
+    o.push(T(L+42,ly+4,'k = '+ks[j].k+(ks[j].k===3?'（推荐）':''),ks[j].k===3?'#8A3F13':'#5B6470',11.5,null,ks[j].k===3?'600':''));
+  }
+  o.push('</svg>');
+  setHTML('#densityChart', o.join('')+
+    '<div class="cap">ρ → L 曲线族。虚线为 k=5，粗实线为推荐的 k=3。曲线在 ρ=1 处精确归零，'+
+    '因此不需要任何额外的"到上限就禁用繁殖"开关。</div>');
+})();
+
+/* 设置面板里的迷你曲线 */
+(function(){
+  var W=250,H=88,L=10,R=10,TP=8,B=8;
+  var pxx=function(r){return L+r*(W-L-R);};
+  var pyy=function(v){return H-B-v*(H-B-TP);};
+  var o=['<svg viewBox="0 0 '+W+' '+H+'" style="width:100%">'];
+  o.push('<rect x="'+L+'" y="'+TP+'" width="'+(W-L-R)+'" height="'+(H-B-TP)+'" fill="#FCFDFE"/>');
+  var pts=[];
+  for(var i=0;i<=50;i++){var r=i/50;pts.push(pxx(r).toFixed(1)+','+pyy(libido(r,3)).toFixed(1));}
+  o.push('<polyline points="'+pts.join(' ')+'" fill="none" stroke="#C2612B" stroke-width="2.2"/>');
+  var cx=pxx(0.6),cy=pyy(libido(0.6,3));
+  o.push('<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#fff" stroke="#C2612B" stroke-width="2"/>');
+  o.push(T(cx-6,cy+13,'当前位置','#8A93A0',10));
+  o.push(T(W-12,H-2,'ρ → 1','#B3BAC4',9.5,'end'));
+  o.push('</svg>');
+  setHTML('#densityMini', o.join(''));
+})();
+
+/* ============ 10.3 家谱树 ============ */
+(function(){
+  var W=940,H=578,NW=128,NH=112;
+  var N=[
+   {id:'FX-0031',sex:'♂',x:140,y:52,dead:true,geno:'A⁺/Aᵛ',ph:'赤橙（隐性携带）',gen:7,
+    coat:'orange',eyes:{color:'gold',shape:'round'},tails:{count:1,len:'short',fluff:'normal',tip:'white'},
+    chains:['av'],carrier:['av'],star:true},
+   {id:'FX-0038',sex:'♀',x:300,y:52,dead:true,geno:'Aˢ/Aˢ',ph:'霜灰',gen:7,
+    coat:'silver',eyes:{color:'teal',shape:'almond'},tails:{count:1,len:'short',fluff:'normal',tip:'white'},
+    chains:[],carrier:[]},
+   {id:'FX-0029',sex:'♂',x:620,y:52,dead:true,geno:'A⁺/Aᵇ',ph:'赤橙（隐性携带）',gen:7,
+    coat:'orange',eyes:{color:'gold',shape:'round'},tails:{count:2,len:'short',fluff:'normal',tip:'white'},
+    chains:['ab'],carrier:['ab']},
+   {id:'FX-0035',sex:'♀',x:780,y:52,dead:true,geno:'Aˢ/Aᵇ',ph:'霜灰（隐性携带）',gen:7,
+    coat:'silver',eyes:{color:'blue',shape:'round'},tails:{count:1,len:'long',fluff:'fluffy',tip:'white'},
+    chains:['ab'],carrier:['ab']},
+   {id:'FX-0044',sex:'♂',x:220,y:202,dead:true,geno:'A⁺/Aᵛ',ph:'赤橙（隐性携带）',gen:8,par:[0,1],
+    coat:'orange',eyes:{color:'gold',shape:'round'},tails:{count:1,len:'short',fluff:'normal',tip:'white'},
+    chains:['av'],carrier:['av']},
+   {id:'FX-0051',sex:'♀',x:700,y:202,dead:false,geno:'A⁺/Aᵇ',ph:'赤橙（隐性携带）',gen:8,par:[2,3],
+    coat:'orange',eyes:{color:'gold',shape:'almond'},tails:{count:2,len:'short',fluff:'fluffy',tip:'white'},
+    chains:['ab'],carrier:['ab']},
+   {id:'FX-0062',sex:'♀',x:460,y:352,dead:false,geno:'Aᵛ/Aᵇ',ph:'幽夜紫 · 目标个体',gen:9,par:[4,5],
+    coat:'violet',eyes:{color:'violet',shape:'round'},tails:{count:3,len:'long',fluff:'fluffy',tip:'white'},
+    sparkle:true,chains:['av','ab'],carrier:[]},
+   {id:'FX-0071',sex:'♂',x:375,y:502,dead:false,geno:'Aᵛ/A⁺',ph:'赤橙（隐性携带）',gen:10,kid:6,
+    coat:'orange',eyes:{color:'gold',shape:'round'},tails:{count:1,len:'short',fluff:'normal',tip:'white'},
+    chains:['av'],carrier:['av']},
+   {id:'FX-0072',sex:'♀',x:545,y:502,dead:false,geno:'Aᵛ/Aᵇ',ph:'幽夜紫',gen:10,kid:6,
+    coat:'violet',eyes:{color:'violet',shape:'round'},tails:{count:2,len:'short',fluff:'fluffy',tip:'white'},
+    sparkle:true,chains:['av','ab'],carrier:[]}
+  ];
+  var CC={av:'#8B5CF6',ab:'#4C4653'};
+  function shared(a,b){
+    for(var i=0;i<a.length;i++) if(b.indexOf(a[i])>=0) return a[i];
+    return null;
+  }
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  /* 连线 */
+  var i,k;
+  for(i=0;i<N.length;i++){
+    var n=N[i];
+    if(n.par){
+      var p1=N[n.par[0]],p2=N[n.par[1]],busY=n.y-78;
+      var sh;
+      for(k=0;k<2;k++){
+        var pp=N[n.par[k]], sc=shared(pp.chains,n.chains);
+        o.push('<path d="M'+pp.x+' '+(pp.y+NH/2)+' L'+pp.x+' '+busY+'" fill="none" stroke="'+
+          (sc?CC[sc]:'#C9D1D9')+'" stroke-width="'+(sc?2.2:1.4)+'"/>');
+      }
+      sh=shared(p1.chains,n.chains)||shared(p2.chains,n.chains);
+      o.push('<path d="M'+p1.x+' '+busY+' L'+p2.x+' '+busY+'" fill="none" stroke="#C9D1D9" stroke-width="1.4"/>');
+      o.push('<path d="M'+n.x+' '+busY+' L'+n.x+' '+(n.y-NH/2)+'" fill="none" stroke="'+
+        (sh?CC[sh]:'#C9D1D9')+'" stroke-width="'+(sh?2.2:1.4)+'"/>');
+    }
+  }
+  /* 后代分支 */
+  var kids=[];
+  for(i=0;i<N.length;i++) if(N[i].kid!==undefined) kids.push(i);
+  if(kids.length){
+    var pa=N[N[kids[0]].kid], busY2=pa.y+NH/2+22;
+    o.push('<path d="M'+pa.x+' '+(pa.y+NH/2)+' L'+pa.x+' '+busY2+'" fill="none" stroke="#C9D1D9" stroke-width="1.4"/>');
+    o.push('<path d="M'+N[kids[0]].x+' '+busY2+' L'+N[kids[kids.length-1]].x+' '+busY2+
+      '" fill="none" stroke="#C9D1D9" stroke-width="1.4"/>');
+    for(i=0;i<kids.length;i++){
+      var kd=N[kids[i]], sc2=shared(pa.chains,kd.chains);
+      o.push('<path d="M'+kd.x+' '+busY2+' L'+kd.x+' '+(kd.y-NH/2)+'" fill="none" stroke="'+
+        (sc2?CC[sc2]:'#C9D1D9')+'" stroke-width="'+(sc2?2.2:1.4)+'"/>');
+    }
+    o.push(T(pa.x+10,busY2+14,'↓ 后代（另一亲本已折叠）','#B3BAC4',10));
+  }
+  /* 节点 */
+  for(i=0;i<N.length;i++){
+    var n2=N[i];
+    var main=n2.chains.indexOf('av')>=0?CC.av:'#D3D7DE';
+    o.push('<rect x="'+(n2.x-NW/2)+'" y="'+(n2.y-NH/2)+'" width="'+NW+'" height="'+NH+'" rx="11" fill="'+
+      (n2.dead?'#FAFBFC':'#FFFFFF')+'" stroke="'+main+'" stroke-width="'+(n2.chains.length?2.2:1.4)+'"/>');
+    if(n2.chains.indexOf('ab')>=0&&n2.chains.indexOf('av')>=0){
+      o.push('<rect x="'+(n2.x-NW/2+4)+'" y="'+(n2.y-NH/2+4)+'" width="'+(NW-8)+'" height="'+(NH-8)+
+        '" rx="8" fill="none" stroke="'+CC.ab+'" stroke-width="1.2" stroke-dasharray="4 3"/>');
+    } else if(n2.chains.indexOf('ab')>=0){
+      o.push('<rect x="'+(n2.x-NW/2)+'" y="'+(n2.y-NH/2)+'" width="'+NW+'" height="'+NH+'" rx="11" fill="none" stroke="'+CC.ab+'" stroke-width="2.2"/>');
+    }
+    o.push(foxAt(n2,46,n2.x-23,n2.y-52));
+    o.push(T(n2.x,n2.y+15,n2.id+' '+n2.sex+(n2.dead?' †':''),n2.dead?'#5B6470':'#1F2328',11,'middle','600'));
+    o.push('<text x="'+n2.x+'" y="'+(n2.y+31)+'" text-anchor="middle" font-size="10" fill="#5B6470" font-family="Consolas,monospace">'+n2.geno+'</text>');
+    o.push(T(n2.x,n2.y+46,n2.ph,'#8A93A0',10,'middle'));
+    if(n2.star){
+      o.push('<path d="'+starPath(n2.x+NW/2-13,n2.y-NH/2+13,8)+'" fill="#C2612B"/>');
+      o.push(T(n2.x+NW/2-4,n2.y-NH/2+16,'突变源','#8A3F13',9.5,'end','600'));
+    }
+    var dots=n2.carrier;
+    for(k=0;k<dots.length;k++){
+      o.push('<circle cx="'+(n2.x+NW/2-13-k*13)+'" cy="'+(n2.y+NH/2-13)+'" r="4.6" fill="#fff" stroke="'+CC[dots[k]]+'" stroke-width="1.6"/>');
+      o.push('<circle cx="'+(n2.x+NW/2-13-k*13)+'" cy="'+(n2.y+NH/2-13)+'" r="1.7" fill="'+CC[dots[k]]+'"/>');
+    }
+  }
+  /* 世代标尺 */
+  for(i=0;i<N.length;i++){
+    if(i===0||N[i].y!==N[i-1].y){
+      o.push(T(14,N[i].y+4,'第 '+N[i].gen+' 代','#C9CFD6',10.5));
+    }
+  }
+  o.push('</svg>');
+  setHTML('#pedigreeFig', o.join('')+
+    '<div class="cap"><span style="color:#8B5CF6">━ 紫线</span> = Aᵛ（幽夜紫）传播路径　'+
+    '<span style="color:#4C4653">┅ 墨线</span> = Aᵇ（墨黑）路径　◌ = 隐性携带者（外观不表现）　★ = 突变首现个体<br>'+
+    '两只<b>看起来都是普通橙色狐狸</b>的亲本，在第 9 代相遇，第一次让紫色出现在桌面上。</div>');
+})();
+
+/* ============ 11.5 桌面角标示意 ============ */
+(function(){
+  var base={coat:'orange',eyes:{color:'gold',shape:'round'},tails:{count:2,len:'short',fluff:'fluffy',tip:'white'},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},pattern:{type:'tabby'},fur:{len:2,curl:0}};
+  var W=706,H=214;
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  var items=[
+    {t:'① 平时',d:'画面完全干净，\n不带任何 UI 贴纸',marks:[]},
+    {t:'② 鼠标悬停',d:'显示该个体的\n当前标记',marks:['star','lock']},
+    {t:'③ 管理模式',d:'全部标记常显，\n方便批量操作',marks:['star','lock','pri']},
+    {t:'④ 锁定个体',d:'额外一层极淡光环，\n远处也能认出',marks:['lock'],halo:true}
+  ];
+  for(var i=0;i<items.length;i++){
+    var it=items[i], x=40+i*168, y=34, s=96, w=s, h=Math.round(s*158/150);
+    if(it.halo) o.push('<ellipse cx="'+(x+s/2)+'" cy="'+(y+h/2)+'" rx="'+(s/2+16)+'" ry="'+(h/2+14)+
+      '" fill="none" stroke="#C2612B" stroke-width="1.6" opacity="0.45"/>');
+    o.push(foxAt(base,s,x,y));
+    var bx=x+s-8, by=y+16;
+    for(var m=0;m<it.marks.length;m++){
+      var mk=it.marks[m], mx=bx-(it.marks.length-1-m)*0, my=by+m*22;
+      if(mk==='star') o.push('<path d="'+starPath(mx,my,9)+'" fill="#E8A33D" stroke="#fff" stroke-width="1.2"/>');
+      if(mk==='lock'){
+        o.push('<path d="M'+(mx-4)+' '+my+' v-3 a4 4 0 0 1 8 0 v3" fill="none" stroke="#5B6470" stroke-width="2"/>');
+        o.push('<rect x="'+(mx-6.5)+'" y="'+my+'" width="13" height="10.5" rx="2.5" fill="#5B6470"/>');
+      }
+      if(mk==='pri'){
+        o.push('<circle cx="'+mx+'" cy="'+(my+4)+'" r="8" fill="#fff" stroke="#378ADD" stroke-width="2"/>');
+        o.push('<circle cx="'+mx+'" cy="'+(my+4)+'" r="3.4" fill="#378ADD"/>');
+      }
+    }
+    o.push('<rect x="'+x+'" y="'+(y+h+12)+'" width="142" height="52" rx="9" fill="#FBFCFD" stroke="#E3E6EB"/>');
+    o.push(T(x+71,y+h+28,it.t,'#1F2328',12,'middle','600'));
+    var lines=it.d.split('\n');
+    for(var k=0;k<lines.length;k++) o.push(T(x+71,y+h+28+14+k*13,lines[k],'#8A93A0',10.5,'middle'));
+  }
+  o.push('</svg>');
+  setHTML('#markFig', o.join('')+
+    '<div class="cap">★ 收藏　🔒 锁定　◎ 重点培育。默认只在悬停时出现；管理模式常显。<br>'+
+    '角标跟随个体移动与左右翻转，尺寸随缩放但最小不低于 10 px。</div>');
+})();
+
+/* ============ 12.2 毛色分布 ============ */
+(function(){
+  var data=[
+    {n:'赤橙',c:'#E08A3C',v:5},{n:'霜灰',c:'#9BA5B0',v:2},{n:'幽夜紫',c:'#A98AD2',v:2},
+    {n:'墨黑',c:'#4C4653',v:1},{n:'雪绒白',c:'#F6F4F1',v:1},{n:'雾霭蓝',c:'#7BA7CE',v:1}
+  ];
+  var W=690,rowH=34,H=data.length*rowH+34;
+  var total=0;for(var i=0;i<data.length;i++)total+=data[i].v;
+  var BX=132,BW=430;
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  o.push(T(10,16,'表型','#8A93A0',11.5));
+  o.push(T(BX,16,'现存个体分布（共 '+total+' 只）','#8A93A0',11.5));
+  for(i=0;i<data.length;i++){
+    var d=data[i], y=30+i*rowH, pct=d.v/total;
+    o.push('<rect x="10" y="'+(y+5)+'" width="20" height="20" rx="6" fill="'+d.c+'" stroke="#C9CFD6" stroke-width="1"/>');
+    o.push(T(38,y+20,d.n,'#1F2328',12.5));
+    o.push('<rect x="'+BX+'" y="'+(y+7)+'" width="'+BW+'" height="16" rx="8" fill="#EDEFF2"/>');
+    o.push('<rect x="'+BX+'" y="'+(y+7)+'" width="'+(BW*pct).toFixed(1)+'" height="16" rx="8" fill="'+d.c+'"/>');
+    o.push(T(BX+BW+12,y+20,d.v+' 只 · '+Math.round(pct*100)+'%','#5B6470',11.5));
+  }
+  o.push('</svg>');
+  setHTML('#coatChart', o.join('')+
+    '<div class="cap">统计的是<b>看得见的表型</b>，不是等位基因频率。两者差多少，见 §12.5 的对照。</div>');
+})();
+
+/* ============ 12.3 基因频率趋势 ============ */
+(function(){
+  var GEN=40,W=706,H=330,L=48,R=118,TP=26,B=44;
+  var series=[
+    {t:'A⁺ 赤橙',c:'#C2612B',a:[[1,.70],[6,.68],[12,.58],[20,.46],[27,.41],[28,.42],[32,.57],[36,.47],[40,.45]],ph:0.4},
+    {t:'Aˢ 霜灰',c:'#9BA5B0',a:[[1,.22],[6,.23],[12,.24],[20,.23],[27,.21],[28,.22],[32,.22],[36,.21],[40,.20]],ph:1.9},
+    {t:'Aᵇ 墨黑',c:'#4C4653',a:[[1,.08],[6,.09],[12,.10],[20,.10],[27,.09],[28,.09],[32,.09],[36,.09],[40,.09]],ph:3.3},
+    {t:'Aᵛ 幽夜紫',c:'#8367AE',a:[[1,0],[6,0],[7,.04],[12,.08],[20,.21],[27,.29],[28,.27],[32,.12],[36,.23],[40,.26]],ph:5.1,zeroTill:6}
+  ];
+  var pxx=function(g){return L+(g-1)/(GEN-1)*(W-L-R);};
+  var pyy=function(v){return H-B-v*(H-B-TP);};
+  var vals=[],g,i,j;
+  for(g=1;g<=GEN;g++){
+    var row=[];
+    for(j=0;j<series.length;j++){
+      var s=series[j], v=interp(s.a,g);
+      if(s.zeroTill&&g<=s.zeroTill) v=0;
+      else if(v>0) v=Math.max(0, v+0.006*Math.sin(g*1.7+s.ph));
+      row.push(v);
+    }
+    var sum=0; for(j=0;j<row.length;j++) sum+=row[j];
+    for(j=0;j<row.length;j++) row[j]=row[j]/sum;
+    vals.push(row);
+  }
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  o.push('<rect x="'+L+'" y="'+TP+'" width="'+(W-L-R)+'" height="'+(H-B-TP)+'" fill="#FCFDFE"/>');
+  for(i=0;i<=4;i++){
+    var v2=i*0.2, yy=pyy(v2);
+    o.push('<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" stroke="#E3E6EB" stroke-width="1"/>');
+    o.push(T(L-9,yy+4,Math.round(v2*100)+'%','#8A93A0',11,'end'));
+  }
+  for(g=1;g<=GEN;g+=5) o.push(T(pxx(g),H-B+18,'G'+g,'#8A93A0',11,'middle'));
+  o.push('<line x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'" stroke="#D3D7DE" stroke-width="1.4"/>');
+  o.push(T((L+W-R)/2,H-8,'世代','#5B6470',12,'middle','600'));
+  /* 事件竖线 */
+  var ev=[{g:28,c:'#378ADD',t:'换浅色壁纸',dy:TP+12},{g:33,c:'#6B7280',t:'切回深色主题',dy:TP+40}];
+  for(i=0;i<ev.length;i++){
+    o.push('<line x1="'+pxx(ev[i].g)+'" y1="'+TP+'" x2="'+pxx(ev[i].g)+'" y2="'+(H-B)+
+      '" stroke="'+ev[i].c+'" stroke-width="1.4" stroke-dasharray="4 4"/>');
+    o.push(T(pxx(ev[i].g)+5,ev[i].dy,ev[i].t,ev[i].c,10.5));
+  }
+  for(j=0;j<series.length;j++){
+    var pts=[];
+    for(g=1;g<=GEN;g++) pts.push(pxx(g).toFixed(1)+','+pyy(vals[g-1][j]).toFixed(1));
+    o.push('<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+series[j].c+'" stroke-width="'+
+      (j===3?3:1.9)+'" stroke-linejoin="round"/>');
+  }
+  /* 突变 ★ */
+  var sx=pxx(7), sy=pyy(vals[6][3]);
+  o.push('<circle cx="'+sx+'" cy="'+sy+'" r="6" fill="#fff" stroke="#8367AE" stroke-width="2.4"/>');
+  o.push('<path d="'+starPath(sx-30,sy-22,8)+'" fill="#C2612B"/>');
+  o.push(T(sx+8,sy-14,'第 7 代 · Aᵛ 突变首现','#553F78',11.5,null,'600'));
+  /* 图例 */
+  for(j=0;j<series.length;j++){
+    var ly=TP+12+j*24;
+    o.push('<line x1="'+(W-R+14)+'" y1="'+ly+'" x2="'+(W-R+38)+'" y2="'+ly+'" stroke="'+series[j].c+'" stroke-width="'+(j===3?3:2.2)+'"/>');
+    o.push(T(W-R+44,ly+4,series[j].t,'#1F2328',11.5));
+    o.push(T(W-R+44,ly+16,Math.round(vals[GEN-1][j]*100)+'%','#8A93A0',10.5));
+  }
+  o.push('</svg>');
+  setHTML('#freqChart', o.join('')+
+    '<div class="cap">A 位点四个等位基因 40 代的频率变化（示意数据）。'+
+    '注意 Aᵛ 在 28 代前后的<b>方向反转</b>——同一个基因，环境一变就从优势变成劣势。</div>');
+})();
+
+/* ============ 12.4 出生与死亡 ============ */
+(function(){
+  var GEN=40,W=706,H=232,L=44,R=20,TP=18,B=44;
+  var pxx=function(g){return L+(g-1)/(GEN-1)*(W-L-R);};
+  var pyy=function(v){return H-B-v*(H-B-TP);};
+  var MAX=16;
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  o.push('<rect x="'+L+'" y="'+TP+'" width="'+(W-L-R)+'" height="'+(H-B-TP)+'" fill="#FCFDFE"/>');
+  for(var i=0;i<=4;i++){
+    var v=i*4, yy=pyy(v/MAX);
+    o.push('<line x1="'+L+'" y1="'+yy+'" x2="'+(W-R)+'" y2="'+yy+'" stroke="#E3E6EB" stroke-width="1"/>');
+    o.push(T(L-9,yy+4,v,'#8A93A0',11,'end'));
+  }
+  for(var g=1;g<=GEN;g+=5) o.push(T(pxx(g),H-B+18,'G'+g,'#8A93A0',11,'middle'));
+  o.push('<line x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'" stroke="#D3D7DE" stroke-width="1.4"/>');
+  var bw=(W-L-R)/GEN/2.6;
+  for(g=1;g<=GEN;g++){
+    var b=Math.round(6+2.2*Math.sin(g/3.1)+1.4*Math.sin(g/1.7+0.6));
+    var d=Math.round(5+2*Math.sin(g/2.6+1.2)+1.4*Math.sin(g/1.4));
+    if(g>=28&&g<=31) d+=4;
+    if(d<0)d=0; if(b<0)b=0;
+    var x0=pxx(g)-bw*1.15;
+    o.push('<rect x="'+x0.toFixed(1)+'" y="'+pyy(b/MAX).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+
+      (H-B-pyy(b/MAX)).toFixed(1)+'" fill="#639922" opacity="0.85"/>');
+    o.push('<rect x="'+(x0+bw+1.5).toFixed(1)+'" y="'+pyy(d/MAX).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+
+      (H-B-pyy(d/MAX)).toFixed(1)+'" fill="#B0B7C0"/>');
+  }
+  o.push('<line x1="'+pxx(28)+'" y1="'+TP+'" x2="'+pxx(28)+'" y2="'+(H-B)+
+    '" stroke="#A33A12" stroke-width="1.4" stroke-dasharray="4 4"/>');
+  o.push(T(pxx(28)+6,TP+14,'环境剧变 → 死亡峰值','#A33A12',11));
+  o.push('<rect x="'+L+'" y="'+(TP+4)+'" width="11" height="11" rx="3" fill="#639922"/>');
+  o.push(T(L+17,TP+14,'出生','#5B6470',11.5));
+  o.push('<rect x="'+(L+60)+'" y="'+(TP+4)+'" width="11" height="11" rx="3" fill="#B0B7C0"/>');
+  o.push(T(L+77,TP+14,'死亡','#5B6470',11.5));
+  o.push('</svg>');
+  setHTML('#bdChart', o.join('')+
+    '<div class="cap">按世代统计的出生 / 死亡数量（示意数据）。'+
+    '第 28 代环境反转时出现<b>死亡峰值</b>——被选择的那一批个体集中离场，种群随后由幸存者的后代重建。</div>');
+})();
+</script>
+<!-- placeholder -->
+<script>
+/* ============ v0.3 新增：世界时钟数据流 ============ */
+(function(){
+  var W=720,H=300;
+  function box(x,y,w,h,t,sub,fill,stroke,dash){
+    var o=['<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="10" fill="'+(fill||'#FFFFFF')+
+      '" stroke="'+(stroke||'#C9D1D9')+'" stroke-width="1.6"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>'];
+    if(t) o.push(T(x+w/2,y+h/2-4,t,'#1F2328',12.5,'middle','600'));
+    if(sub) o.push(T(x+w/2,y+h/2+13,sub,'#8A93A0',10.5,'middle'));
+    return o.join('');
+  }
+  function arrow(x1,y1,x2,y2,pts,c){
+    var d='M'+x1+' '+y1;
+    for(var i=0;i<pts.length;i++) d+=' L'+pts[i][0]+' '+pts[i][1];
+    d+=' L'+x2+' '+y2;
+    return '<path d="'+d+'" fill="none" stroke="'+(c||'#5B6470')+'" stroke-width="1.6" stroke-linejoin="round"/>'+
+      '<circle cx="'+x2+'" cy="'+y2+'" r="3" fill="'+(c||'#5B6470')+'"/>';
+  }
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  /* 上层：光照，不经时钟 */
+  o.push(box(20,34,150,54,'Windows 真实系统','壁纸 / 主题 / 明暗','#FBF7F2','#C2612B'));
+  o.push(box(250,34,170,54,'光照读数','即时读取 · 不经过时钟','#FDF6EE','#C2612B'));
+  o.push(arrow(170,61,250,61,[],'#C2612B'));
+  o.push(T(210,52,'即时','#C2612B',10.5,'middle'));
+  /* 下层：生态时钟 */
+  o.push(box(20,118,150,54,'流速设定','暂停 / 1×–10× / 自定义','#F2F6FA','#378ADD'));
+  o.push(box(250,118,170,54,'WorldTime','单一 tick 源','#EAF1F9','#378ADD'));
+  o.push(box(500,118,200,54,'昼夜 / 季节 / 温度','24 游戏天 = 1 生态年','#EAF1F9','#378ADD'));
+  o.push(arrow(95,88,95,118,[],'#378ADD'));
+  o.push(arrow(170,145,250,145,[],'#378ADD'));
+  o.push(arrow(420,145,500,145,[],'#378ADD'));
+  o.push(T(295,137,'可调流速','#378ADD',10.5));
+  o.push(T(460,137,'与现实日历无关','#378ADD',10.5));
+  /* 绕行到合成节点 */
+  o.push(arrow(420,61,420,233,[[700,61],[700,233]],'#C2612B'));
+  o.push(arrow(600,172,535,210,[[600,205]],'#378ADD'));
+  o.push(box(420,206,230,54,'环境 → 适应度','光照 × 昼夜 × 季节 × 食物 × 拥挤','#F7F9FB','#5B6470'));
+  o.push(T(360,84,'① 不需要时间的 → 直接读真实系统','#8A3F13',11.5,'end'));
+  o.push(T(360,168,'② 需要时间的 → 走独立生态时钟','#185FA5',11.5,'end'));
+  o.push('</svg>');
+  setHTML('#clockFig', o.join('')+
+    '<div class="cap">两条通道分开走。<b>上层</b>（光照）是即时读数，不经过任何时钟；'+
+    '<b>下层</b>（昼夜 / 季节 / 温度）跑独立的 WorldTime，与现实日历无关、流速可调。</div>');
+})();
+
+/* ============ v0.3 新增：饱食三级状态 ============ */
+(function(){
+  var W=700,H=290;
+  var base={coat:'orange',eyes:{color:'gold',shape:'round'},tails:{count:2,len:'short',fluff:'fluffy',tip:'white'},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},pattern:{type:'tabby'},fur:{len:2,curl:0}};
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  /* 饱食度轴：左=100 右=0 */
+  var AX=60, AW=600, AY=34, AH=22;
+  o.push(T(AX,22,'饱食度（左 → 右 = 逐渐变饿）','#5B6470',12,'start','600'));
+  var segs=[
+    {x0:60,x1:300,c:'#639922',t:'活跃',d:'100 – 60%'},
+    {x0:300,x1:510,c:'#BA7517',t:'低活跃',d:'60 – 25%'},
+    {x0:510,x1:660,c:'#7C8794',t:'休眠',d:'25 – 0%'}
+  ];
+  for(var i=0;i<segs.length;i++){
+    var s=segs[i];
+    o.push('<rect x="'+s.x0+'" y="'+AY+'" width="'+(s.x1-s.x0)+'" height="'+AH+'" fill="'+s.c+'" opacity="0.85"/>');
+    o.push(T((s.x0+s.x1)/2,AY+15,s.t,'#FFFFFF',12,'middle','600'));
+  }
+  o.push('<rect x="'+AX+'" y="'+AY+'" width="'+AW+'" height="'+AH+'" fill="none" stroke="#C9D1D9" stroke-width="1"/>');
+  [100,75,50,25,0].forEach(function(v){
+    var xx=AX+(100-v)/100*AW;
+    o.push('<line x1="'+xx+'" y1="'+(AY+AH)+'" x2="'+xx+'" y2="'+(AY+AH+5)+'" stroke="#8A93A0" stroke-width="1"/>');
+    o.push(T(xx,AY+AH+18,v+'%','#8A93A0',10.5,'middle'));
+  });
+  /* 三张状态卡 */
+  var cards=[
+    {p:'stand', t:'活跃',    c:'#639922', r:'100 – 60%', d:'正常行为 · 正常繁殖'},
+    {p:'sit',   t:'低活跃',  c:'#BA7517', r:'60 – 25%',  d:'移动变慢 · 不再主动求偶'},
+    {p:'sleep', t:'休眠',    c:'#7C8794', r:'25 – 0%',   d:'代谢近乎冻结 · 不繁殖 · 不死'}
+  ];
+  for(i=0;i<cards.length;i++){
+    var cd=cards[i], x=20+i*228, y=96, w=210, h=176;
+    o.push('<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="12" fill="#FBFCFD" stroke="'+cd.c+'" stroke-width="1.8"/>');
+    var sp={}; for(var k in base){sp[k]=base[k];}
+    sp.pose=cd.p;
+    o.push(foxAt(sp,72,x+(w-72)/2,y+12));
+    o.push(T(x+w/2,y+104,cd.t,'#1F2328',13,'middle','600'));
+    o.push('<rect x="'+(x+18)+'" y="'+(y+114)+'" width="'+(w-36)+'" height="10" rx="5" fill="#EDEFF2"/>');
+    var frac=[0.8,0.42,0.12][i];
+    o.push('<rect x="'+(x+18)+'" y="'+(y+114)+'" width="'+((w-36)*frac).toFixed(1)+'" height="10" rx="5" fill="'+cd.c+'"/>');
+    o.push(T(x+w/2,y+142,cd.r,'#5B6470',11.5,'middle'));
+    o.push(T(x+w/2,y+160,cd.d,'#8A93A0',10.5,'middle'));
+  }
+  o.push(T(350,284,'终点是休眠，不是死亡 —— 投喂后立即苏醒','#3B6D11',12,'middle','600'));
+  o.push('</svg>');
+  setHTML('#satietyFig', o.join('')+
+    '<div class="cap">饥饿只到休眠为止。休眠个体的 ID 与基因型照常计入统计，但不占繁殖位、不再衰老推进。</div>');
+})();
+
+/* ============ v0.3 新增：家谱中的 DONOR 虚线节点 ============ */
+(function(){
+  var W=680,H=330;
+  var donor={coat:'silver',eyes:{color:'teal',shape:'almond'},tails:{count:1,len:'short',fluff:'normal',tip:'white'},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},pattern:{type:'none'},fur:{len:1,curl:0}};
+  var receptor={coat:'violet',eyes:{color:'violet',shape:'round'},tails:{count:3,len:'long',fluff:'fluffy',tip:'white'},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},pattern:{type:'none'},fur:{len:2,curl:0},sparkle:true};
+  var child={coat:'violet',eyes:{color:'teal',shape:'round'},tails:{count:2,len:'short',fluff:'fluffy',tip:'white'},
+    ears:{shape:'pointy',size:1,tip:'dark',inner:'light'},pattern:{type:'spot'},fur:{len:2,curl:0}};
+  function node(x,y,w,h,title,lines,dash,gray){
+    var o=['<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="12" fill="'+(gray?'#F7F8FA':'#FFFFFF')+
+      '" stroke="'+(gray?'#8A93A0':'#C9D1D9')+'" stroke-width="1.8"'+(dash?' stroke-dasharray="6 4"':'')+'/>'];
+    o.push(T(x+w/2,y+20,title,'#1F2328',12.5,'middle','600'));
+    for(var i=0;i<lines.length;i++) o.push(T(x+w/2,y+40+i*15,lines[i],'#5B6470',11,'middle'));
+    return {html:o.join(''),foxX:x+(w-72)/2,foxY:y+h-72-10};
+  }
+  var o=['<svg viewBox="0 0 '+W+' '+H+'">'];
+  var n1=node(20,30,190,150,'基因供体 DONOR',['FX-0031 ♂「灰烬」','第 7 代 · 已故','来自纪念馆'],true,true);
+  o.push(n1.html); o.push(foxAt(donor,72,n1.foxX,n1.foxY));
+  var n2=node(20,200,190,130,'存活受体',['FX-0062 ♀「暮霭」','第 9 代 · 存活','实际生下后代'],false,false);
+  o.push(n2.html); o.push(foxAt(receptor,64,n2.foxX,n2.foxY));
+  var n3=node(390,90,270,180,'育种后代',['FX-0081 ♀ · 第 10 代','父 DONOR FX-0031（虚线亲本）','母 FX-0062（实际受体）'],false,false);
+  o.push(n3.html); o.push(foxAt(child,78,n3.foxX,n3.foxY));
+  /* 连线 */
+  o.push('<path d="M210 105 L320 105 L320 180 L390 180" fill="none" stroke="#8A93A0" stroke-width="1.8" stroke-dasharray="6 4"/>');
+  o.push('<path d="M210 265 L320 265 L320 180" fill="none" stroke="#5B6470" stroke-width="1.8"/>');
+  o.push('<circle cx="320" cy="180" r="4" fill="#5B6470"/>');
+  o.push(T(265,96,'配子','#8A93A0',10.5,'middle'));
+  o.push(T(265,258,'配子','#8A93A0',10.5,'middle'));
+  o.push(T(345,176,'孟德尔组合','#185FA5',11,'start','600'));
+  o.push(T(115,18,'样本 ×1（消耗品）','#8A93A0',11,'middle'));
+  o.push('</svg>');
+  setHTML('#donorFig', o.join('')+
+    '<div class="cap">虚线框 = 来自纪念馆的基因供体。它在家谱里作为<b>真实亲本</b>参与 r 计算与溯源，'+
+    '但本人已死亡，不会回到桌面。</div>');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# 本机会话记忆，不公开
+.workbuddy/
+
+# 渲染缓存，可自动重建
+_cache/
+
+# 本机桌宠状态（位置/缩放/个体）
+pet_state.json
+
+# 桌面实拍截图，含本机界面，不公开
+docs/desktop-mvp-1.png
+docs/desktop-mvp-2.png
+docs/desktop-shot-compare.png
+
+# 调试中间产物
+docs/_tmp_*.png
+docs/_probe_*.png
+docs/fox-render/
+docs/render-kernel/
+
+# 历史美术版本（太大，按需从资料库单独取）
+_art_v1.2/
+_art_v1.3/
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 系统
+.DS_Store
+Thumbs.db

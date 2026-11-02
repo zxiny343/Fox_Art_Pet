@@ -1,0 +1,334 @@
+{
+ "schemaVersion": "1.0",
+ "anchorSet": "v1.0-view34",
+ "note": "Art side only. No dominance, recessiveness or inheritance probability is defined here (LOCK-G).",
+ "categories": [
+  {
+   "id": "coat",
+   "nameZh": "毛色",
+   "values": [
+    "white",
+    "orange",
+    "black",
+    "grey",
+    "blue",
+    "purple",
+    "sakura",
+    "mint",
+    "caramel",
+    "obsidian_gold",
+    "mist_purple",
+    "haze_blue"
+   ],
+   "default": "blue",
+   "layer": "base"
+  },
+  {
+   "id": "ear",
+   "nameZh": "耳朵",
+   "values": [
+    "ear_large",
+    "ear_small",
+    "ear_pointed",
+    "ear_round",
+    "ear_star",
+    "ear_fold"
+   ],
+   "default": "ear_large",
+   "tier": 2,
+   "set": "SET_EAR",
+   "requiresPair": true
+  },
+  {
+   "id": "tail",
+   "nameZh": "尾巴",
+   "values": [
+    "tail_normal",
+    "tail_long",
+    "tail_fluffy",
+    "tail_short",
+    "tail_curl",
+    "tail_twin",
+    "tail_triple",
+    "tail_quad",
+    "tail_quint",
+    "tail_nine",
+    "tail_thin"
+   ],
+   "default": "tail_normal",
+   "boneSegments": {
+    "tail_normal": 3,
+    "tail_long": 5,
+    "tail_fluffy": 3,
+    "tail_short": 2,
+    "tail_curl": 4,
+    "tail_twin": 3,
+    "tail_triple": 3,
+    "tail_quad": 3,
+    "tail_quint": 3,
+    "tail_nine": 3,
+    "tail_thin": 2
+   },
+   "specialHandling": {
+    "tail_twin": {
+     "branchCount": 2,
+     "segmentsPerBranch": 3,
+     "branchAngleDeg": 28
+    },
+    "tail_triple": {
+     "branchCount": 3,
+     "segmentsPerBranch": 3,
+     "branchAnglesDeg": [
+      -28,
+      0,
+      28
+     ],
+     "branchRootAnchor": [
+      425,
+      505
+     ],
+     "note": "程序化分叉（v1.3 P0）：以 tail_normal 基础形绕 tail_root 旋转复制，外侧分支缩短≤8%/细化≤28%"
+    },
+    "tail_quad": {
+     "branchCount": 4,
+     "segmentsPerBranch": 3,
+     "branchAnglesDeg": [
+      -28,
+      -14,
+      14,
+      28
+     ],
+     "branchRootAnchor": [
+      425,
+      505
+     ],
+     "note": "程序化分叉（v1.3 P0）：以 tail_normal 基础形绕 tail_root 旋转复制，外侧分支缩短≤8%/细化≤28%"
+    },
+    "tail_quint": {
+     "branchCount": 5,
+     "segmentsPerBranch": 3,
+     "branchAnglesDeg": [
+      -28,
+      -14,
+      0,
+      14,
+      28
+     ],
+     "branchRootAnchor": [
+      425,
+      505
+     ],
+     "note": "程序化分叉（v1.3 P0）：以 tail_normal 基础形绕 tail_root 旋转复制，外侧分支缩短≤8%/细化≤28%"
+    },
+    "tail_nine": {
+     "branchCount": 9,
+     "segmentsPerBranch": 3,
+     "branchAnglesDeg": [
+      -56,
+      -42,
+      -28,
+      -14,
+      0,
+      14,
+      28,
+      42,
+      56
+     ],
+     "branchRootAnchor": [
+      425,
+      505
+     ],
+     "note": "程序化分叉（v1.3 P0）：以 tail_normal 基础形绕 tail_root 旋转复制，外侧分支缩短≤8%/细化≤28%"
+    }
+   }
+  },
+  {
+   "id": "eyeShape",
+   "nameZh": "眼型",
+   "values": [
+    "eye_round",
+    "eye_almond",
+    "eye_sleepy"
+   ],
+   "default": "eye_round",
+   "tier": 2,
+   "set": "SET_EYE"
+  },
+  {
+   "id": "eyeColor",
+   "nameZh": "眼色",
+   "values": [
+    "eye_blue",
+    "eye_gold",
+    "eye_red",
+    "eye_green",
+    "eye_purple",
+    "eye_hetero",
+    "eye_copper",
+    "eye_cyan"
+   ],
+   "default": "eye_blue",
+   "independentPerSide": true
+  },
+  {
+   "id": "pupil",
+   "nameZh": "瞳孔",
+   "values": [
+    "pupil_round",
+    "pupil_slit",
+    "pupil_star"
+   ],
+   "default": "pupil_round",
+   "orthogonalTo": "eyeShape"
+  },
+  {
+   "id": "fur",
+   "nameZh": "毛发",
+   "values": [
+    "fur_short",
+    "fur_medium",
+    "fur_long",
+    "fur_curly"
+   ],
+   "default": "fur_short",
+   "tier": 2,
+   "set": [
+    "SET_FUR_HEAD",
+    "SET_FUR_BODY",
+    "SET_FUR_TAIL"
+   ],
+   "forcesBaseSwap": [
+    "fur_long",
+    "fur_curly"
+   ]
+  },
+  {
+   "id": "pattern",
+   "nameZh": "花纹",
+   "values": [
+    "pattern_solid",
+    "pattern_spots",
+    "pattern_stripes",
+    "pattern_gradient",
+    "pattern_face_mark",
+    "pattern_flame",
+    "pattern_tabby"
+   ],
+   "default": "pattern_solid",
+   "layer": "overlay"
+  },
+  {
+   "id": "special",
+   "nameZh": "特殊",
+   "values": [
+    "special_glow",
+    "special_star_mark",
+    "special_ear_star",
+    "special_pupil_star",
+    "special_aura",
+    "special_twin_tail"
+   ],
+   "default": null,
+   "layer": "overlay",
+   "stackable": true
+  }
+ ],
+ "incompatible": [
+  {
+   "pair": [
+    "fur_curly",
+    "pattern_stripes"
+   ],
+   "reason": "stripes break up on curly silhouette, unreadable at 256px"
+  },
+  {
+   "pair": [
+    "tail_twin",
+    "tail_short"
+   ],
+   "reason": "mutually exclusive concept"
+  },
+  {
+   "pair": [
+    "tail_twin",
+    "tail_curl"
+   ],
+   "reason": "bone branch depth unmanageable"
+  },
+  {
+   "pair": [
+    "ear_small",
+    "special_ear_star"
+   ],
+   "reason": "star notch unreadable on small ear"
+  },
+  {
+   "pair": [
+    "fur_long",
+    "body_base"
+   ],
+   "reason": "long fur exceeds default body silhouette; must swap to body_base_long"
+  },
+  {
+   "pair": [
+    "tail_triple",
+    "tail_short"
+   ],
+   "reason": "tail-count trait conflicts with tail_short; branch count is the visible evolution signal"
+  },
+  {
+   "pair": [
+    "tail_quad",
+    "tail_short"
+   ],
+   "reason": "tail-count trait conflicts with tail_short; branch count is the visible evolution signal"
+  },
+  {
+   "pair": [
+    "tail_quint",
+    "tail_short"
+   ],
+   "reason": "tail-count trait conflicts with tail_short; branch count is the visible evolution signal"
+  },
+  {
+   "pair": [
+    "tail_nine",
+    "tail_short"
+   ],
+   "reason": "tail-count trait conflicts with tail_short; branch count is the visible evolution signal"
+  },
+  {
+   "pair": [
+    "tail_triple",
+    "tail_curl"
+   ],
+   "reason": "tail-count trait conflicts with tail_curl; branch count is the visible evolution signal"
+  },
+  {
+   "pair": [
+    "tail_quad",
+    "tail_curl"
+   ],
+   "reason": "tail-count trait conflicts with tail_curl; branch count is the visible evolution signal"
+  },
+  {
+   "pair": [
+    "tail_quint",
+    "tail_curl"
+   ],
+   "reason": "tail-count trait conflicts with tail_curl; branch count is the visible evolution signal"
+  },
+  {
+   "pair": [
+    "tail_nine",
+    "tail_curl"
+   ],
+   "reason": "tail-count trait conflicts with tail_curl; branch count is the visible evolution signal"
+  }
+ ],
+ "reserved": [
+  "special_wing",
+  "special_crystal",
+  "special_melanic"
+ ]
+}

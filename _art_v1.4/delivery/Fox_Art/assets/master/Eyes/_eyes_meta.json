@@ -1,0 +1,80 @@
+{
+  "round": {
+    "category": "eyes",
+    "canvas": [
+      160,
+      160
+    ],
+    "anchor": [
+      80,
+      80
+    ],
+    "rootRule": "center",
+    "placedBBox": [
+      16,
+      17,
+      144,
+      143
+    ],
+    "placedSize": [
+      128,
+      126
+    ],
+    "scale": 0.5203,
+    "file": "eye_round.png",
+    "sourceSheet": "eyes_1.png",
+    "index": 0
+  },
+  "almond": {
+    "category": "eyes",
+    "canvas": [
+      160,
+      160
+    ],
+    "anchor": [
+      80,
+      80
+    ],
+    "rootRule": "center",
+    "placedBBox": [
+      16,
+      22,
+      144,
+      139
+    ],
+    "placedSize": [
+      128,
+      117
+    ],
+    "scale": 0.4812,
+    "file": "eye_almond.png",
+    "sourceSheet": "eyes_1.png",
+    "index": 1
+  },
+  "sleepy": {
+    "category": "eyes",
+    "canvas": [
+      160,
+      160
+    ],
+    "anchor": [
+      80,
+      80
+    ],
+    "rootRule": "center",
+    "placedBBox": [
+      16,
+      48,
+      144,
+      111
+    ],
+    "placedSize": [
+      128,
+      63
+    ],
+    "scale": 0.4295,
+    "file": "eye_sleepy.png",
+    "sourceSheet": "eyes_1.png",
+    "index": 2
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "tail": {
+    "file": "part_tail@1024.png",
+    "regionType": "polyline",
+    "regionSpec": {
+      "type": "polyline",
+      "points": [
+        [
+          428,
+          500
+        ],
+        [
+          330,
+          440
+        ],
+        [
+          250,
+          375
+        ],
+        [
+          205,
+          332
+        ]
+      ],
+      "radius": 74,
+      "clip": {
+        "yMax": 505
+      },
+      "note": "沿尾巴中轴的折线胶囊；根部止于臀前，不挖身体"
+    },
+    "contentBBox": [
+      147,
+      297,
+      503,
+      506
+    ],
+    "contentSize": [
+      356,
+      209
+    ],
+    "coverPx": 40294
+  },
+  "ear_L": {
+    "file": "part_ear_L@1024.png",
+    "regionType": "ellipse",
+    "regionSpec": {
+      "type": "ellipse",
+      "center": [
+        505,
+        252
+      ],
+      "rx": 80,
+      "ry": 84,
+      "rotDeg": -10,
+      "note": "左耳实测 x420-591 y150-300，底边中心即 ear_root_l"
+    },
+    "contentBBox": [
+      425,
+      183,
+      584,
+      336
+    ],
+    "contentSize": [
+      159,
+      153
+    ],
+    "coverPx": 16386
+  },
+  "ear_R": {
+    "file": "part_ear_R@1024.png",
+    "regionType": "ellipse",
+    "regionSpec": {
+      "type": "ellipse",
+      "center": [
+        762,
+        248
+      ],
+      "rx": 78,
+      "ry": 83,
+      "rotDeg": 8,
+      "note": "右耳实测 x679-855 y150-300，底边中心即 ear_root_r"
+    },
+    "contentBBox": [
+      686,
+      166,
+      840,
+      331
+    ],
+    "contentSize": [
+      154,
+      165
+    ],
+    "coverPx": 17500
+  },
+  "eye_L": {
+    "file": "part_eye_L@1024.png",
+    "regionType": "ellipse",
+    "regionSpec": {
+      "type": "ellipse",
+      "center": [
+        610,
+        508
+      ],
+      "rx": 54,
+      "ry": 48,
+      "rotDeg": 0,
+      "note": "eye_l 锚点"
+    },
+    "contentBBox": [
+      556,
+      460,
+      665,
+      557
+    ],
+    "contentSize": [
+      109,
+      97
+    ],
+    "coverPx": 8129
+  },
+  "eye_R": {
+    "file": "part_eye_R@1024.png",
+    "regionType": "ellipse",
+    "regionSpec": {
+      "type": "ellipse",
+      "center": [
+        778,
+        488
+      ],
+      "rx": 58,
+      "ry": 50,
+      "rotDeg": 0,
+      "note": "eye_r 锚点"
+    },
+    "contentBBox": [
+      720,
+      438,
+      837,
+      539
+    ],
+    "contentSize": [
+      117,
+      101
+    ],
+    "coverPx": 9105
+  },
+  "body_core": {
+    "file": "part_body_core@1024.png",
+    "regionType": "master minus union(regions) dilated",
+    "socketPx": 96509,
+    "removedPx": 96509
+  }
+}

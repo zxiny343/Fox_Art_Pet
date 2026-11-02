@@ -1,0 +1,472 @@
+{
+ "normal": {
+  "category": "tails",
+  "canvas": [
+   1024,
+   1024
+  ],
+  "declaredAnchor": [
+   425,
+   505
+  ],
+  "rootPointInCanvas": [
+   425,
+   505
+  ],
+  "aligned": true,
+  "file": "tail_normal.png",
+  "source": "part_tail@1024.png（母版原版尾巴，与 body_core 像素级互补）",
+  "note": "旧版 768 独立件已废弃：独立件会破坏包络并引入旋转缩放误差"
+ },
+ "long": {
+  "category": "tails",
+  "canvas": [
+   768,
+   768
+  ],
+  "declaredAnchor": [
+   672,
+   576
+  ],
+  "rootRule": "auto-detected thick end + axis rotation",
+  "rootPointInCanvas": [
+   467,
+   592
+  ],
+  "rotationDeg": -79.61,
+  "detectedAxisDeg": 157.29,
+  "targetAxisDeg": -123.1,
+  "placedBBox": [
+   97,
+   161,
+   670,
+   607
+  ],
+  "placedSize": [
+   573,
+   446
+  ],
+  "scale": 1.5049,
+  "note": "已按主轴旋到母版尾巴朝向；组装时把 rootPointInCanvas 对齐 tail_root",
+  "cutBottom": 0.0,
+  "file": "tail_long.png",
+  "sourceSheet": "tails_r2_1.png",
+  "index": 1,
+  "measuredDiagPx": 552.3,
+  "intendedRel": 1.28,
+  "targetDiagPx": 726.3,
+  "displayScale": 1.3152
+ },
+ "fluffy": {
+  "category": "tails",
+  "canvas": [
+   768,
+   768
+  ],
+  "declaredAnchor": [
+   672,
+   576
+  ],
+  "rootRule": "auto-detected thick end + axis rotation",
+  "rootPointInCanvas": [
+   469,
+   569
+  ],
+  "rotationDeg": -68.45,
+  "detectedAxisDeg": 168.45,
+  "targetAxisDeg": -123.1,
+  "placedBBox": [
+   170,
+   172,
+   597,
+   595
+  ],
+  "placedSize": [
+   427,
+   423
+  ],
+  "scale": 1.5049,
+  "note": "已按主轴旋到母版尾巴朝向；组装时把 rootPointInCanvas 对齐 tail_root",
+  "cutBottom": 0.0,
+  "file": "tail_fluffy.png",
+  "sourceSheet": "tails_r2_1.png",
+  "index": 2,
+  "measuredDiagPx": 473.1,
+  "intendedRel": 1.06,
+  "targetDiagPx": 601.5,
+  "displayScale": 1.2715
+ },
+ "short": {
+  "category": "tails",
+  "canvas": [
+   768,
+   768
+  ],
+  "declaredAnchor": [
+   672,
+   576
+  ],
+  "rootRule": "auto-detected thick end + axis rotation",
+  "rootPointInCanvas": [
+   498,
+   515
+  ],
+  "rotationDeg": -85.64,
+  "detectedAxisDeg": 151.26,
+  "targetAxisDeg": -123.1,
+  "placedBBox": [
+   230,
+   249,
+   537,
+   519
+  ],
+  "placedSize": [
+   307,
+   270
+  ],
+  "scale": 1.5049,
+  "note": "已按主轴旋到母版尾巴朝向；组装时把 rootPointInCanvas 对齐 tail_root",
+  "cutBottom": 0.0,
+  "file": "tail_short.png",
+  "sourceSheet": "tails_r2_1.png",
+  "index": 3,
+  "measuredDiagPx": 503.1,
+  "intendedRel": 0.72,
+  "targetDiagPx": 408.6,
+  "displayScale": 0.8121
+ },
+ "curl": {
+  "category": "tails",
+  "canvas": [
+   768,
+   768
+  ],
+  "declaredAnchor": [
+   672,
+   576
+  ],
+  "rootRule": "auto-detected thick end + axis rotation",
+  "rootPointInCanvas": [
+   543,
+   562
+  ],
+  "rotationDeg": -68.03,
+  "detectedAxisDeg": 168.87,
+  "targetAxisDeg": -123.1,
+  "placedBBox": [
+   178,
+   197,
+   589,
+   571
+  ],
+  "placedSize": [
+   411,
+   374
+  ],
+  "scale": 1.5049,
+  "note": "已按主轴旋到母版尾巴朝向；组装时把 rootPointInCanvas 对齐 tail_root",
+  "cutBottom": 0.0,
+  "file": "tail_curl.png",
+  "sourceSheet": "tails_r2_1.png",
+  "index": 4,
+  "measuredDiagPx": 508.3,
+  "intendedRel": 0.98,
+  "targetDiagPx": 556.1,
+  "displayScale": 1.0941
+ },
+ "twin": {
+  "category": "tails",
+  "canvas": [
+   768,
+   768
+  ],
+  "declaredAnchor": [
+   672,
+   576
+  ],
+  "rootRule": "auto-detected thick end + axis rotation",
+  "rootPointInCanvas": [
+   573,
+   587
+  ],
+  "rotationDeg": -74.24,
+  "detectedAxisDeg": 162.66,
+  "targetAxisDeg": -123.1,
+  "placedBBox": [
+   145,
+   174,
+   622,
+   594
+  ],
+  "placedSize": [
+   477,
+   420
+  ],
+  "scale": 1.5049,
+  "note": "已按主轴旋到母版尾巴朝向；组装时把 rootPointInCanvas 对齐 tail_root",
+  "cutBottom": 0.0,
+  "file": "tail_twin.png",
+  "sourceSheet": "tails_r2_1.png",
+  "index": 5,
+  "measuredDiagPx": 540.6,
+  "intendedRel": 1.12,
+  "targetDiagPx": 635.6,
+  "displayScale": 1.1756
+ },
+ "triple": {
+  "category": "tails",
+  "canvas": [
+   1024,
+   1024
+  ],
+  "declaredAnchor": [
+   425,
+   505
+  ],
+  "rootPointInCanvas": [
+   425,
+   505
+  ],
+  "aligned": true,
+  "file": "tail_triple.png",
+  "source": "程序化分叉：tail_normal.png 绕 tail_root(425,505) 旋转 [-28, 0, 28]°，外侧分支缩短≤8%/细化≤28%",
+  "branchCount": 3,
+  "branchAnglesDeg": [
+   -28,
+   0,
+   28
+  ],
+  "alphaPx": 67173,
+  "bbox": [
+   116,
+   242,
+   502,
+   554
+  ],
+  "note": "v1.3 P0 新增；与 tail_normal 同为 normal 形制"
+ },
+ "quad": {
+  "category": "tails",
+  "canvas": [
+   1024,
+   1024
+  ],
+  "declaredAnchor": [
+   425,
+   505
+  ],
+  "rootPointInCanvas": [
+   425,
+   505
+  ],
+  "aligned": true,
+  "file": "tail_quad.png",
+  "source": "程序化分叉：tail_normal.png 绕 tail_root(425,505) 旋转 [-28, -14, 14, 28]°，外侧分支缩短≤8%/细化≤28%",
+  "branchCount": 4,
+  "branchAnglesDeg": [
+   -28,
+   -14,
+   14,
+   28
+  ],
+  "alphaPx": 69000,
+  "bbox": [
+   116,
+   242,
+   501,
+   554
+  ],
+  "note": "v1.3 P0 新增；与 tail_normal 同为 normal 形制"
+ },
+ "quint": {
+  "category": "tails",
+  "canvas": [
+   1024,
+   1024
+  ],
+  "declaredAnchor": [
+   425,
+   505
+  ],
+  "rootPointInCanvas": [
+   425,
+   505
+  ],
+  "aligned": true,
+  "file": "tail_quint.png",
+  "source": "程序化分叉：tail_normal.png 绕 tail_root(425,505) 旋转 [-28, -14, 0, 14, 28]°，外侧分支缩短≤8%/细化≤28%",
+  "branchCount": 5,
+  "branchAnglesDeg": [
+   -28,
+   -14,
+   0,
+   14,
+   28
+  ],
+  "alphaPx": 71938,
+  "bbox": [
+   116,
+   242,
+   502,
+   554
+  ],
+  "note": "v1.3 P0 新增；与 tail_normal 同为 normal 形制"
+ },
+ "nine": {
+  "category": "tails",
+  "canvas": [
+   1024,
+   1024
+  ],
+  "declaredAnchor": [
+   425,
+   505
+  ],
+  "rootPointInCanvas": [
+   425,
+   505
+  ],
+  "aligned": true,
+  "file": "tail_nine.png",
+  "source": "程序化分叉：tail_normal.png 绕 tail_root(425,505) 旋转 [-56, -42, -28, -14, 0, 14, 28, 42, 56]°，外侧分支缩短≤8%/细化≤28%",
+  "branchCount": 9,
+  "branchAnglesDeg": [
+   -56,
+   -42,
+   -28,
+   -14,
+   0,
+   14,
+   28,
+   42,
+   56
+  ],
+  "alphaPx": 99072,
+  "bbox": [
+   116,
+   219,
+   502,
+   590
+  ],
+  "note": "v1.3 P0 新增；与 tail_normal 同为 normal 形制"
+ },
+ "thin": {
+  "category": "tails",
+  "canvas": [
+   1024,
+   1024
+  ],
+  "declaredAnchor": [
+   425,
+   505
+  ],
+  "rootPointInCanvas": [
+   425,
+   505
+  ],
+  "aligned": true,
+  "file": "tail_thin.png",
+  "source": "tail_normal.png 横向压缩 0.52× + 开运算去毛刺",
+  "alphaPx": 34229,
+  "bbox": [
+   321,
+   150,
+   505,
+   501
+  ],
+  "boneSegments": 2,
+  "note": "v1.3 P2：蓬尾的反义——细、直、毛量少"
+ },
+ "_v14_R1": {
+  "method": "root-fluff-gradient",
+  "scale": 40.0,
+  "alphaFloor": 10.0,
+  "windowPx": 40294,
+  "short": {
+   "patchedPx": 33077,
+   "partBBoxV13": [
+    270,
+    386,
+    502,
+    505
+   ],
+   "hole_blue": 0,
+   "subjectBBox": [
+    190,
+    152,
+    874,
+    925
+   ],
+   "subjectBBoxV13": [
+    190,
+    152,
+    874,
+    925
+   ],
+   "hole_black": 0,
+   "hole_haze_blue": 0
+  },
+  "thin": {
+   "patchedPx": 37410,
+   "partBBoxV13": [
+    321,
+    150,
+    505,
+    501
+   ],
+   "hole_blue": 0,
+   "subjectBBox": [
+    190,
+    150,
+    874,
+    925
+   ],
+   "subjectBBoxV13": [
+    190,
+    150,
+    874,
+    925
+   ],
+   "hole_black": 0,
+   "hole_haze_blue": 0
+  }
+ },
+ "_v14_R2": {
+  "method": "root-disc de-outline + seam closing + single outer contour",
+  "radiusInner": 110.0,
+  "radiusOuter": 160.0,
+  "perTail": {
+   "twin": {
+    "innerStrokePx": 590,
+    "seamPx": 0,
+    "alphaBefore": 42013,
+    "alphaAfter": 42013
+   },
+   "triple": {
+    "innerStrokePx": 3,
+    "seamPx": 6,
+    "alphaBefore": 67199,
+    "alphaAfter": 67205
+   },
+   "quad": {
+    "innerStrokePx": 5,
+    "seamPx": 6,
+    "alphaBefore": 69019,
+    "alphaAfter": 69025
+   },
+   "quint": {
+    "innerStrokePx": 3,
+    "seamPx": 6,
+    "alphaBefore": 71952,
+    "alphaAfter": 71958
+   },
+   "nine": {
+    "innerStrokePx": 9,
+    "seamPx": 3,
+    "alphaBefore": 99094,
+    "alphaAfter": 99097
+   }
+  },
+  "note": "只处理 tail_root 附近 110px；区域外保留各分支原有描边与毛流"
+ }
+}

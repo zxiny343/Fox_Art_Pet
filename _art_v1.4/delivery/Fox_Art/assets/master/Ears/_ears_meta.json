@@ -1,0 +1,505 @@
+{
+ "large_L": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   306
+  ],
+  "placedBBox": [
+   130,
+   77,
+   254,
+   306
+  ],
+  "placedSize": [
+   124,
+   229
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_large_L.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 0,
+  "measuredDiagPx": 176.3,
+  "intendedRel": 1.15,
+  "targetDiagPx": 260.5,
+  "displayScale": 1.4778
+ },
+ "large_R": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   306
+  ],
+  "placedBBox": [
+   130,
+   77,
+   254,
+   306
+  ],
+  "placedSize": [
+   124,
+   229
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_large_R.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 1,
+  "measuredDiagPx": 176.3,
+  "intendedRel": 1.15,
+  "targetDiagPx": 260.5,
+  "displayScale": 1.4778
+ },
+ "small_L": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   193,
+   271
+  ],
+  "placedBBox": [
+   162,
+   112,
+   222,
+   271
+  ],
+  "placedSize": [
+   60,
+   159
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_small_L.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 2,
+  "measuredDiagPx": 233.3,
+  "intendedRel": 0.75,
+  "targetDiagPx": 169.9,
+  "displayScale": 0.7284
+ },
+ "small_R": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   271
+  ],
+  "placedBBox": [
+   162,
+   112,
+   222,
+   271
+  ],
+  "placedSize": [
+   60,
+   159
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_small_R.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 3,
+  "measuredDiagPx": 232.9,
+  "intendedRel": 0.75,
+  "targetDiagPx": 169.9,
+  "displayScale": 0.7295
+ },
+ "pointed_L": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   302
+  ],
+  "placedBBox": [
+   148,
+   81,
+   235,
+   302
+  ],
+  "placedSize": [
+   87,
+   221
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_pointed_L.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 4,
+  "measuredDiagPx": 237.5,
+  "intendedRel": 1.05,
+  "targetDiagPx": 237.9,
+  "displayScale": 1.0015
+ },
+ "pointed_R": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   302
+  ],
+  "placedBBox": [
+   148,
+   81,
+   236,
+   302
+  ],
+  "placedSize": [
+   88,
+   221
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_pointed_R.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 5,
+  "measuredDiagPx": 237.9,
+  "intendedRel": 1.05,
+  "targetDiagPx": 237.9,
+  "displayScale": 1.0
+ },
+ "round_L": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   278
+  ],
+  "placedBBox": [
+   138,
+   105,
+   246,
+   278
+  ],
+  "placedSize": [
+   108,
+   173
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_round_L.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 6,
+  "measuredDiagPx": 169.8,
+  "intendedRel": 0.9,
+  "targetDiagPx": 203.9,
+  "displayScale": 1.2007
+ },
+ "round_R": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   278
+  ],
+  "placedBBox": [
+   138,
+   105,
+   246,
+   278
+  ],
+  "placedSize": [
+   108,
+   173
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_round_R.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 7,
+  "measuredDiagPx": 169.8,
+  "intendedRel": 0.9,
+  "targetDiagPx": 203.9,
+  "displayScale": 1.2007
+ },
+ "star_L": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   193,
+   287
+  ],
+  "placedBBox": [
+   131,
+   96,
+   253,
+   287
+  ],
+  "placedSize": [
+   122,
+   191
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_star_L.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 8,
+  "measuredDiagPx": 209.2,
+  "intendedRel": 1.0,
+  "targetDiagPx": 226.5,
+  "displayScale": 1.0832
+ },
+ "star_R": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   287
+  ],
+  "placedBBox": [
+   130,
+   97,
+   253,
+   287
+  ],
+  "placedSize": [
+   123,
+   190
+  ],
+  "scale": 0.7733,
+  "note": "内容居中不裁切；组装时把 rootPointInCanvas 对齐到狐狸身上的锚点",
+  "cutBottom": 0.28,
+  "file": "ear_star_R.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 9,
+  "measuredDiagPx": 209.7,
+  "intendedRel": 1.0,
+  "targetDiagPx": 226.5,
+  "displayScale": 1.0804
+ },
+ "fold_L": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   193,
+   271
+  ],
+  "placedBBox": [
+   162,
+   112,
+   222,
+   271
+  ],
+  "placedSize": [
+   60,
+   159
+  ],
+  "scale": 0.7733,
+  "note": "v1.3 P2：ear_small 基础上耳尖沿 38% 高度处翻折朝下（程序化派生，未出新 AI 图）；体量接近 ear_small",
+  "cutBottom": 0.28,
+  "file": "ear_fold_L.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 2,
+  "measuredDiagPx": 233.3,
+  "intendedRel": 0.78,
+  "targetDiagPx": 169.9,
+  "displayScale": 0.7284
+ },
+ "fold_R": {
+  "category": "ears",
+  "canvas": [
+   384,
+   384
+  ],
+  "declaredAnchor": [
+   192,
+   320
+  ],
+  "rootRule": "bottom-center",
+  "rootPointInCanvas": [
+   192,
+   271
+  ],
+  "placedBBox": [
+   162,
+   112,
+   222,
+   271
+  ],
+  "placedSize": [
+   60,
+   159
+  ],
+  "scale": 0.7733,
+  "note": "v1.3 P2：ear_small 基础上耳尖沿 38% 高度处翻折朝下（程序化派生，未出新 AI 图）；体量接近 ear_small",
+  "cutBottom": 0.28,
+  "file": "ear_fold_R.png",
+  "sourceSheet": "ears_r2_1.png",
+  "index": 3,
+  "measuredDiagPx": 232.9,
+  "intendedRel": 0.78,
+  "targetDiagPx": 169.9,
+  "displayScale": 0.7295
+ },
+ "_v14_R3": {
+  "method": "ear_round 母本 + 外轮廓分离 + 锚定 topY 放大 + 重画 3px 描边",
+  "scale": [
+   1.2,
+   1.16
+  ],
+  "metrics": {
+   "L": {
+    "round": {
+     "px": 21103,
+     "topY": 169,
+     "bbox": [
+      425,
+      169,
+      585,
+      335
+     ]
+    },
+    "large": {
+     "px": 31740,
+     "topY": 166,
+     "bbox": [
+      406,
+      166,
+      604,
+      365
+     ]
+    },
+    "strokeColor": [
+     23,
+     29,
+     46
+    ],
+    "scale": [
+     1.2,
+     1.16
+    ]
+   },
+   "R": {
+    "round": {
+     "px": 20151,
+     "topY": 166,
+     "bbox": [
+      684,
+      166,
+      840,
+      330
+     ]
+    },
+    "large": {
+     "px": 30252,
+     "topY": 163,
+     "bbox": [
+      665,
+      163,
+      859,
+      359
+     ]
+    },
+    "strokeColor": [
+     42,
+     51,
+     70
+    ],
+    "scale": [
+     1.2,
+     1.16
+    ]
+   }
+  }
+ }
+}

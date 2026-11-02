@@ -1,0 +1,188 @@
+{
+  "workflow_id": "d22d9c4f-7bfc-4529-acbf-25943f742502",
+  "state_version": 26,
+  "status": "draft",
+  "artifacts": {},
+  "submissions": {
+    "s1-base-view34": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户确认四项规格全选A，并授权使用灵感值出图；阶段1基础角色3/4站姿",
+      "input_hashes": {},
+      "status": "failed",
+      "generationId": "NONE"
+    },
+    "s1-base-view34-r1": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户要求重新对接可灵；重连后余额500；重试此前因余额不足失败的 s1-base-view34 一次",
+      "input_hashes": {},
+      "status": "submitted",
+      "generationId": "AWDxSkq99dQhczUKEwzalf-POe_ObXkFbx2EmIaDtIuhblSLj2zMbEYgY3MBNBu-X0A95C8R"
+    },
+    "s1-base-view34-r2": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "第一轮4张全部为四足着地姿态且有投影，不符合LOCK-C；用户已授权使用灵感值，重出一版强约束二足提示词",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s1-base-view34-q4": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户拍板改四足站姿；LOCK-C由二足改为四足；重出阶段1标准视图",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-parts-ears": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "阶段2部件表：耳5型/尾6型/眼型3/瞳孔3，隔离白底部件表用于连通域切分为可替换PNG",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-parts-tails": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "阶段2部件表：耳5型/尾6型/眼型3/瞳孔3，隔离白底部件表用于连通域切分为可替换PNG",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-parts-eyes": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "阶段2部件表：耳5型/尾6型/眼型3/瞳孔3，隔离白底部件表用于连通域切分为可替换PNG",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-parts-pupils": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "阶段2部件表：耳5型/尾6型/眼型3/瞳孔3，隔离白底部件表用于连通域切分为可替换PNG",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-parts-ears-r2": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "首轮部件表失败：耳朵生成带脸头部、尾巴生成完整狐狸，动物先验过强。改用道具/周边产品摄影话术重出",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-parts-tails-r2": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "首轮部件表失败：耳朵生成带脸头部、尾巴生成完整狐狸，动物先验过强。改用道具/周边产品摄影话术重出",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-patterns": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "阶段2花纹：斑点/条纹/额头纹章做成黑色alpha遮罩，可叠加到任意毛色",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-fur-mid": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段2毛发4型：短毛=母版，另出中长/长/卷三型；用母版做参考图保证构图配色一致",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-fur-long": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段2毛发4型：短毛=母版，另出中长/长/卷三型；用母版做参考图保证构图配色一致",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s2-fur-curly": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段2毛发4型：短毛=母版，另出中长/长/卷三型；用母版做参考图保证构图配色一致",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-tail-long": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-tail-fluffy": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-tail-short": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-tail-curl": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-tail-twin": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-ear-large": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-ear-small": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    },
+    "s3-ear-pointed": {
+      "tool": "image_to_image",
+      "inputs": [],
+      "authorization": "阶段3：独立部件与母版形状不配套导致覆盖率仅40-52%，改用图生图从母版生成同姿态尾/耳变体，切出的部件天然配套",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    }
+  },
+  "pending_actions": [
+    "可灵余额0，text_to_image 返回 Insufficient credits，等待用户确认200灵感值到账"
+  ],
+  "delivery": null
+}

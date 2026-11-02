@@ -1,0 +1,187 @@
+{
+  "schemaVersion": "1.0",
+  "anchorSet": "v3.0-view34-quadruped",
+  "note": "表情 = 眼件 + 眉件 + 嘴件 + 腮红 + 头部微动参数的组合；全部部件 1024 全画布对齐，(0,0) 叠加，不需要程序侧调坐标。",
+  "coatTinting": "眉/嘴/闭眼件按 colorways.json 的 outline 色逐毛色烘焙，文件名带 _<coat> 后缀；腮红与毛色无关，只有一件。",
+  "slots": {
+    "eye": {
+      "anchor": "eye_l / eye_r",
+      "assets": "assets/master/Eyes/eye_<shape>_<color>.png + Expressions/eye_closed_<coat>.png / eye_happy_<coat>.png",
+      "shapes": [
+        "round",
+        "almond",
+        "sleepy",
+        "closed",
+        "happy"
+      ],
+      "colors": [
+        "blue",
+        "cyan",
+        "gold",
+        "green",
+        "purple",
+        "red"
+      ]
+    },
+    "brow": {
+      "anchor": "brow_l(606,446) / brow_r(778,426)",
+      "assets": "assets/master/Expressions/brow_<kind>_<L|R>.png",
+      "kinds": [
+        "neutral",
+        "angry",
+        "sad",
+        "raised"
+      ]
+    },
+    "mouth": {
+      "anchor": "mouth(730,596)",
+      "assets": "assets/master/Expressions/mouth_<kind>.png",
+      "kinds": [
+        "closed",
+        "smile",
+        "open_o",
+        "frown",
+        "tongue",
+        "wavy"
+      ],
+      "socket": "body_core 上已挖出 mouth 区并 socket 补色"
+    },
+    "blush": {
+      "anchor": "blush_l(558,548) / blush_r(812,512)",
+      "assets": "assets/master/Expressions/blush.png",
+      "blend": "normal / 可改用 screen"
+    }
+  },
+  "expressions": [
+    {
+      "id": "neutral",
+      "name": "平静",
+      "eye": "eye_round_blue",
+      "brow": "neutral",
+      "mouth": "closed",
+      "blush": false,
+      "head": {
+        "rotDeg": 0,
+        "dx": 0,
+        "dy": 0
+      }
+    },
+    {
+      "id": "happy",
+      "name": "开心",
+      "eye": "eye_happy",
+      "brow": "raised",
+      "mouth": "smile",
+      "blush": false,
+      "head": {
+        "rotDeg": 0,
+        "dx": 2,
+        "dy": -4
+      }
+    },
+    {
+      "id": "excited",
+      "name": "兴奋",
+      "eye": "eye_round_gold",
+      "brow": "raised",
+      "mouth": "open_o",
+      "blush": true,
+      "head": {
+        "rotDeg": 0,
+        "dx": 0,
+        "dy": -8
+      }
+    },
+    {
+      "id": "sad",
+      "name": "难过",
+      "eye": "eye_almond_blue",
+      "brow": "sad",
+      "mouth": "frown",
+      "blush": false,
+      "head": {
+        "rotDeg": 3,
+        "dx": -2,
+        "dy": 6
+      }
+    },
+    {
+      "id": "angry",
+      "name": "生气",
+      "eye": "eye_almond_red",
+      "brow": "angry",
+      "mouth": "frown",
+      "blush": false,
+      "head": {
+        "rotDeg": -2,
+        "dx": 0,
+        "dy": 2
+      }
+    },
+    {
+      "id": "surprised",
+      "name": "惊讶",
+      "eye": "eye_round_cyan",
+      "brow": "raised",
+      "mouth": "open_o",
+      "blush": false,
+      "head": {
+        "rotDeg": 0,
+        "dx": 0,
+        "dy": -10
+      }
+    },
+    {
+      "id": "sleepy",
+      "name": "困倦",
+      "eye": "eye_sleepy_blue",
+      "brow": "neutral",
+      "mouth": "closed",
+      "blush": false,
+      "head": {
+        "rotDeg": 4,
+        "dx": 0,
+        "dy": 8
+      }
+    },
+    {
+      "id": "curious",
+      "name": "好奇",
+      "eye": "eye_round_green",
+      "brow": "raised",
+      "mouth": "wavy",
+      "blush": false,
+      "head": {
+        "rotDeg": -8,
+        "dx": 4,
+        "dy": -4
+      }
+    },
+    {
+      "id": "shy",
+      "name": "害羞",
+      "eye": "eye_sleepy_purple",
+      "brow": "sad",
+      "mouth": "wavy",
+      "blush": true,
+      "head": {
+        "rotDeg": 5,
+        "dx": -3,
+        "dy": 5
+      }
+    },
+    {
+      "id": "smug",
+      "name": "得意",
+      "eye": "eye_almond_purple",
+      "brow": "raised",
+      "mouth": "tongue",
+      "blush": false,
+      "head": {
+        "rotDeg": -4,
+        "dx": 3,
+        "dy": 0
+      }
+    }
+  ]
+}

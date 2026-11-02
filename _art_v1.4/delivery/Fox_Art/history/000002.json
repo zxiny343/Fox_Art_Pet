@@ -1,0 +1,18 @@
+{
+  "workflow_id": "d22d9c4f-7bfc-4529-acbf-25943f742502",
+  "state_version": 2,
+  "status": "draft",
+  "artifacts": {},
+  "submissions": {
+    "s1-base-view34": {
+      "tool": "text_to_image",
+      "inputs": [],
+      "authorization": "用户确认四项规格全选A，并授权使用灵感值出图；阶段1基础角色3/4站姿",
+      "input_hashes": {},
+      "status": "unknown",
+      "generationId": null
+    }
+  },
+  "pending_actions": [],
+  "delivery": null
+}

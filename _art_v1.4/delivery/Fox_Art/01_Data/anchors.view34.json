@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "3.0",
+  "anchorSet": "v3.0-view34-quadruped",
+  "view": "three-quarter-front",
+  "pose": "quadruped-standing",
+  "supersedes": "v2.0-view34-quadruped",
+  "note": "v2.0 由目视叠加图估计得出；v3.0 用 probe_shape.py 对母版 alpha 做行列剖面实测后重标，取代目视估计值。阶段3 拆分与组装全部基于 v3.0。",
+  "canvas": { "width": 1024, "height": 1024, "origin": "top-left", "xAxis": "right-positive", "yAxis": "down-positive", "safeMargin": 60 },
+  "engineConversion": { "yEngine": "1024 - yArt", "scaleN": "coord1024 * N / 1024" },
+  "tolerancePx": 12,
+  "envelopeRule": {
+    "fit": "content scaled to fit within 904x904 safe box, maximizing equally",
+    "ground": "content bottom edge on y=928",
+    "center": "content horizontally centered on x=512",
+    "measuredAllVariants": "all stage-3 assembled variants measured bbox (147,150)-(876,927), identical to master",
+    "note": "极端性状（长尾/大耳）在规整后仍落回同一包络，差异体现为形状占比而非外围尺寸"
+  },
+  "measuredEnvelope": {
+    "contentBBox": { "x": 147, "y": 150, "x2": 877, "y2": 928 },
+    "contentWidth": 730,
+    "contentHeight": 778
+  },
+  "measurementBasis": {
+    "tool": "tools/probe_shape.py",
+    "leftEarRuns": "y=200 x[429-496] / y=250 x[421-565] / y=275 x[420-591]",
+    "rightEarRuns": "y=175 x[762-823] / y=250 x[697-838] / y=275 x[679-841]",
+    "tailRuns": "y=325 x[153-338] / y=375 x[188-402] / y=425 x[206-430] / y=475 x[195-444]",
+    "tailFusion": "y>=500 尾巴与躯干 alpha 融合无法分离，故 tail_root 定在尾巴出口 (425,505) 而非骨盆 (420,645)"
+  },
+  "proportions": {
+    "backTopY": 605,
+    "bellyLowY": 880,
+    "legHeight": 138,
+    "headHeightApprox": 220,
+    "note": "backTop/bellyLow measured from art; headHeight is an estimate"
+  },
+  "anchors": [
+    { "id": "root",             "x": 512, "y": 928, "role": "skeleton root / ground contact / translation base", "verified": true },
+    { "id": "pelvis",           "x": 420, "y": 645, "role": "body rotation center / hind leg mount", "verified": true },
+    { "id": "tail_root",        "x": 425, "y": 505, "role": "UNIQUE tail rotation center shared by every tail type; v2.0 was (430,655)=pelvis, corrected to actual tail exit", "verified": true },
+    { "id": "tail_mid",         "x": 312, "y": 415, "role": "tail mid bone", "verified": true },
+    { "id": "tail_tip",         "x": 200, "y": 320, "role": "tail end bone", "verified": true },
+    { "id": "neck",             "x": 655, "y": 560, "role": "UNIQUE head-body joint / head rotation center", "verified": true },
+    { "id": "head_center",      "x": 660, "y": 450, "role": "head micro-motion / expression layer alignment", "verified": false },
+    { "id": "ear_root_l",       "x": 505, "y": 348, "role": "left ear rotation center; v2.0 was (470,350), corrected by profile", "verified": true },
+    { "id": "ear_root_r",       "x": 762, "y": 346, "role": "right ear rotation center; v2.0 was (790,340), corrected by profile", "verified": true },
+    { "id": "eye_l",            "x": 610, "y": 510, "role": "left eye socket anchor", "verified": true },
+    { "id": "eye_r",            "x": 775, "y": 490, "role": "right eye socket anchor", "verified": true },
+    { "id": "muzzle",           "x": 740, "y": 555, "role": "nose / mouth swap base", "verified": true },
+    { "id": "back_top",         "x": 565, "y": 605, "role": "back silhouette landmark (proportion check)", "verified": true },
+    { "id": "belly_low",        "x": 590, "y": 880, "role": "belly silhouette landmark (proportion check)", "verified": true },
+    { "id": "shoulder_near",    "x": 700, "y": 600, "role": "near front leg mount", "verified": false },
+    { "id": "shoulder_far",     "x": 650, "y": 595, "role": "far front leg mount", "verified": false },
+    { "id": "paw_front_near",   "x": 690, "y": 903, "role": "near front paw", "verified": true },
+    { "id": "paw_front_far",    "x": 640, "y": 895, "role": "far front paw", "verified": false },
+    { "id": "hip_near",         "x": 430, "y": 655, "role": "near hind leg mount", "verified": true },
+    { "id": "hip_far",          "x": 370, "y": 650, "role": "far hind leg mount", "verified": false },
+    { "id": "foot_hind_near",   "x": 440, "y": 895, "role": "near hind foot", "verified": true },
+    { "id": "foot_hind_far",    "x": 390, "y": 890, "role": "far hind foot", "verified": false }
+  ],
+  "socketSystem": {
+    "purpose": "body_core 的挖空区不可留空——小部件盖不满时会露出透明洞",
+    "method": "挖空区用「非描边体色最近邻扩散 + 原部件高斯模糊」补色",
+    "pitfall": "若从描边像素扩散，挖空区会被填成近黑色，整只变剪影（阶段3 实测踩过）",
+    "uncoveredRate": "配套部件约 0%；阶段2 独立部件曾达 19-38%（已弃用）"
+  },
+  "partAlignmentModes": [
+    { "mode": "aligned-full-canvas", "used": "阶段3 配套部件（母版变体图切出）", "rule": "1024x1024 全画布，直接 (0,0) alpha_composite，零错位、无需锚点换算" },
+    { "mode": "anchored-legacy", "used": "阶段2 独立部件（隔离白底表切出）", "rule": "按 rootPointInCanvas 对齐锚点 + 主轴旋转 + 母版实测尺寸归一化" }
+  ],
+  "invariants": [
+    "tail_root is shared by tail_normal / tail_long / tail_fluffy / tail_short / tail_curl / tail_twin",
+    "neck is the only head-body joint",
+    "root / neck / tail_root / pelvis must never be moved by mods",
+    "quadruped interaction is expressed by head, ears, tail and whole-body motion - forepaws do not perform interactive gestures"
+  ],
+  "pendingVerification": [
+    "head_center",
+    "shoulder_near / shoulder_far",
+    "paw_front_far",
+    "hip_far / foot_hind_far"
+  ]
+}

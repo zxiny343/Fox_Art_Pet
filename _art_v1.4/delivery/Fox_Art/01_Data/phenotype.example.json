@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "anchorSet": "v1.0-view34",
+  "note": "Example only. Art side does NOT define inheritance probability. This is the input format the program uses to assemble one fox.",
+  "individuals": [
+    {
+      "id": "fox_001_standard",
+      "nameZh": "标准霜蓝",
+      "phenotype": {
+        "coat": "blue",
+        "ear": "ear_large",
+        "tail": "tail_normal",
+        "eyeShape": "eye_round",
+        "eyeColor": "eye_blue",
+        "pupil": "pupil_round",
+        "fur": "fur_short",
+        "pattern": "pattern_solid",
+        "special": []
+      },
+      "scale": 1.0
+    },
+    {
+      "id": "fox_002_rare",
+      "nameZh": "曜金稀有个体",
+      "phenotype": {
+        "coat": "obsidian_gold",
+        "ear": "ear_star",
+        "tail": "tail_twin",
+        "eyeShape": "eye_almond",
+        "eyeColor": "eye_hetero",
+        "eyeColorPerSide": { "l": "eye_gold", "r": "eye_purple" },
+        "pupil": "pupil_star",
+        "fur": "fur_long",
+        "pattern": "pattern_gradient",
+        "special": ["special_glow", "special_star_mark", "special_aura"]
+      },
+      "scale": 1.15,
+      "notes": "fur_long forces body_base_long / head_base_long; tail_twin needs 2 bone branches"
+    },
+    {
+      "id": "fox_003_conflict_demo",
+      "nameZh": "冲突回退演示",
+      "requested": { "fur": "fur_curly", "pattern": "pattern_stripes" },
+      "resolved": { "fur": "fur_curly", "pattern": "pattern_spots" },
+      "fallbackReason": "incompatible: fur_curly x pattern_stripes"
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "tail_long.png": {
+    "source": "tail_long.png",
+    "region": "tail",
+    "variant": "long",
+    "category": "tails",
+    "contentBBox": [
+      171,
+      259,
+      503,
+      506
+    ],
+    "contentSize": [
+      332,
+      247
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "tail_fluffy.png": {
+    "source": "tail_fluffy.png",
+    "region": "tail",
+    "variant": "fluffy",
+    "category": "tails",
+    "contentBBox": [
+      162,
+      260,
+      503,
+      506
+    ],
+    "contentSize": [
+      341,
+      246
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "tail_short.png": {
+    "source": "tail_short.png",
+    "region": "tail",
+    "variant": "short",
+    "category": "tails",
+    "contentBBox": [
+      270,
+      386,
+      503,
+      506
+    ],
+    "contentSize": [
+      233,
+      120
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "tail_curl.png": {
+    "source": "tail_curl.png",
+    "region": "tail",
+    "variant": "curl",
+    "category": "tails",
+    "contentBBox": [
+      196,
+      326,
+      503,
+      506
+    ],
+    "contentSize": [
+      307,
+      180
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "tail_twin.png": {
+    "source": "tail_twin.png",
+    "region": "tail",
+    "variant": "twin",
+    "category": "tails",
+    "contentBBox": [
+      133,
+      296,
+      503,
+      506
+    ],
+    "contentSize": [
+      370,
+      210
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_large_L.png": {
+    "source": "ear_large.png",
+    "region": "ear_L",
+    "variant": "large",
+    "category": "ears",
+    "contentBBox": [
+      425,
+      235,
+      551,
+      336
+    ],
+    "contentSize": [
+      126,
+      101
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_large_R.png": {
+    "source": "ear_large.png",
+    "region": "ear_R",
+    "variant": "large",
+    "category": "ears",
+    "contentBBox": [
+      685,
+      166,
+      832,
+      331
+    ],
+    "contentSize": [
+      147,
+      165
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_small_L.png": {
+    "source": "ear_small.png",
+    "region": "ear_L",
+    "variant": "small",
+    "category": "ears",
+    "contentBBox": [
+      456,
+      169,
+      586,
+      336
+    ],
+    "contentSize": [
+      130,
+      167
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_small_R.png": {
+    "source": "ear_small.png",
+    "region": "ear_R",
+    "variant": "small",
+    "category": "ears",
+    "contentBBox": [
+      684,
+      170,
+      777,
+      331
+    ],
+    "contentSize": [
+      93,
+      161
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_pointed_L.png": {
+    "source": "ear_pointed.png",
+    "region": "ear_L",
+    "variant": "pointed",
+    "category": "ears",
+    "contentBBox": [
+      456,
+      169,
+      583,
+      336
+    ],
+    "contentSize": [
+      127,
+      167
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_pointed_R.png": {
+    "source": "ear_pointed.png",
+    "region": "ear_R",
+    "variant": "pointed",
+    "category": "ears",
+    "contentBBox": [
+      689,
+      167,
+      805,
+      331
+    ],
+    "contentSize": [
+      116,
+      164
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_round_L.png": {
+    "source": "ear_round.png",
+    "region": "ear_L",
+    "variant": "round",
+    "category": "ears",
+    "contentBBox": [
+      425,
+      169,
+      586,
+      336
+    ],
+    "contentSize": [
+      161,
+      167
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_round_R.png": {
+    "source": "ear_round.png",
+    "region": "ear_R",
+    "variant": "round",
+    "category": "ears",
+    "contentBBox": [
+      684,
+      166,
+      841,
+      331
+    ],
+    "contentSize": [
+      157,
+      165
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_star_L.png": {
+    "source": "ear_star.png",
+    "region": "ear_L",
+    "variant": "star",
+    "category": "ears",
+    "contentBBox": [
+      425,
+      190,
+      586,
+      336
+    ],
+    "contentSize": [
+      161,
+      146
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  },
+  "ear_star_R.png": {
+    "source": "ear_star.png",
+    "region": "ear_R",
+    "variant": "star",
+    "category": "ears",
+    "contentBBox": [
+      684,
+      166,
+      839,
+      331
+    ],
+    "contentSize": [
+      155,
+      165
+    ],
+    "aligned": true,
+    "note": "从母版变体图按同一 mask 切出，与母版同姿态同位置，天然配套"
+  }
+}

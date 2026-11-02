@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "2.0",
+  "purpose": "把 1024 母版拆成可替换部件层的区域定义。坐标为母版全画布像素，原点左上。",
+  "source": "assets/master/Base/fox_base_blue_q4@1024.png",
+  "anchorSet": "v3.0-view34-quadruped",
+  "status": "measured - 区域参数由 probe_shape.py 的 alpha 行列剖面实测推导，非目视估计",
+  "measurementBasis": {
+    "leftEarRuns": "y=200 x[429-496] / y=250 x[421-565] / y=275 x[420-591]",
+    "rightEarRuns": "y=175 x[762-823] / y=250 x[697-838] / y=275 x[679-841]",
+    "tailRuns": "y=325 x[153-338] / y=375 x[188-402] / y=425 x[206-430] / y=475 x[195-444]；y>=500 与躯干融合无法分离",
+    "tailNote": "尾巴独立可见段只到 y~495，因此挖空区裁剪 yMax=505，避免吃进臀部与后腿"
+  },
+  "regions": {
+    "tail": {
+      "type": "polyline",
+      "points": [[428, 500], [330, 440], [250, 375], [205, 332]],
+      "radius": 74,
+      "clip": { "yMax": 505 },
+      "note": "沿尾巴中轴的折线胶囊；根部止于臀前，不挖身体"
+    },
+    "ear_L": {
+      "type": "ellipse",
+      "center": [505, 252],
+      "rx": 80,
+      "ry": 84,
+      "rotDeg": -10,
+      "note": "左耳实测 x420-591 y150-300，底边中心即 ear_root_l"
+    },
+    "ear_R": {
+      "type": "ellipse",
+      "center": [762, 248],
+      "rx": 78,
+      "ry": 83,
+      "rotDeg": 8,
+      "note": "右耳实测 x679-855 y150-300，底边中心即 ear_root_r"
+    },
+    "eye_L": {
+      "type": "ellipse",
+      "center": [610, 508],
+      "rx": 54,
+      "ry": 48,
+      "rotDeg": 0,
+      "note": "eye_l 锚点"
+    },
+    "eye_R": {
+      "type": "ellipse",
+      "center": [778, 488],
+      "rx": 58,
+      "ry": 50,
+      "rotDeg": 0,
+      "note": "eye_r 锚点"
+    },
+    "mouth": {
+      "type": "ellipse",
+      "center": [726, 600],
+      "rx": 58,
+      "ry": 40,
+      "rotDeg": 0,
+      "note": "阶段4 新增：嘴部 socket。母版自带的小 w 形嘴被挖掉并 socket 补色，由 Expressions/mouth_*.png 替换，供 10 种表情切换。上边界 y=560 避开鼻子(740,552)"
+    }
+  },
+  "dilatePx": 3,
+  "dilateNote": "body_core 挖空时对区域做 N 像素膨胀，消除抗锯齿白边"
+}

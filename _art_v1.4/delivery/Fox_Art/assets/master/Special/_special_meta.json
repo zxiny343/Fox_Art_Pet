@@ -1,0 +1,68 @@
+{
+ "schemaVersion": "1.0",
+ "note": "v1.4 R5：special 三件套由美术侧交付，不再依赖产品侧程序化兜底。",
+ "canvas": "1024x1024 RGBA，全画布对齐，(0,0) 叠加",
+ "layers": {
+  "special_glow": {
+   "file": "special_glow@1024.png",
+   "procedural": false,
+   "blend": "alpha-over",
+   "clipToBody": false,
+   "description": "贴身柔光，无底色；外沿按高斯自然衰减到 0，可整只叠加",
+   "color": [
+    255,
+    246,
+    214
+   ]
+  },
+  "special_aura": {
+   "file": "special_aura@1024.png",
+   "procedural": false,
+   "blend": "alpha-over",
+   "clipToBody": false,
+   "description": "头顶暖色光环；环心 (640,128)，水平直径 300px，环体宽 17px，柔边；俯视透视取 ry=58 椭圆",
+   "color": [
+    255,
+    213,
+    138
+   ]
+  },
+  "special_star_mark": {
+   "file": "special_star_mark@1024.png",
+   "procedural": false,
+   "blend": "tint-by-coat",
+   "clipToBody": true,
+   "description": "胸腹侧一簇 3 颗五角星，纯 alpha 遮罩（RGB 恒白）；产品侧按毛色上色并裁到身体范围内",
+   "stars": [
+    {
+     "cx": 655,
+     "cy": 700,
+     "r": 30.0
+    },
+    {
+     "cx": 700,
+     "cy": 668,
+     "r": 20.0
+    },
+    {
+     "cx": 622,
+     "cy": 738,
+     "r": 14.0
+    }
+   ]
+  }
+ },
+ "composedOf": {
+  "special_ear_star": [
+   "Ears/ear_star_L.png",
+   "Ears/ear_star_R.png"
+  ],
+  "special_pupil_star": [
+   "Eyes/pupil_star.png"
+  ],
+  "special_twin_tail": [
+   "Tails/tail_twin.png"
+  ]
+ },
+ "notes": "traits.json 的 special.values 共 6 项：3 项为本目录实体文件，另 3 项为既有部件组合，不做空引用。"
+}

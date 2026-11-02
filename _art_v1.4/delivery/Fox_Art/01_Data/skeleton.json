@@ -1,0 +1,1796 @@
+{
+ "schemaVersion": "1.0",
+ "anchorSet": "v3.0-view34-quadruped",
+ "canvas": 1024,
+ "note": "坐标取自 01_Data/anchors.view34.json 的实测锚点；bone.start 为骨骼原点，restRotationDeg 为静止角度。",
+ "bones": [
+  {
+   "id": "root",
+   "parent": null,
+   "start": [
+    512,
+    928
+   ],
+   "end": [
+    512,
+    928
+   ],
+   "length": 0.0,
+   "restRotationDeg": 0.0,
+   "note": "根节点，地面接触/位移基准"
+  },
+  {
+   "id": "pelvis",
+   "parent": "root",
+   "start": [
+    420,
+    645
+   ],
+   "end": [
+    420,
+    645
+   ],
+   "length": 0.0,
+   "restRotationDeg": 0.0,
+   "note": "身体旋转中心，后腿挂载"
+  },
+  {
+   "id": "body",
+   "parent": "pelvis",
+   "start": [
+    420,
+    645
+   ],
+   "end": [
+    565,
+    605
+   ],
+   "length": 150.4,
+   "restRotationDeg": -15.42,
+   "note": "躯干，呼吸缩放骨"
+  },
+  {
+   "id": "neck",
+   "parent": "body",
+   "start": [
+    655,
+    560
+   ],
+   "end": [
+    655,
+    560
+   ],
+   "length": 0.0,
+   "restRotationDeg": 0.0,
+   "note": "头身唯一连接点"
+  },
+  {
+   "id": "head",
+   "parent": "neck",
+   "start": [
+    655,
+    560
+   ],
+   "end": [
+    660,
+    450
+   ],
+   "length": 110.1,
+   "restRotationDeg": -87.4,
+   "note": "头部旋转/微动"
+  },
+  {
+   "id": "ear_l",
+   "parent": "head",
+   "start": [
+    505,
+    348
+   ],
+   "end": [
+    478,
+    190
+   ],
+   "length": 160.3,
+   "restRotationDeg": -99.7,
+   "note": "左耳根→耳尖"
+  },
+  {
+   "id": "ear_r",
+   "parent": "head",
+   "start": [
+    762,
+    346
+   ],
+   "end": [
+    800,
+    178
+   ],
+   "length": 172.2,
+   "restRotationDeg": -77.25,
+   "note": "右耳根→耳尖"
+  },
+  {
+   "id": "muzzle",
+   "parent": "head",
+   "start": [
+    740,
+    555
+   ],
+   "end": [
+    740,
+    555
+   ],
+   "length": 0.0,
+   "restRotationDeg": 0.0,
+   "note": "鼻/嘴插槽挂载点"
+  },
+  {
+   "id": "tail_root",
+   "parent": "pelvis",
+   "start": [
+    425,
+    505
+   ],
+   "end": [
+    425,
+    505
+   ],
+   "length": 0.0,
+   "restRotationDeg": 0.0,
+   "note": "唯一尾巴旋转中心（所有尾型共用）"
+  },
+  {
+   "id": "tail_mid",
+   "parent": "tail_root",
+   "start": [
+    312,
+    415
+   ],
+   "end": [
+    312,
+    415
+   ],
+   "length": 0.0,
+   "restRotationDeg": 0.0,
+   "note": "尾巴中段"
+  },
+  {
+   "id": "tail_sub",
+   "parent": "tail_mid",
+   "start": [
+    312,
+    415
+   ],
+   "end": [
+    250,
+    375
+   ],
+   "length": 73.8,
+   "restRotationDeg": -147.17,
+   "note": "尾巴次段"
+  },
+  {
+   "id": "tail_tip",
+   "parent": "tail_sub",
+   "start": [
+    250,
+    375
+   ],
+   "end": [
+    200,
+    320
+   ],
+   "length": 74.3,
+   "restRotationDeg": -132.27,
+   "note": "尾巴末段"
+  },
+  {
+   "id": "hip_near",
+   "parent": "pelvis",
+   "start": [
+    430,
+    655
+   ],
+   "end": [
+    432,
+    780
+   ],
+   "length": 125.0,
+   "restRotationDeg": 89.08,
+   "note": "近侧后腿大腿"
+  },
+  {
+   "id": "foot_hind_near",
+   "parent": "hip_near",
+   "start": [
+    432,
+    780
+   ],
+   "end": [
+    440,
+    895
+   ],
+   "length": 115.3,
+   "restRotationDeg": 86.02,
+   "note": "近侧后脚"
+  },
+  {
+   "id": "hip_far",
+   "parent": "pelvis",
+   "start": [
+    370,
+    650
+   ],
+   "end": [
+    382,
+    775
+   ],
+   "length": 125.6,
+   "restRotationDeg": 84.52,
+   "note": "远侧后腿大腿"
+  },
+  {
+   "id": "foot_hind_far",
+   "parent": "hip_far",
+   "start": [
+    382,
+    775
+   ],
+   "end": [
+    390,
+    890
+   ],
+   "length": 115.3,
+   "restRotationDeg": 86.02,
+   "note": "远侧后脚"
+  },
+  {
+   "id": "shoulder_near",
+   "parent": "body",
+   "start": [
+    700,
+    600
+   ],
+   "end": [
+    700,
+    750
+   ],
+   "length": 150.0,
+   "restRotationDeg": 90.0,
+   "note": "近侧前腿"
+  },
+  {
+   "id": "paw_front_near",
+   "parent": "shoulder_near",
+   "start": [
+    700,
+    750
+   ],
+   "end": [
+    690,
+    903
+   ],
+   "length": 153.3,
+   "restRotationDeg": 93.74,
+   "note": "近侧前爪"
+  },
+  {
+   "id": "shoulder_far",
+   "parent": "body",
+   "start": [
+    650,
+    595
+   ],
+   "end": [
+    648,
+    745
+   ],
+   "length": 150.0,
+   "restRotationDeg": 90.76,
+   "note": "远侧前腿"
+  },
+  {
+   "id": "paw_front_far",
+   "parent": "shoulder_far",
+   "start": [
+    648,
+    745
+   ],
+   "end": [
+    640,
+    895
+   ],
+   "length": 150.2,
+   "restRotationDeg": 93.05,
+   "note": "远侧前爪"
+  }
+ ],
+ "slots": [
+  {
+   "id": "eye_l",
+   "bone": "head",
+   "anchor": [
+    610,
+    510
+   ],
+   "note": "眼插槽 L"
+  },
+  {
+   "id": "eye_r",
+   "bone": "head",
+   "anchor": [
+    775,
+    490
+   ],
+   "note": "眼插槽 R"
+  },
+  {
+   "id": "brow_l",
+   "bone": "head",
+   "anchor": [
+    606,
+    428
+   ],
+   "note": "眉插槽 L（锚点 brow_l 606,428）"
+  },
+  {
+   "id": "brow_r",
+   "bone": "head",
+   "anchor": [
+    778,
+    408
+   ],
+   "note": "眉插槽 R（锚点 brow_r 778,408）"
+  },
+  {
+   "id": "mouth",
+   "bone": "muzzle",
+   "anchor": [
+    736,
+    578
+   ],
+   "note": "嘴插槽（锚点 mouth 736,578）"
+  },
+  {
+   "id": "blush",
+   "bone": "head",
+   "anchor": [
+    660,
+    450
+   ],
+   "note": "腮红叠加层"
+  },
+  {
+   "id": "tail",
+   "bone": "tail_root",
+   "anchor": [
+    660,
+    450
+   ],
+   "note": "尾巴附件插槽（6 型尾）"
+  },
+  {
+   "id": "ear_l_att",
+   "bone": "ear_l",
+   "anchor": [
+    660,
+    450
+   ],
+   "note": "左耳附件插槽（5 型耳）"
+  },
+  {
+   "id": "ear_r_att",
+   "bone": "ear_r",
+   "anchor": [
+    660,
+    450
+   ],
+   "note": "右耳附件插槽（5 型耳）"
+  }
+ ],
+ "twinTailOverride": {
+  "rule": "tail_twin（S 级）在 tail_root 下分叉为 tail_root_a / tail_root_b，各挂 3 段链；其余 5 种尾型共用同一条 4 段链，不新建根节点。",
+  "extraBones": [
+   "tail_root_a",
+   "tail_mid_a",
+   "tail_tip_a",
+   "tail_root_b",
+   "tail_mid_b",
+   "tail_tip_b"
+  ]
+ },
+ "tailBranchTemplates": {
+  "tail_triple": {
+   "branchCount": 3,
+   "branchAnglesDeg": [
+    -28,
+    0,
+    28
+   ],
+   "segmentsPerBranch": 3,
+   "rootAnchor": [
+    425,
+    505
+   ],
+   "branches": [
+    {
+     "branchIndex": 0,
+     "branchAngleDeg": -28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b0_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.6,
+       "restRotationDeg": -28
+      },
+      {
+       "id": "tail_b0_mid",
+       "parent": "tail_b0_root",
+       "start": [
+        288.7,
+        479.6
+       ],
+       "end": [
+        288.7,
+        479.6
+       ],
+       "length": 70.8,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_sub",
+       "parent": "tail_b0_mid",
+       "start": [
+        218.1,
+        473.7
+       ],
+       "end": [
+        218.1,
+        473.7
+       ],
+       "length": 71.4,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_tip",
+       "parent": "tail_b0_sub",
+       "start": [
+        150.9,
+        449.6
+       ],
+       "end": [
+        150.9,
+        449.6
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 1,
+     "branchAngleDeg": 0,
+     "lengthScale": 1.0,
+     "bones": [
+      {
+       "id": "tail_b1_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 144.5,
+       "restRotationDeg": 0
+      },
+      {
+       "id": "tail_b1_mid",
+       "parent": "tail_b1_root",
+       "start": [
+        312.0,
+        415.0
+       ],
+       "end": [
+        312.0,
+        415.0
+       ],
+       "length": 73.8,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_sub",
+       "parent": "tail_b1_mid",
+       "start": [
+        250.0,
+        375.0
+       ],
+       "end": [
+        250.0,
+        375.0
+       ],
+       "length": 74.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_tip",
+       "parent": "tail_b1_sub",
+       "start": [
+        200.0,
+        320.0
+       ],
+       "end": [
+        200.0,
+        320.0
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 2,
+     "branchAngleDeg": 28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b2_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.7,
+       "restRotationDeg": 28
+      },
+      {
+       "id": "tail_b2_mid",
+       "parent": "tail_b2_root",
+       "start": [
+        369.8,
+        377.8
+       ],
+       "end": [
+        369.8,
+        377.8
+       ],
+       "length": 70.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_sub",
+       "parent": "tail_b2_mid",
+       "start": [
+        335.3,
+        315.9
+       ],
+       "end": [
+        335.3,
+        315.9
+       ],
+       "length": 71.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_tip",
+       "parent": "tail_b2_sub",
+       "start": [
+        317.7,
+        246.8
+       ],
+       "end": [
+        317.7,
+        246.8
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    }
+   ]
+  },
+  "tail_quad": {
+   "branchCount": 4,
+   "branchAnglesDeg": [
+    -28,
+    -14,
+    14,
+    28
+   ],
+   "segmentsPerBranch": 3,
+   "rootAnchor": [
+    425,
+    505
+   ],
+   "branches": [
+    {
+     "branchIndex": 0,
+     "branchAngleDeg": -28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b0_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.6,
+       "restRotationDeg": -28
+      },
+      {
+       "id": "tail_b0_mid",
+       "parent": "tail_b0_root",
+       "start": [
+        288.7,
+        479.6
+       ],
+       "end": [
+        288.7,
+        479.6
+       ],
+       "length": 70.8,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_sub",
+       "parent": "tail_b0_mid",
+       "start": [
+        218.1,
+        473.7
+       ],
+       "end": [
+        218.1,
+        473.7
+       ],
+       "length": 71.4,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_tip",
+       "parent": "tail_b0_sub",
+       "start": [
+        150.9,
+        449.6
+       ],
+       "end": [
+        150.9,
+        449.6
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 1,
+     "branchAngleDeg": -14,
+     "lengthScale": 0.98,
+     "bones": [
+      {
+       "id": "tail_b1_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 141.6,
+       "restRotationDeg": -14
+      },
+      {
+       "id": "tail_b1_mid",
+       "parent": "tail_b1_root",
+       "start": [
+        296.2,
+        446.2
+       ],
+       "end": [
+        296.2,
+        446.2
+       ],
+       "length": 72.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_sub",
+       "parent": "tail_b1_mid",
+       "start": [
+        227.8,
+        422.9
+       ],
+       "end": [
+        227.8,
+        422.9
+       ],
+       "length": 72.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_tip",
+       "parent": "tail_b1_sub",
+       "start": [
+        167.2,
+        382.4
+       ],
+       "end": [
+        167.2,
+        382.4
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 2,
+     "branchAngleDeg": 14,
+     "lengthScale": 0.98,
+     "bones": [
+      {
+       "id": "tail_b2_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 141.6,
+       "restRotationDeg": 14
+      },
+      {
+       "id": "tail_b2_mid",
+       "parent": "tail_b2_root",
+       "start": [
+        338.9,
+        392.6
+       ],
+       "end": [
+        338.9,
+        392.6
+       ],
+       "length": 72.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_sub",
+       "parent": "tail_b2_mid",
+       "start": [
+        289.4,
+        339.9
+       ],
+       "end": [
+        289.4,
+        339.9
+       ],
+       "length": 72.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_tip",
+       "parent": "tail_b2_sub",
+       "start": [
+        254.9,
+        275.7
+       ],
+       "end": [
+        254.9,
+        275.7
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 3,
+     "branchAngleDeg": 28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b3_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.7,
+       "restRotationDeg": 28
+      },
+      {
+       "id": "tail_b3_mid",
+       "parent": "tail_b3_root",
+       "start": [
+        369.8,
+        377.8
+       ],
+       "end": [
+        369.8,
+        377.8
+       ],
+       "length": 70.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b3_sub",
+       "parent": "tail_b3_mid",
+       "start": [
+        335.3,
+        315.9
+       ],
+       "end": [
+        335.3,
+        315.9
+       ],
+       "length": 71.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b3_tip",
+       "parent": "tail_b3_sub",
+       "start": [
+        317.7,
+        246.8
+       ],
+       "end": [
+        317.7,
+        246.8
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    }
+   ]
+  },
+  "tail_quint": {
+   "branchCount": 5,
+   "branchAnglesDeg": [
+    -28,
+    -14,
+    0,
+    14,
+    28
+   ],
+   "segmentsPerBranch": 3,
+   "rootAnchor": [
+    425,
+    505
+   ],
+   "branches": [
+    {
+     "branchIndex": 0,
+     "branchAngleDeg": -28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b0_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.6,
+       "restRotationDeg": -28
+      },
+      {
+       "id": "tail_b0_mid",
+       "parent": "tail_b0_root",
+       "start": [
+        288.7,
+        479.6
+       ],
+       "end": [
+        288.7,
+        479.6
+       ],
+       "length": 70.8,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_sub",
+       "parent": "tail_b0_mid",
+       "start": [
+        218.1,
+        473.7
+       ],
+       "end": [
+        218.1,
+        473.7
+       ],
+       "length": 71.4,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_tip",
+       "parent": "tail_b0_sub",
+       "start": [
+        150.9,
+        449.6
+       ],
+       "end": [
+        150.9,
+        449.6
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 1,
+     "branchAngleDeg": -14,
+     "lengthScale": 0.98,
+     "bones": [
+      {
+       "id": "tail_b1_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 141.6,
+       "restRotationDeg": -14
+      },
+      {
+       "id": "tail_b1_mid",
+       "parent": "tail_b1_root",
+       "start": [
+        296.2,
+        446.2
+       ],
+       "end": [
+        296.2,
+        446.2
+       ],
+       "length": 72.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_sub",
+       "parent": "tail_b1_mid",
+       "start": [
+        227.8,
+        422.9
+       ],
+       "end": [
+        227.8,
+        422.9
+       ],
+       "length": 72.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_tip",
+       "parent": "tail_b1_sub",
+       "start": [
+        167.2,
+        382.4
+       ],
+       "end": [
+        167.2,
+        382.4
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 2,
+     "branchAngleDeg": 0,
+     "lengthScale": 1.0,
+     "bones": [
+      {
+       "id": "tail_b2_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 144.5,
+       "restRotationDeg": 0
+      },
+      {
+       "id": "tail_b2_mid",
+       "parent": "tail_b2_root",
+       "start": [
+        312.0,
+        415.0
+       ],
+       "end": [
+        312.0,
+        415.0
+       ],
+       "length": 73.8,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_sub",
+       "parent": "tail_b2_mid",
+       "start": [
+        250.0,
+        375.0
+       ],
+       "end": [
+        250.0,
+        375.0
+       ],
+       "length": 74.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_tip",
+       "parent": "tail_b2_sub",
+       "start": [
+        200.0,
+        320.0
+       ],
+       "end": [
+        200.0,
+        320.0
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 3,
+     "branchAngleDeg": 14,
+     "lengthScale": 0.98,
+     "bones": [
+      {
+       "id": "tail_b3_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 141.6,
+       "restRotationDeg": 14
+      },
+      {
+       "id": "tail_b3_mid",
+       "parent": "tail_b3_root",
+       "start": [
+        338.9,
+        392.6
+       ],
+       "end": [
+        338.9,
+        392.6
+       ],
+       "length": 72.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b3_sub",
+       "parent": "tail_b3_mid",
+       "start": [
+        289.4,
+        339.9
+       ],
+       "end": [
+        289.4,
+        339.9
+       ],
+       "length": 72.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b3_tip",
+       "parent": "tail_b3_sub",
+       "start": [
+        254.9,
+        275.7
+       ],
+       "end": [
+        254.9,
+        275.7
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 4,
+     "branchAngleDeg": 28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b4_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.7,
+       "restRotationDeg": 28
+      },
+      {
+       "id": "tail_b4_mid",
+       "parent": "tail_b4_root",
+       "start": [
+        369.8,
+        377.8
+       ],
+       "end": [
+        369.8,
+        377.8
+       ],
+       "length": 70.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b4_sub",
+       "parent": "tail_b4_mid",
+       "start": [
+        335.3,
+        315.9
+       ],
+       "end": [
+        335.3,
+        315.9
+       ],
+       "length": 71.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b4_tip",
+       "parent": "tail_b4_sub",
+       "start": [
+        317.7,
+        246.8
+       ],
+       "end": [
+        317.7,
+        246.8
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    }
+   ]
+  },
+  "tail_nine": {
+   "branchCount": 9,
+   "branchAnglesDeg": [
+    -56,
+    -42,
+    -28,
+    -14,
+    0,
+    14,
+    28,
+    42,
+    56
+   ],
+   "segmentsPerBranch": 3,
+   "rootAnchor": [
+    425,
+    505
+   ],
+   "branches": [
+    {
+     "branchIndex": 0,
+     "branchAngleDeg": -56,
+     "lengthScale": 0.92,
+     "bones": [
+      {
+       "id": "tail_b0_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 132.9,
+       "restRotationDeg": -56
+      },
+      {
+       "id": "tail_b0_mid",
+       "parent": "tail_b0_root",
+       "start": [
+        298.2,
+        544.9
+       ],
+       "end": [
+        298.2,
+        544.9
+       ],
+       "length": 67.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_sub",
+       "parent": "tail_b0_mid",
+       "start": [
+        235.8,
+        571.6
+       ],
+       "end": [
+        235.8,
+        571.6
+       ],
+       "length": 68.4,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b0_tip",
+       "parent": "tail_b0_sub",
+       "start": [
+        168.1,
+        581.4
+       ],
+       "end": [
+        168.1,
+        581.4
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 1,
+     "branchAngleDeg": -42,
+     "lengthScale": 0.94,
+     "bones": [
+      {
+       "id": "tail_b1_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 135.7,
+       "restRotationDeg": -42
+      },
+      {
+       "id": "tail_b1_mid",
+       "parent": "tail_b1_root",
+       "start": [
+        289.5,
+        513.2
+       ],
+       "end": [
+        289.5,
+        513.2
+       ],
+       "length": 69.4,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_sub",
+       "parent": "tail_b1_mid",
+       "start": [
+        221.0,
+        524.3
+       ],
+       "end": [
+        221.0,
+        524.3
+       ],
+       "length": 69.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b1_tip",
+       "parent": "tail_b1_sub",
+       "start": [
+        151.5,
+        517.3
+       ],
+       "end": [
+        151.5,
+        517.3
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 2,
+     "branchAngleDeg": -28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b2_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.6,
+       "restRotationDeg": -28
+      },
+      {
+       "id": "tail_b2_mid",
+       "parent": "tail_b2_root",
+       "start": [
+        288.7,
+        479.6
+       ],
+       "end": [
+        288.7,
+        479.6
+       ],
+       "length": 70.8,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_sub",
+       "parent": "tail_b2_mid",
+       "start": [
+        218.1,
+        473.7
+       ],
+       "end": [
+        218.1,
+        473.7
+       ],
+       "length": 71.4,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b2_tip",
+       "parent": "tail_b2_sub",
+       "start": [
+        150.9,
+        449.6
+       ],
+       "end": [
+        150.9,
+        449.6
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 3,
+     "branchAngleDeg": -14,
+     "lengthScale": 0.98,
+     "bones": [
+      {
+       "id": "tail_b3_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 141.6,
+       "restRotationDeg": -14
+      },
+      {
+       "id": "tail_b3_mid",
+       "parent": "tail_b3_root",
+       "start": [
+        296.2,
+        446.2
+       ],
+       "end": [
+        296.2,
+        446.2
+       ],
+       "length": 72.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b3_sub",
+       "parent": "tail_b3_mid",
+       "start": [
+        227.8,
+        422.9
+       ],
+       "end": [
+        227.8,
+        422.9
+       ],
+       "length": 72.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b3_tip",
+       "parent": "tail_b3_sub",
+       "start": [
+        167.2,
+        382.4
+       ],
+       "end": [
+        167.2,
+        382.4
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 4,
+     "branchAngleDeg": 0,
+     "lengthScale": 1.0,
+     "bones": [
+      {
+       "id": "tail_b4_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 144.5,
+       "restRotationDeg": 0
+      },
+      {
+       "id": "tail_b4_mid",
+       "parent": "tail_b4_root",
+       "start": [
+        312.0,
+        415.0
+       ],
+       "end": [
+        312.0,
+        415.0
+       ],
+       "length": 73.8,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b4_sub",
+       "parent": "tail_b4_mid",
+       "start": [
+        250.0,
+        375.0
+       ],
+       "end": [
+        250.0,
+        375.0
+       ],
+       "length": 74.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b4_tip",
+       "parent": "tail_b4_sub",
+       "start": [
+        200.0,
+        320.0
+       ],
+       "end": [
+        200.0,
+        320.0
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 5,
+     "branchAngleDeg": 14,
+     "lengthScale": 0.98,
+     "bones": [
+      {
+       "id": "tail_b5_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 141.6,
+       "restRotationDeg": 14
+      },
+      {
+       "id": "tail_b5_mid",
+       "parent": "tail_b5_root",
+       "start": [
+        338.9,
+        392.6
+       ],
+       "end": [
+        338.9,
+        392.6
+       ],
+       "length": 72.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b5_sub",
+       "parent": "tail_b5_mid",
+       "start": [
+        289.4,
+        339.9
+       ],
+       "end": [
+        289.4,
+        339.9
+       ],
+       "length": 72.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b5_tip",
+       "parent": "tail_b5_sub",
+       "start": [
+        254.9,
+        275.7
+       ],
+       "end": [
+        254.9,
+        275.7
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 6,
+     "branchAngleDeg": 28,
+     "lengthScale": 0.96,
+     "bones": [
+      {
+       "id": "tail_b6_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 138.7,
+       "restRotationDeg": 28
+      },
+      {
+       "id": "tail_b6_mid",
+       "parent": "tail_b6_root",
+       "start": [
+        369.8,
+        377.8
+       ],
+       "end": [
+        369.8,
+        377.8
+       ],
+       "length": 70.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b6_sub",
+       "parent": "tail_b6_mid",
+       "start": [
+        335.3,
+        315.9
+       ],
+       "end": [
+        335.3,
+        315.9
+       ],
+       "length": 71.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b6_tip",
+       "parent": "tail_b6_sub",
+       "start": [
+        317.7,
+        246.8
+       ],
+       "end": [
+        317.7,
+        246.8
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 7,
+     "branchAngleDeg": 42,
+     "lengthScale": 0.94,
+     "bones": [
+      {
+       "id": "tail_b7_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 135.7,
+       "restRotationDeg": 42
+      },
+      {
+       "id": "tail_b7_mid",
+       "parent": "tail_b7_root",
+       "start": [
+        402.7,
+        371.1
+       ],
+       "end": [
+        402.7,
+        371.1
+       ],
+       "length": 69.4,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b7_sub",
+       "parent": "tail_b7_mid",
+       "start": [
+        384.5,
+        304.1
+       ],
+       "end": [
+        384.5,
+        304.1
+       ],
+       "length": 69.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b7_tip",
+       "parent": "tail_b7_sub",
+       "start": [
+        384.2,
+        234.2
+       ],
+       "end": [
+        384.2,
+        234.2
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    },
+    {
+     "branchIndex": 8,
+     "branchAngleDeg": 56,
+     "lengthScale": 0.92,
+     "bones": [
+      {
+       "id": "tail_b8_root",
+       "parent": "tail_root",
+       "start": [
+        425.0,
+        505.0
+       ],
+       "end": [
+        425.0,
+        505.0
+       ],
+       "length": 132.9,
+       "restRotationDeg": 56
+      },
+      {
+       "id": "tail_b8_mid",
+       "parent": "tail_b8_root",
+       "start": [
+        435.5,
+        372.5
+       ],
+       "end": [
+        435.5,
+        372.5
+       ],
+       "length": 67.9,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b8_sub",
+       "parent": "tail_b8_mid",
+       "start": [
+        434.1,
+        304.6
+       ],
+       "end": [
+        434.1,
+        304.6
+       ],
+       "length": 68.3,
+       "restRotationDeg": 0.0
+      },
+      {
+       "id": "tail_b8_tip",
+       "parent": "tail_b8_sub",
+       "start": [
+        450.3,
+        238.2
+       ],
+       "end": [
+        450.3,
+        238.2
+       ],
+       "length": 0.0,
+       "restRotationDeg": 0.0
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

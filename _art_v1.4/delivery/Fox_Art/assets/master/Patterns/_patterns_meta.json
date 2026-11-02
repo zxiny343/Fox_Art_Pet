@@ -1,0 +1,79 @@
+{
+ "pattern_solid": {
+  "blend": "alpha",
+  "tintRole": "shade",
+  "strength": 0.85
+ },
+ "pattern_spots": {
+  "blend": "alpha",
+  "tintRole": "shade",
+  "strength": 0.85
+ },
+ "pattern_stripes": {
+  "blend": "alpha",
+  "tintRole": "shade",
+  "strength": 0.85
+ },
+ "pattern_gradient": {
+  "blend": "alpha",
+  "tintRole": "shade",
+  "strength": 0.85
+ },
+ "pattern_facemark": {
+  "blend": "alpha",
+  "tintRole": "shade",
+  "strength": 0.85
+ },
+ "pattern_flame": {
+  "blend": "screen",
+  "tintRole": "light",
+  "strength": 0.95,
+  "minLuma": 170.0,
+  "note": "v1.3 P1：滤色/加法叠加，取毛色 light 色；light 亮度不足 150 时只提亮不改色相，保证深色毛(black/obsidian_gold)上仍清晰可见。遮罩沿背脊→尾尖分布，额头与五官为禁区"
+ },
+ "pattern_tabby": {
+  "blend": "alpha",
+  "tintRole": "shade",
+  "strength": 0.85,
+  "note": "v1.3 P2：断点/碎横纹，与 pattern_stripes 的连续纵纹并排可区分"
+ },
+ "pattern_face_mark": {
+  "blend": "alpha",
+  "tintRole": "shade",
+  "strength": 0.85,
+  "note": "别名：与 traits.json 的 pattern_face_mark 对应，实际遮罩为 pattern_facemark_mask@1024.png"
+ },
+ "_v14_R4": {
+  "method": "加粗笔画 + 加密条数/斑点，不改颜色，保留 FACE_BIG 脸部保护",
+  "stripePeriod": 70.0,
+  "stripeWidth": 34.0,
+  "spotCount": 170,
+  "spotRadius": [
+   11.0,
+   25.0
+  ],
+  "spotMinSeparation": 0.78,
+  "tabbyGrid": [
+   56,
+   54
+  ],
+  "coverage": {
+   "stripes": {
+    "maskPx": 115730,
+    "coat": 0.4762,
+    "trunk": 0.4742
+   },
+   "tabby": {
+    "maskPx": 115138,
+    "coat": 0.4737,
+    "trunk": 0.4837
+   },
+   "spots": {
+    "maskPx": 72279,
+    "coat": 0.2974,
+    "trunk": 0.2955
+   }
+  },
+  "flameUnchanged": true
+ }
+}
