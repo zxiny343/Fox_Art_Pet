@@ -23,7 +23,7 @@ for i in (1, 2):
     print(p, img.size, img.mode)
 
 # 两张是否不同（判断桌宠是否在动）
-from PIL import ImageChops
+from PIL import Image, ImageChops
 a = Image.open(paths[0]).convert("RGB")
 b = Image.open(paths[1]).convert("RGB")
 if a.size != b.size:

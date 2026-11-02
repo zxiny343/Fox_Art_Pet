@@ -494,6 +494,40 @@ def _scaled_core(core, pose, work):
                           resample=Image.BICUBIC)
 
 
+def make_walk_action(src='walk', out='walk_fx', boost=2.6, bob_px=16.0):
+    """程序化增强版 walk，解决「走路像滑行」。
+
+    原始 walk 的大部分通道在腿骨上（hip/shoulder/foot/paw），而腿画在
+    body_core 位图里没法单独摆 → 这些通道全部被丢弃；剩下的 body 起伏
+    只有 ±3.5px@1024，缩到 168px 显示只剩 0.6px，等于静止贴图。
+
+    这里把**能 rig 的通道**（body 位移/旋转、tail 全链）幅度放大 boost 倍，
+    再叠加 pelvis 上下 bob（与 body bob 同相、每循环 4 个完整起伏，对应
+    四足一步一沉的重心），生成新动作注册进 ACTIONS 并返回 id。
+    head/hip/foot/shoulder/paw 通道直接丢弃（无 rig）。
+    """
+    s = ACTIONS[src]
+    chs = []
+    for c in s.get('channels', []):
+        b, ch = c.get('bone'), c.get('channel')
+        usable = (b == 'body' and ch in ('translateY', 'rotate')) \
+            or (b and b.startswith('tail'))
+        if not usable:
+            continue
+        ks = [[k[0], k[1] * boost] + list(k[2:]) for k in c.get('keys', [])]
+        chs.append(dict(bone=b, channel=ch, keys=ks))
+    n = 24
+    keys = [[round(i / float(n), 4),
+             round(bob_px * math.sin(4 * 2 * math.pi * i / float(n)), 3)]
+            for i in range(n + 1)]                    # 4 周期/循环
+    chs.append(dict(bone='pelvis', channel='translateY', keys=keys))
+    act = dict(s)
+    act.update(id=out, channels=chs, slots=[],
+               note='程序化增强 walk：腿不可分，放大 body/tail 幅度 + pelvis bob')
+    ACTIONS[out] = act
+    return out
+
+
 _EYE_CACHE = {}
 
 

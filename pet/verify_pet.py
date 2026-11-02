@@ -64,6 +64,8 @@ def main():
     cfg, state_path = CFG.load(None)
     state_path = os.path.join(ROOT, '_pet_test_state.json')
     cfg['x'], cfg['y'] = 300, 300
+    cfg['scale'] = 1.0          # 不吃本机 state 里的缩放，保证断言稳定
+    cfg['fps'] = 30
 
     sec('A · 窗口属性')
     pet = APP.FoxPet(cfg, state_path)
@@ -101,13 +103,16 @@ def main():
 
     sec('C · 帧率（决定能不能流畅）')
     pet.timer.stop()
+    for _ in range(150):        # 先让自适应降档收敛（30 帧评估一次）
+        pet._tick()
     n = 60
     t0 = time.time()
     for _ in range(n):
         pet._tick()
     dt = (time.time() - t0) / n
     chk(dt < 0.033, 'C1 单帧渲染 < 33ms（够 30fps）',
-        '%.1f ms/帧 → %.0f fps' % (dt * 1000, 1.0 / dt))
+        '%.1f ms/帧 → %.0f fps (ssaa=%.1f work=%d)'
+        % (dt * 1000, 1.0 / dt, pet.ssaa, pet.work))
     chk(pet.fps > 0, 'C1 fps 统计有值', '%.1f' % pet.fps)
 
     sec('D · 缩放')
@@ -144,8 +149,9 @@ def main():
         pet.bh.interact(kind)
         try:
             img, _ = AN.render_frame(pet.spec, 0, pet.bh.items(),
-                                     size=256, layers=pet.layers, work=256)
-            ok = img.size == (256, int(round(256 * AN.ASPECT)))
+                                     size=pet.width(), layers=pet.layers,
+                                     work=pet.work)
+            ok = img.size == (pet.width(), int(round(pet.width() * AN.ASPECT)))
         except Exception as ex:
             ok = False
             LINES.append('       %s: %s' % (kind, ex))
@@ -183,6 +189,94 @@ def main():
     chk(float((a3[..., 3] > 200).mean()) > 0.08, 'G1 换只后仍能渲染',
         '不透明 %.1f%%' % (float((a3[..., 3] > 200).mean()) * 100))
 
+    sec('J · 清晰度与散步（v1.1）')
+    # J1 超采样：渲染分辨率 = 显示尺寸 × ssaa
+    disp = int(cfg['base_size'] * cfg['scale'])
+    chk(pet.work == int(min(1024, max(256, round(disp * pet.ssaa)))),
+        'J1 work = 显示尺寸 × ssaa', 'disp=%d ssaa=%.1f work=%d'
+        % (disp, pet.ssaa, pet.work))
+    # J2 锐化后处理确实改变图像
+    pet._facing = 1
+    img_raw, _ = AN.render_frame(pet.spec, 0, [('idle_breath', 0.3)],
+                                 size=disp, layers=pet.layers, work=pet.work)
+    pet.sharpen = False
+    img_off = pet._post(img_raw.copy())
+    pet.sharpen = True
+    img_on = pet._post(img_raw.copy())
+    d = float(np.abs(np.asarray(img_on, np.int16) - np.asarray(img_off, np.int16)).mean())
+    chk(d > 0.5, 'J2 锐化改变了输出（且幅度 sane）', '平均差 %.2f' % d)
+    # J3 镜像：facing=-1 输出 = 原图水平翻转
+    pet.sharpen = False
+    img_r = pet._post(img_raw.copy())                       # facing=1
+    pet._facing = -1
+    img_l = pet._post(img_raw.copy())                       # facing=-1
+    pet._facing = 1
+    same = np.abs(np.asarray(img_l, np.int16)
+                  - np.asarray(img_r.transpose(Image.FLIP_LEFT_RIGHT),
+                               np.int16)).max()
+    chk(same == 0, 'J3 facing=-1 输出 = 原图镜像', 'max diff %d' % same)
+    # J4 walk_fx 已注册且幅度被放大
+    import anim as _AN
+    _AN.make_walk_action()                                  # 幂等
+    p_old = _AN.pose_at_multi([('walk', 0.125)]).get('body', 'translateY')
+    p_new = _AN.pose_at_multi([(APP.WALK_AID, 0.125)]).get('body', 'translateY')
+    chk(abs(p_new) > abs(p_old) > 0, 'J4 walk_fx 身体起伏幅度放大',
+        'walk %.2f → %s %.2f' % (p_old, APP.WALK_AID, p_new))
+    chk(_AN.ACTIONS[APP.WALK_AID].get('loop'), 'J4 walk_fx 是循环动作', '')
+    # J5 Wanderer 状态机：rest → walk → 到达 → rest
+    wd = APP.WD.Wanderer(seed=7, rest=(0.05, 0.1), speed=(300, 300),
+                         step=(150, 150))
+    walked = 0.0
+    x = 400.0
+    for _ in range(3000):
+        dx, walking = wd.tick(1 / 30.0, x, 100.0, 900.0)
+        x += dx
+        walked += abs(dx)
+        if wd.trips >= 2:
+            break
+    chk(wd.trips >= 1 and walked > 100, 'J5 散步状态机能走完并返回 rest',
+        'trips=%d walked=%.0f' % (wd.trips, walked))
+    # J6 边界：目标在界外时被夹住
+    wd2 = APP.WD.Wanderer(seed=3, rest=(0.01, 0.02), speed=(500, 500),
+                          step=(50, 5000))
+    x = 890.0
+    for _ in range(400):
+        dx, _w = wd2.tick(1 / 30.0, x, 100.0, 900.0)
+        x += dx
+        if x > 900.0:
+            break
+    chk(x <= 900.0 + 1e-6, 'J6 散步不越出屏幕边界', 'x=%.1f' % x)
+    # J7 暂停：pause 后不走
+    wd3 = APP.WD.Wanderer(seed=11, rest=(0.01, 0.01))
+    wd3.pause(10.0)
+    dx, walking = wd3.tick(0.5, 400.0, 100.0, 900.0)
+    chk(dx == 0 and not walking, 'J7 交互暂停期间不出门', '')
+    # J8 睡着时 _wander_step 不走
+    pet.bh._doze()
+    for _ in range(int(6 * 30)):
+        pet.bh.tick(1 / 30.0)
+    dx, walking = pet._wander_step(1 / 30.0)
+    chk(not walking and dx == 0, 'J8 睡着时散步挂起',
+        '%s base=%s' % (pet.bh.status()['state'], pet.bh.status()['base']))
+    pet.bh.wake()
+    for _ in range(int(2.5 * 30)):
+        pet.bh.tick(1 / 30.0)
+    # J9 小尺寸渲染不糊：work 下限保护
+    pet.set_scale(0.5)
+    chk(pet.work == 256, 'J9 缩到最小也保底 work=256', 'work=%d' % pet.work)
+    pet.set_scale(1.0)
+    # J10 自适应降档：帧耗时持续超预算时 ssaa 自动下调
+    pet._frame_ms = [100.0] * 30        # 伪造 30 帧高耗时
+    pet.ssaa = 2.0
+    pet._tick()
+    chk(pet.ssaa == 1.5 and pet._ssaa_floor_hit,
+        'J10 超帧率预算自动降 ssaa', 'ssaa=%.1f work=%d' % (pet.ssaa, pet.work))
+    pet._frame_ms = [5.0] * 30
+    pet.ssaa = 2.0
+    pet._apply_size()
+    pet.layers = AN.get_layers(pet.spec, pet.work)
+    pet._ssaa_floor_hit = False
+
     sec('H · 配置持久化')
     pet.move(123, 456)
     pet._save_pos()
@@ -201,6 +295,17 @@ def main():
     open(state_path, 'w').write('{ 这不是 JSON')
     cfg3, _ = CFG.load(state_path)
     chk(cfg3['x'] is None, 'H3 坏配置退回默认值', 'x=%s' % cfg3['x'])
+    # v1.0 老状态里 base_size=256（旧默认），v1.1 一次性迁到 168
+    with open(state_path, 'w', encoding='utf-8') as fh:
+        json.dump({'base_size': 256, 'x': 10, 'y': 20}, fh)
+    cfg4, _ = CFG.load(state_path)
+    chk(cfg4['base_size'] == 168, 'H4 旧默认 base_size=256 迁移到 168',
+        'base_size=%s' % cfg4['base_size'])
+    with open(state_path, 'w', encoding='utf-8') as fh:
+        json.dump({'base_size': 200, 'x': 10, 'y': 20}, fh)
+    cfg5, _ = CFG.load(state_path)
+    chk(cfg5['base_size'] == 200, 'H4 用户自定义的 base_size 不被动',
+        'base_size=%s' % cfg5['base_size'])
     try:
         os.remove(state_path)
     except OSError:

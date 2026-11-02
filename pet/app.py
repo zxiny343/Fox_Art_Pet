@@ -24,17 +24,21 @@ for _p in (ROOT, os.path.join(ROOT, 'sim'), os.path.dirname(os.path.abspath(__fi
 
 from PySide6.QtCore import Qt, QPoint, QTimer, QElapsedTimer, Signal  # noqa: E402
 from PySide6.QtGui import (QImage, QPixmap, QPainter, QIcon,           # noqa: E402
-                           QAction, QCursor)
+                           QAction, QCursor)                           # noqa: E402
 from PySide6.QtWidgets import (QApplication, QWidget, QMenu,            # noqa: E402
-                               QSystemTrayIcon, QMessageBox)
-from PIL import Image                                                   # noqa: E402
+                               QSystemTrayIcon, QMessageBox)            # noqa: E402
+from PIL import Image, ImageFilter                                      # noqa: E402
 
 import anim as AN                                                       # noqa: E402
 import artmap as AM                                                     # noqa: E402
 import render_kernel as RK                                              # noqa: E402
 import config as CFG                                                    # noqa: E402
 import behavior as BH                                                   # noqa: E402
+import wander as WD                                                     # noqa: E402
 from fox_ecosystem_sim import phenotype as PH                           # noqa: E402
+
+# 程序化增强版 walk（原始 walk 的腿部通道没有 rig，缩到桌宠尺寸像静止滑行）
+WALK_AID = AN.make_walk_action()
 
 
 def pick_fox(idx=0, seed=20261101):
@@ -79,11 +83,10 @@ class FoxPet(QWidget):
 
         self.scale = CFG.clamp_scale(cfg['scale'])
         self.base = int(cfg['base_size'])
-        self.work = max(int(self.base * self.scale), 256)
-        # 画布向下扩了 192px 给「坐下/趴下/睡觉」的下沉留地方，
-        # 所以窗口不是正方形，高 = 宽 × 1.1875（见 anim.ASPECT）
-        self.setFixedSize(int(self.base * self.scale),
-                          int(self.base * self.scale * AN.ASPECT))
+        self.ssaa = CFG.clamp_ssaa(cfg.get('ssaa', 2.0))
+        self.sharpen = bool(cfg.get('sharpen', True))
+        # 显示尺寸（窗口大小）
+        self._apply_size()
 
         # 个体
         self.geno = cfg.get('geno') or pick_fox(fox_idx, cfg.get('seed', 20261101))
@@ -94,6 +97,11 @@ class FoxPet(QWidget):
         # 行为
         self.bh = BH.Behavior(seed=cfg.get('seed', 20261101) + fox_idx,
                               doze_after=cfg.get('doze_after', 90.0))
+
+        # 散步
+        self.wander = WD.Wanderer(seed=(cfg.get('seed', 20261101) + fox_idx) * 7 + 1,
+                                  enabled=bool(cfg.get('wander', True)))
+        self._facing = 1            # +1 原图朝向 / -1 水平镜像
 
         # 交互状态
         self._drag_off = None
@@ -111,9 +119,27 @@ class FoxPet(QWidget):
         self._fps_n = 0
         self.fps = 0.0
         self._pix = None
+        self._frame_ms = []         # 自适应降档的滚动帧耗时样本
+        self._ssaa_floor_hit = False
 
         self._place_initial()
         self.timer.start(int(1000.0 / max(1, cfg.get('fps', 30))))
+
+    # ------------------------------------------------------------------
+    # 尺寸与清晰度
+    # ------------------------------------------------------------------
+    def _apply_size(self):
+        """窗口 = 显示尺寸；渲染分辨率 = 显示尺寸 × ssaa（超采样抗糊）。
+
+        缩小后发糊的根源是「渲染分辨率跟着显示尺寸一起缩」。这里把渲染
+        固定在显示尺寸的 ssaa 倍（默认 2×，LANCZOS 缩回），实测 168px 显示
+        时 work=336 约 20ms/帧（49fps），PSNR 与 512 渲染几乎持平。
+        """
+        disp = int(self.base * self.scale)
+        self.work = int(min(1024, max(256, round(disp * self.ssaa))))
+        # 画布向下扩了 192px 给「坐下/趴下/睡觉」的下沉留地方，
+        # 所以窗口不是正方形，高 = 宽 × 1.1875（见 anim.ASPECT）
+        self.setFixedSize(disp, int(disp * AN.ASPECT))
 
     # ------------------------------------------------------------------
     # 位置
@@ -152,10 +178,15 @@ class FoxPet(QWidget):
             return
 
         self.bh.tick(dt)
+
+        # 散步：决定这一帧窗口平移多少（可能为 0）
+        dx, walking = self._wander_step(dt)
+
         t0 = time.time()
         img, _ = AN.render_frame(self.spec, 0, self.bh.items(),
                                  size=int(self.base * self.scale),
                                  layers=self.layers, work=self.work)
+        img = self._post(img)
         self._pix = pil_to_qpixmap(img)
         self.update()
 
@@ -165,6 +196,64 @@ class FoxPet(QWidget):
             self.fps = 1.0 / (self._fps_acc / self._fps_n)
             self._fps_acc = 0.0
             self._fps_n = 0
+
+        # 自适应降档：渲染跟不上目标帧率就降超采样（只降不升，避免震荡）。
+        # 帧耗时 ~ O(work²)，scale 大时 2× 超采样可能把 30fps 拖到 19fps。
+        self._frame_ms.append((time.time() - t0) * 1000.0)
+        if len(self._frame_ms) >= 30:
+            avg = sum(self._frame_ms) / len(self._frame_ms)
+            self._frame_ms = []
+            budget = 1000.0 / max(1.0, float(self.cfg.get('fps', 30))) * 0.85
+            if avg > budget and self.ssaa > 1.05:
+                self.ssaa = max(1.0, round(self.ssaa - 0.5, 2))
+                self._ssaa_floor_hit = True
+                self.cfg['ssaa'] = self.ssaa
+                self._apply_size()
+                self.layers = AN.get_layers(self.spec, self.work)
+                print('[pet] 帧耗时 %.0fms 超预算 %.0fms → ssaa 降到 %.1f (work=%d)'
+                      % (avg, budget, self.ssaa, self.work))
+
+    def _post(self, img):
+        """渲染后处理：朝向镜像 + 轻度锐化（自检也直接测这个方法）。"""
+        if self._facing < 0:            # 朝向镜像（画布左右对称，翻转安全）
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+        if self.sharpen:                # 抵消 LANCZOS 缩小的偏软
+            img = img.filter(ImageFilter.UnsharpMask(radius=1.0, percent=55,
+                                                     threshold=2))
+        return img
+
+    def _wander_step(self, dt):
+        """散步编排：返回 (dx, walking)。
+
+        允许走的前提：没在拖拽、清醒、base 正闲着（idle 或已在 walk）。
+        正在播交互动作（happy_wag / eat…）或睡着时不出门。
+        """
+        if self._drag_off is not None:
+            self.wander.pause(6.0)
+            return 0.0, False
+
+        scr = QApplication.screenAt(self.frameGeometry().center()) \
+            or QApplication.primaryScreen()
+        ag = scr.availableGeometry()
+        x_min = ag.left() + 6
+        x_max = ag.right() - self.width() - 5
+        dx, walking = self.wander.tick(dt, self.x(), x_min, x_max)
+
+        if walking:
+            if self.bh.base == WALK_AID or \
+                    (self.bh.state == 'awake'
+                     and self.bh.base == BH.Behavior.BASE_IDLE):
+                if self.bh.base != WALK_AID:
+                    self.bh._set_base(WALK_AID, None)
+                if dx:
+                    self.move(int(self.x() + dx), self.y())
+                return dx, True
+            self.wander.pause(2.0)      # 忙别的事，稍后再说
+            return 0.0, False
+
+        if self.bh.base == WALK_AID:    # 走完了 → 回 idle
+            self.bh._set_base(BH.Behavior.BASE_IDLE, None)
+        return 0.0, False
 
     def paintEvent(self, e):
         if self._pix is None:
@@ -216,11 +305,13 @@ class FoxPet(QWidget):
         else:
             # 没移动 = 单击 = 摸一摸
             self.bh.interact('pet')
+            self.wander.pause(8.0)
             self.sig_state.emit('摸一摸')
         e.accept()
 
     def mouseDoubleClickEvent(self, e):
         self.bh.interact('bounce')
+        self.wander.pause(8.0)
         e.accept()
 
     def wheelEvent(self, e):
@@ -236,8 +327,7 @@ class FoxPet(QWidget):
             return
         cx, cy = self.geometry().center().x(), self.geometry().bottom()
         self.scale = s
-        self.work = max(int(self.base * self.scale), 256)
-        self.setFixedSize(int(self.base * s), int(self.base * s * AN.ASPECT))
+        self._apply_size()
         self.layers = AN.get_layers(self.spec, self.work)
         # 以"脚下"为锚缩放，视觉上不会乱跳
         self.move(cx - self.width() // 2, cy - self.height())
@@ -253,12 +343,14 @@ class FoxPet(QWidget):
     def _menu(self, pos):
         m = QMenu(self)
         acts = [
-            ('摸一摸', lambda: self.bh.interact('pet')),
-            ('喂食', lambda: self.bh.interact('feed')),
-            ('喝水', lambda: self.bh.interact('drink')),
-            ('伸懒腰', lambda: self.bh.interact('stretch')),
-            ('嚎叫', lambda: self.bh.interact('howl')),
+            ('摸一摸', lambda: self._do('pet')),
+            ('喂食', lambda: self._do('feed')),
+            ('喝水', lambda: self._do('drink')),
+            ('伸懒腰', lambda: self._do('stretch')),
+            ('嚎叫', lambda: self._do('howl')),
             (None, None),
+            ('散步：开' if not self.wander.enabled else '散步：关',
+             self.toggle_wander),
             ('换一只', self.new_fox),
             ('睡一觉', lambda: self.bh.interact('pet') if False
              else self._force_sleep()),
@@ -276,6 +368,18 @@ class FoxPet(QWidget):
             a.triggered.connect(fn)
             m.addAction(a)
         m.exec(pos)
+
+    def _do(self, kind):
+        """菜单/托盘触发的交互：先让散步停一停。"""
+        self.wander.pause(8.0)
+        self.bh.interact(kind)
+
+    def toggle_wander(self):
+        self.wander.enabled = not self.wander.enabled
+        if not self.wander.enabled:
+            self.wander.pause(0.0)
+        self.cfg['wander'] = self.wander.enabled
+        CFG.save(self.cfg, self.state_path)
 
     def _force_sleep(self):
         if self.bh.state == 'asleep':
@@ -365,9 +469,11 @@ def main(argv=None):
         return a
 
     tm = QMenu()
-    tm.addAction(_mk('摸一摸', lambda: pet.bh.interact('pet')))
-    tm.addAction(_mk('喂食', lambda: pet.bh.interact('feed')))
+    tm.addAction(_mk('摸一摸', lambda: pet._do('pet')))
+    tm.addAction(_mk('喂食', lambda: pet._do('feed')))
     tm.addSeparator()
+    tm.addAction(_mk('散步：开' if not pet.wander.enabled else '散步：关',
+                    pet.toggle_wander))
     tm.addAction(_mk('换一只', pet.new_fox))
     tm.addAction(_mk('睡一觉 / 唤醒', pet._force_sleep))
     tm.addSeparator()

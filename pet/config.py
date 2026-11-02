@@ -16,11 +16,17 @@ for _p in (ROOT, os.path.join(ROOT, 'sim')):
 
 DEFAULT_PATH = os.path.join(ROOT, 'pet_state.json')
 
+LEGACY_BASE_SIZE = 256    # v1.0 的默认显示宽度；v1.1 改为 168 并做一次性迁移
+
 DEFAULTS = {
     'x': None,              # None = 首次启动自动贴到屏幕右下
     'y': None,
     'scale': 1.0,           # 显示倍率（0.4 ~ 3.0）
-    'base_size': 256,       # 渲染分辨率
+    'base_size': 168,       # 显示宽度（窗口高 = 宽 × 1.1875）
+    'ssaa': 2.0,            # 超采样倍率：渲染分辨率 = 显示尺寸 × ssaa，
+                            # 再 LANCZOS 缩回来。缩小后不糊的关键。
+    'sharpen': True,        # 超采样缩回后轻度锐化，抵消 LANCZOS 的偏软
+    'wander': True,         # 自动散步（水平漫步）
     'always_top': True,
     'click_through': False,  # 鼠标穿透（穿透后不能拖拽，靠托盘菜单关）
     'geno': None,           # 当前这只狐狸的基因型；None = 随机抽一只
@@ -42,6 +48,10 @@ def load(path=None):
                     cfg[k] = v
     except (IOError, OSError, ValueError):
         pass
+    # 一次性迁移：老版本的 state 存着旧默认 base_size=256，用户并没有
+    # 真正自定义过（代码里没有改它的入口），v1.1 起统一迁到新默认 168。
+    if cfg.get('base_size') == LEGACY_BASE_SIZE:
+        cfg['base_size'] = DEFAULTS['base_size']
     cfg['geno'] = norm_geno(cfg.get('geno'))
     return cfg, path
 
@@ -83,3 +93,12 @@ def clamp_scale(v):
     except (TypeError, ValueError):
         return 1.0
     return max(0.4, min(3.0, v))
+
+
+def clamp_ssaa(v):
+    """超采样倍率：太小没意义，太大拖垮帧率。1.0 ~ 4.0。"""
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return 2.0
+    return max(1.0, min(4.0, v))

@@ -7,10 +7,8 @@ _cache/
 # 本机桌宠状态（位置/缩放/个体）
 pet_state.json
 
-# 桌面实拍截图，含本机界面，不公开
-docs/desktop-mvp-1.png
-docs/desktop-mvp-2.png
-docs/desktop-shot-compare.png
+# 桌面实拍截图，含本机界面，不公开（模式匹配，防止新截图误提交）
+docs/desktop-*.png
 
 # 调试中间产物
 docs/_tmp_*.png
