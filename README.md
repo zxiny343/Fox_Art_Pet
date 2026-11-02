@@ -55,9 +55,10 @@ python pet/app.py --new          # --new 随机换一只狐狸；不加则读 pe
 LANCZOS 缩回后轻度锐化 —— 这是「缩小也不糊」的关键。若机器带不动导致
 帧率跌破目标，ssaa 会自动降档（只降不升）；也可在 `pet_state.json` 里改 `ssaa`。
 
-**自动散步（v1.1）**：狐狸每隔几秒~十几秒会在屏幕上水平走一段（55~95 px/s），
-走累了停下休息，朝向自动翻转。交互（摸/喂/拖拽）会让它停一停；
-右键或托盘菜单可开关散步。睡觉时不散步。
+**自动散步（v1.1+）**：狐狸每隔几秒~十几秒会在屏幕上水平走一段（55~95 px/s），
+走累了停下休息，**朝向自动镜像翻转**（往左走时整图水平翻转，头朝行进方向）。
+走路时四条腿按四足步态摆动（对角两两同步，`sim/legs.py` 切腿 + 绕根部旋转 ±12° + 抬腿）。
+交互（摸/喂/拖拽）会让它停一停；右键或托盘菜单可开关散步。睡觉时不散步。
 
 ## 3. 目录结构
 
@@ -70,6 +71,7 @@ pet/                桌宠外壳（PySide6）
   verify_behavior.py / verify_pet.py   自检（37 项 / 40 项）
 sim/                渲染与生态内核
   anim.py           动画播放器：读 skeleton.json + animations.json，多动作混合
+  legs.py           四足步态腿部 rig：切 body_core 的 4 条腿按 walk 步态摆动
   artmap.py         表型 → 部件映射 + 换色 + 部件级 LRU 缓存
   render_kernel.py  唯一渲染入口 render()，含缺件降级表与素材版本自动失效
   fox_ecosystem_sim.py / breeding.py / diversity.py ...   生态与遗传模拟
@@ -96,9 +98,11 @@ QT_QPA_PLATFORM=offscreen python pet/verify_pet.py   # 桌宠外壳（离屏）�
 
 ## 5. 已知限制
 
-- 36 个动作里有 18 个需要「分腿部件」：腿目前画在 `body_core` 位图里，没法单独摆，这些动作暂不可用。
-  其中 walk 已用程序化增强版 `walk_fx` 补上（`anim.make_walk_action`：放大 body/tail 幅度
-  + pelvis 重心起伏，帧差 0 → 2.4），散步即用它。run / walk_fast 待同样处理。
+- 36 个动作里有 18 个需要「分腿部件」：腿画在 `body_core` 位图里没法单独摆。
+  其中 **walk 已用程序化腿部 rig 补上**（`sim/legs.py`：扫描底部 alpha 找 4 条腿，
+  切成独立图层，按四足 walk 步态——对角两两同步——绕根部摆动 ±12° + 抬腿 8px；
+  帧差 0 → 5.3，散步即用它）。朝向镜像在 `app._post` 整图翻转，往左走时自动翻。
+  run / walk_fast 待同样处理。
 - 头部转动需要切图资源，当前未实现（只有整体 `pelvis` 平移/旋转）。
 - `eye_closed` 缺 `mist_purple` / `haze_blue` 两个眼色；附件命名不统一 → 记在 v1.5 美术返修清单。
 - v1.4 尾根缺口用半透明雾填充（alpha 均值 ~70，正常部件 ~253），衰减长度偏短 → v1.5 待修。

@@ -14,6 +14,8 @@ docs/desktop-*.png
 # 调试中间产物
 docs/_tmp_*.png
 docs/_probe_*.png
+docs/probe-*.png
+docs/probe_*.png
 docs/fox-render/
 docs/render-kernel/
 

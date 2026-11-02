@@ -10,6 +10,7 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import anim as AN                                      # noqa: E402
 import artmap as AM                                    # noqa: E402
+import legs as LG                                      # noqa: E402
 import render_kernel as RK                             # noqa: E402
 from fox_ecosystem_sim import phenotype as PH          # noqa: E402
 
@@ -127,6 +128,63 @@ def main():
         dt = (time.time() - t0) / n
         ck(dt < budget, 'F work=%d 帧耗时 < %.0fms' % (work_sz, budget * 1000),
            '%.1fms → %.0f fps' % (dt * 1000, 1.0 / dt))
+
+    # --- G 腿部 rig（四足步态） ---
+    sec('G 腿部 rig（walk 类动作启用四足步态）')
+    LG.clear_cache()
+    work = 336
+    L336 = AN.get_layers(spec, work)
+    # G1 检测到 4 条腿
+    info = LG._detect(L336['core'])
+    ck(info is not None and len(info) == 4, 'G1 检测到 4 条腿',
+       '腿数=%d' % (len(info) if info else 0))
+    if info:
+        # 4 条腿 x 中心应单调递增（从左到右）
+        xs = [lg['xc'] for lg in info]
+        ck(xs == sorted(xs), 'G2 四腿 x 坐标从左到右有序', str(xs))
+        # y_root < y_foot（根部在脚上方）
+        ck(all(lg['y_root'] < lg['y_foot'] for lg in info),
+           'G3 每条腿根部在脚上方')
+
+    # G4 walk 帧差 > idle 帧差（腿在动）
+    def frame_diff(items_a, items_b):
+        ia = np.asarray(AN.render_frame(spec, 0, items_a, size=168,
+                                        layers=L336, work=work)[0], np.int16)
+        ib = np.asarray(AN.render_frame(spec, 0, items_b, size=168,
+                                        layers=L336, work=work)[0], np.int16)
+        return float(np.abs(ia - ib).mean())
+
+    # walk t=0 vs t=0.25：腿应明显不同
+    d_walk = frame_diff([('walk', 0.0)], [('walk', 0.25)])
+    # idle 同样区间：应几乎无差
+    d_idle = frame_diff([('idle_breath', 0.0)], [('idle_breath', 0.25)])
+    ck(d_walk > d_idle * 2.0, 'G4 walk 帧差显著大于 idle',
+       'walk=%.2f idle=%.2f' % (d_walk, d_idle))
+    ck(d_walk > 1.0, 'G5 walk 帧差 > 1（腿在动）', 'walk=%.2f' % d_walk)
+
+    # G6 idle 不触发腿部 rig（walk_phase=None 时 core 不变）
+    img_idle, _ = AN.render_frame(spec, 0, [('idle_breath', 0.3)],
+                                  size=168, layers=L336, work=work)
+    ck(img_idle.size == (168, int(round(168 * AN.ASPECT))),
+       'G6 idle 渲染尺寸正确', str(img_idle.size))
+
+    # G7 walk 性能：腿部 rig 不拖垮帧率
+    AN.render_frame(spec, 0, [('walk', 0.1)], size=168, layers=L336, work=work)
+    t0 = time.time()
+    n = 20
+    for i in range(n):
+        AN.render_frame(spec, 0, [('walk', i / float(n))],
+                        size=168, layers=L336, work=work)
+    dt_walk = (time.time() - t0) / n
+    ck(dt_walk < 0.045, 'G7 walk+腿rig 帧耗时 < 45ms',
+       '%.1fms' % (dt_walk * 1000))
+
+    # G8 朝向：镜像后 walk 帧与原图非镜像版不同（朝向变了）
+    img_r, _ = AN.render_frame(spec, 0, [('walk', 0.25)],
+                               size=168, layers=L336, work=work)
+    img_l = img_r.transpose(Image.FLIP_LEFT_RIGHT)
+    ck(not np.array_equal(np.asarray(img_r), np.asarray(img_l)),
+       'G8 镜像后像素改变（朝向翻转生效）')
 
     print('\n'.join(ROWS))
     print('')

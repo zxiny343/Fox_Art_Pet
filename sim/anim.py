@@ -27,9 +27,18 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import artmap as AM                                    # noqa: E402
+import legs as _LEG                                    # noqa: E402
 
 DATA = AM.DATA
 MASTER = AM.MASTER
+
+
+def _spec_key(spec):
+    """基因型摘要 clave，layers/legs 缓存共用。"""
+    return spec.get('_key') or json.dumps(
+        {k: spec[k] for k in ('coat', 'fur', 'tail', 'ear', 'eye_l', 'eye_r',
+                              'pupil', 'pattern', 'special')},
+        sort_keys=True, default=str)
 
 with open(os.path.join(DATA, 'skeleton.json'), encoding='utf-8') as f:
     SKEL = json.load(f)
@@ -390,14 +399,10 @@ def get_layers(spec, work=512):
 
     layers() 本身要 1.3s（换色 + 花纹），一只狐狸在一段动画里只做一次。
     """
-    import artmap as _AM
-    key = (spec.get('_key') or json.dumps(
-        {k: spec[k] for k in ('coat', 'fur', 'tail', 'ear', 'eye_l', 'eye_r',
-                              'pupil', 'pattern', 'special')},
-        sort_keys=True, default=str), work)
+    key = (_spec_key(spec), work)
     if key in _LAYER_CACHE:
         return _LAYER_CACHE[key]
-    L = _AM.layers(spec)
+    L = AM.layers(spec)
     if work != 1024:
         L = {k: (v.resize((work, work), Image.LANCZOS) if hasattr(v, 'resize')
                  else v) for k, v in L.items()}
@@ -453,7 +458,6 @@ def render_frame(spec, t, actions, size=512, layers=None, work=None):
     work = 变换发生的分辨率。桌宠只显示 256，在 1024 上做旋转是浪费
     （实测 0.6s/帧 → 512 上 0.15s、256 上 0.04s）。默认取 max(size, 256)。
     """
-    import artmap as _AM
     work = work or max(size or 512, 256)
     if layers is None:
         layers = get_layers(spec, work)
@@ -464,7 +468,13 @@ def render_frame(spec, t, actions, size=512, layers=None, work=None):
 
     canvas = Image.new('RGBA', (work, work), (0, 0, 0, 0))
     canvas.alpha_composite(rig_tail(layers['tail'], spec['tail'], pose, work))
-    canvas.alpha_composite(_scaled_core(layers['core'], pose, work))
+    # core 层：walk 类动作时启用腿部 rig（腿画在 body_core 位图里无独立骨骼，
+    # 原始 walk 的腿部通道被丢弃；这里把 4 条短腿切出来按四足步态摆动）
+    core_layer = _scaled_core(layers['core'], pose, work)
+    wt = _LEG.walk_phase(items)
+    if wt is not None:
+        core_layer = _LEG.rig_legs(core_layer, wt, _spec_key(spec), work)
+    canvas.alpha_composite(core_layer)
     for side in ('L', 'R'):
         canvas.alpha_composite(rig_ear(layers['ear_' + side], side, pose, work))
     # 眼睛在工作分辨率上放：place_eyes_on 用 1024 锚点，这里按比例换算

@@ -274,6 +274,10 @@ class FoxPet(QWidget):
                 if self.bh.base != WALK_AID:
                     self.bh._set_base(WALK_AID, None)
                 if dx:
+                    # 同步朝向：wander.facing 在 tick 里按 dx 方向设好，
+                    # 但之前漏了把它传到 self._facing → 镜像永远不发生，
+                    # 往左走时原图朝右不变，看起来像倒退着走。
+                    self._facing = self.wander.facing
                     self.move(int(self.x() + dx), self.y())
                 return dx, True
             self.wander.pause(2.0)      # 忙别的事，稍后再说
