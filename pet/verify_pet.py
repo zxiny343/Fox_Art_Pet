@@ -65,7 +65,10 @@ def main():
     state_path = os.path.join(ROOT, '_pet_test_state.json')
     cfg['x'], cfg['y'] = 300, 300
     cfg['scale'] = 1.0          # 不吃本机 state 里的缩放，保证断言稳定
-    cfg['fps'] = 30
+    cfg['fps'] = 24             # 与 config 默认一致（30fps 会把 2× 超采样逼到降档）
+    cfg['log'] = False          # 自检别往 pet.log 里灌日志
+    cfg['geno'] = None          # 也不吃本机那只，保证「换一只」一定换得掉
+    cfg['ssaa'] = 2.0           # ssaa 不落盘，这里显式给默认值
 
     sec('A · 窗口属性')
     pet = APP.FoxPet(cfg, state_path)
@@ -110,10 +113,13 @@ def main():
     for _ in range(n):
         pet._tick()
     dt = (time.time() - t0) / n
-    chk(dt < 0.033, 'C1 单帧渲染 < 33ms（够 30fps）',
+    budget = 1.0 / float(cfg['fps'])
+    chk(dt < budget, 'C1 单帧渲染 < 1/目标fps（%.0f fps）' % cfg['fps'],
         '%.1f ms/帧 → %.0f fps (ssaa=%.1f work=%d)'
         % (dt * 1000, 1.0 / dt, pet.ssaa, pet.work))
     chk(pet.fps > 0, 'C1 fps 统计有值', '%.1f' % pet.fps)
+    chk(pet.ssaa >= 2.0 - 1e-6, 'C2 24fps 下 2× 超采样没被误降档',
+        'ssaa=%.1f work=%d' % (pet.ssaa, pet.work))
 
     sec('D · 缩放')
     w0 = pet.width()
@@ -271,6 +277,15 @@ def main():
     pet._tick()
     chk(pet.ssaa == 1.5 and pet._ssaa_floor_hit,
         'J10 超帧率预算自动降 ssaa', 'ssaa=%.1f work=%d' % (pet.ssaa, pet.work))
+    # J11 只是小幅超支（35ms < 41.7ms 预算）不该降档，否则清晰度白给
+    pet.ssaa = 2.0
+    pet._apply_size()
+    pet.layers = AN.get_layers(pet.spec, pet.work)
+    pet._ssaa_floor_hit = False
+    pet._frame_ms = [35.0] * 30
+    pet._tick()
+    chk(pet.ssaa == 2.0 and not pet._ssaa_floor_hit,
+        'J11 35ms 在 24fps 预算内不降档', 'ssaa=%.1f' % pet.ssaa)
     pet._frame_ms = [5.0] * 30
     pet.ssaa = 2.0
     pet._apply_size()

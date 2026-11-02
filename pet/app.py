@@ -12,10 +12,12 @@
 """
 
 import argparse
+import atexit
 import json
 import os
 import sys
 import time
+import traceback
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 for _p in (ROOT, os.path.join(ROOT, 'sim'), os.path.dirname(os.path.abspath(__file__))):
@@ -39,6 +41,23 @@ from fox_ecosystem_sim import phenotype as PH                           # noqa: 
 
 # 程序化增强版 walk（原始 walk 的腿部通道没有 rig，缩到桌宠尺寸像静止滑行）
 WALK_AID = AN.make_walk_action()
+
+LOG_PATH = os.path.join(ROOT, 'pet.log')
+
+
+def _log(cfg, msg):
+    """轻量事件日志：启动、退出原因、降档。写 pet.log（已 gitignore）。
+
+    桌宠是长期后台进程，之前两次「跑了几个小时后 exit 0 消失」查不到原因，
+    所以把退出路径都记一笔：正常退出、关窗、未捕获异常、Qt 循环结束。
+    """
+    if not (cfg or {}).get('log', True):
+        return
+    try:
+        with open(LOG_PATH, 'a', encoding='utf-8') as f:
+            f.write('%s  %s\n' % (time.strftime('%Y-%m-%d %H:%M:%S'), msg))
+    except (IOError, OSError):
+        pass
 
 
 def pick_fox(idx=0, seed=20261101):
@@ -120,6 +139,7 @@ class FoxPet(QWidget):
         self.fps = 0.0
         self._pix = None
         self._frame_ms = []         # 自适应降档的滚动帧耗时样本
+        self._warm_skip = 60        # 前 60 帧不计样本（建层/首帧冷启动）
         self._ssaa_floor_hit = False
 
         self._place_initial()
@@ -198,20 +218,28 @@ class FoxPet(QWidget):
             self._fps_n = 0
 
         # 自适应降档：渲染跟不上目标帧率就降超采样（只降不升，避免震荡）。
-        # 帧耗时 ~ O(work²)，scale 大时 2× 超采样可能把 30fps 拖到 19fps。
-        self._frame_ms.append((time.time() - t0) * 1000.0)
+        # 帧耗时 ~ O(work²)，scale 大时 2× 超采样可能把 24fps 拖垮。
+        # 注意：前 60 帧不计入（换只/缩放要重建部件层，1.3s 的冷峰会误判成"太慢"），
+        # 用中位数而不是均值，抗偶发卡顿。
+        if self._warm_skip > 0:
+            self._warm_skip -= 1
+        else:
+            self._frame_ms.append((time.time() - t0) * 1000.0)
         if len(self._frame_ms) >= 30:
-            avg = sum(self._frame_ms) / len(self._frame_ms)
+            avg = sorted(self._frame_ms)[len(self._frame_ms) // 2]
             self._frame_ms = []
-            budget = 1000.0 / max(1.0, float(self.cfg.get('fps', 30))) * 0.85
+            budget = 1000.0 / max(1.0, float(self.cfg.get('fps', 24)))
             if avg > budget and self.ssaa > 1.05:
                 self.ssaa = max(1.0, round(self.ssaa - 0.5, 2))
                 self._ssaa_floor_hit = True
-                self.cfg['ssaa'] = self.ssaa
+                # 只改运行时，不写进 cfg/state：否则下次启动永久从低倍率开始
                 self._apply_size()
                 self.layers = AN.get_layers(self.spec, self.work)
-                print('[pet] 帧耗时 %.0fms 超预算 %.0fms → ssaa 降到 %.1f (work=%d)'
-                      % (avg, budget, self.ssaa, self.work))
+                self._warm_skip = 30           # 重建层后再跳过一批样本
+                msg = ('帧耗时中位 %.0fms 超预算 %.0fms → ssaa 降到 %.1f (work=%d)'
+                       % (avg, budget, self.ssaa, self.work))
+                print('[pet] ' + msg)
+                _log(self.cfg, msg)
 
     def _post(self, img):
         """渲染后处理：朝向镜像 + 轻度锐化（自检也直接测这个方法）。"""
@@ -418,10 +446,17 @@ class FoxPet(QWidget):
 
     def quit(self):
         self._save_pos()
+        # 记调用链：能区分「右键菜单」「托盘菜单」「程序内部」三种来源，
+        # 之前两次「跑几小时后自己消失」就是缺这条线索才查不出来。
+        chain = ' <- '.join('%s:%d %s' % (os.path.basename(f.filename), f.lineno,
+                                          f.name)
+                            for f in traceback.extract_stack()[-4:-1])
+        _log(self.cfg, '退出：quit() 调用链 %s' % chain)
         QApplication.quit()
 
     def closeEvent(self, e):
         self._save_pos()
+        _log(self.cfg, '退出：窗口关闭')
         super().closeEvent(e)
 
 
@@ -446,10 +481,23 @@ def main(argv=None):
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
 
+    # 退出原因埋点：任何一条路径停下来都能在 pet.log 里查到
+    def _hook(exc_type, exc, tb):
+        _log(cfg, '未捕获异常：\n' + ''.join(
+            traceback.format_exception(exc_type, exc, tb)))
+        sys.__excepthook__(exc_type, exc, tb)
+
+    sys.excepthook = _hook
+    app.aboutToQuit.connect(lambda: _log(cfg, '退出：Qt 事件循环结束'))
+    atexit.register(lambda: _log(cfg, '退出：进程结束（atexit）'))
+
     pet = FoxPet(cfg, state_path, fox_idx=(hash(time.time()) % 997) if args.new else 0)
     if cfg['click_through']:
         pet.setAttribute(Qt.WA_TransparentForMouseEvents, True)
     pet.show()
+    _log(cfg, '启动 pid=%d 显示 %dx%d work=%d fps=%s ssaa=%.1f wander=%s'
+         % (os.getpid(), pet.width(), pet.height(), pet.work,
+            cfg.get('fps'), pet.ssaa, pet.wander.enabled))
 
     if args.once:
         pet._tick()

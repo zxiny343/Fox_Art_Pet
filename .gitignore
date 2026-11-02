@@ -6,6 +6,7 @@ _cache/
 
 # 本机桌宠状态（位置/缩放/个体）
 pet_state.json
+pet.log
 
 # 桌面实拍截图，含本机界面，不公开（模式匹配，防止新截图误提交）
 docs/desktop-*.png
