@@ -24,8 +24,13 @@ pip install PySide6 pillow numpy
 ## 2. 快速开始
 
 ```bash
+git clone https://github.com/zxiny343/Fox_Art_Pet.git
+cd Fox_Art_Pet
+pip install PySide6 pillow numpy
 python pet/app.py --new          # --new 随机换一只狐狸；不加则读 pet_state.json 里存的那只
 ```
+
+美术素材（v1.4，559 个文件 / 58M）已经随仓库一起分发，clone 完即可直接运行，不用另外下载。
 
 可选参数：
 
